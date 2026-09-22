@@ -6,6 +6,10 @@ import type { AxisDirection, AxisKey, Operation, OperationDraft, Part, Vec3 } fr
 import { useEditorStore } from '../../store/useEditorStore';
 import { NumberField } from '../common/NumberField';
 import { SegmentedControl } from '../common/SegmentedControl';
+import { OperationNudge } from './OperationNudge';
+import { CORNER_GRID, CORNER_LABELS } from '../../core/operation/cornerLabels';
+import { ALL_CORNERS } from '../../core/types';
+import type { CornerKey } from '../../core/types';
 
 interface Props {
   part: Part;
@@ -48,7 +52,7 @@ export function OperationForm({ part, draft }: Props) {
   );
 
   const directionControl =
-    op.type === 'roundHole' || op.type === 'rectHole' ? (
+    op.type === 'roundHole' || op.type === 'rectHole' || op.type === 'arch' || op.type === 'roundCorner' ? (
       <div className="field">
         <label className="field-label" htmlFor="op-direction">
           方向
@@ -60,7 +64,7 @@ export function OperationForm({ part, draft }: Props) {
         >
           {ALL_DIRECTIONS.map((dir) => (
             <option key={dir} value={dir}>
-              {DIRECTION_LABELS[dir]} から掘る
+              {DIRECTION_LABELS[dir]}
             </option>
           ))}
         </select>
@@ -91,6 +95,7 @@ export function OperationForm({ part, draft }: Props) {
             onCommit={(v) => patch({ position: setPositionAxis(position, va, v) })}
           />
         </div>
+        <OperationNudge part={part} draft={draft} />
         <p className="muted">掘る深さの方向は「方向」で決まります</p>
       </div>
     );
@@ -129,6 +134,7 @@ export function OperationForm({ part, draft }: Props) {
 
       {op.type === 'rectHole' ? (
         <>
+          <NumberField label="断面の回転" unit="deg" value={op.rotation} onCommit={(rotation) => patch({ rotation })} />
           <NumberField label="幅" unit="mm" value={op.width} min={0} error={messageFor(result.errors, 'width')} onCommit={(width) => patch({ width })} />
           <NumberField label="高さ" unit="mm" value={op.height} min={0} error={messageFor(result.errors, 'height')} onCommit={(height) => patch({ height })} />
           <label className="checkbox">
@@ -146,6 +152,112 @@ export function OperationForm({ part, draft }: Props) {
           />
           {directionControl}
           {holePosition(op.position, op.direction)}
+        </>
+      ) : null}
+
+      {op.type === 'arch' ? (
+        <>
+          <NumberField
+            label="幅"
+            unit="mm"
+            value={op.width}
+            min={0}
+            error={messageFor(result.errors, 'width')}
+            onCommit={(width) => patch({ width })}
+          />
+          <NumberField
+            label="全高"
+            unit="mm"
+            value={op.height}
+            min={0}
+            error={messageFor(result.errors, 'height')}
+            onCommit={(height) => patch({ height })}
+          />
+          <NumberField
+            label="アーチの高さ"
+            unit="mm"
+            value={op.rise}
+            min={0}
+            max={op.height}
+            error={messageFor(result.errors, 'rise')}
+            onCommit={(rise) => patch({ rise })}
+          />
+          <div className="button-row">
+            <button type="button" onClick={() => patch({ rise: op.width / 2 })}>
+              半円にする
+            </button>
+            <button type="button" onClick={() => patch({ rise: 0 })}>
+              角にする
+            </button>
+          </div>
+          <p className="muted">アーチの高さを 幅の半分（{Math.round((op.width / 2) * 10) / 10}mm）にすると半円になります</p>
+          <NumberField label="断面の回転" unit="deg" value={op.rotation} onCommit={(rotation) => patch({ rotation })} />
+          <label className="checkbox">
+            <input type="checkbox" checked={op.through} onChange={(e) => patch({ through: e.target.checked })} />
+            貫通させる
+          </label>
+          <NumberField
+            label="深さ"
+            unit="mm"
+            value={op.depth}
+            min={0}
+            disabled={op.through}
+            error={messageFor(result.errors, 'depth')}
+            onCommit={(depth) => patch({ depth })}
+          />
+          {directionControl}
+          {holePosition(op.position, op.direction)}
+        </>
+      ) : null}
+
+      {op.type === 'roundCorner' ? (
+        <>
+          <NumberField
+            label="半径"
+            unit="mm"
+            value={op.radius}
+            min={0}
+            error={messageFor(result.errors, 'radius')}
+            warning={messageFor(result.warnings, 'radius')}
+            onCommit={(radius) => patch({ radius })}
+          />
+          <div className="field-group">
+            <span className="field-label">丸める角</span>
+            <div className="corner-grid">
+              {CORNER_GRID.map((key: CornerKey) => (
+                <label key={key} className="checkbox corner-cell">
+                  <input
+                    type="checkbox"
+                    checked={op.corners.includes(key)}
+                    onChange={(e) =>
+                      patch({
+                        corners: e.target.checked
+                          ? ALL_CORNERS.filter((c) => c === key || op.corners.includes(c))
+                          : op.corners.filter((c) => c !== key),
+                      })
+                    }
+                  />
+                  {CORNER_LABELS[key]}
+                </label>
+              ))}
+            </div>
+            <div className="button-row">
+              <button type="button" onClick={() => patch({ corners: [...ALL_CORNERS] })}>
+                四隅すべて
+              </button>
+              <button
+                type="button"
+                onClick={() => patch({ corners: ['topLeft', 'topRight'] })}
+              >
+                上の 2 つ
+              </button>
+            </div>
+            {messageFor(result.errors, 'corners') ? (
+              <p className="notice notice-error">{messageFor(result.errors, 'corners')}</p>
+            ) : null}
+          </div>
+          {directionControl}
+          <p className="muted">板厚を貫通して、素材の外形の角を落とします</p>
         </>
       ) : null}
 
@@ -173,6 +285,7 @@ export function OperationForm({ part, draft }: Props) {
                 />
               ))}
             </div>
+            <OperationNudge part={part} draft={draft} />
           </div>
         </>
       ) : null}
@@ -199,6 +312,7 @@ export function OperationForm({ part, draft }: Props) {
             warning={messageFor(result.warnings, 'offset')}
             onCommit={(v) => patch({ offset: v - axisSize(part.size, op.axis) / 2 })}
           />
+          <OperationNudge part={part} draft={draft} />
           <SegmentedControl
             label="残す側"
             value={op.keep}

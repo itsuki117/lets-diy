@@ -2,7 +2,8 @@
 
 - ステータス: 確定（Codex 実装開始可）
 - 対象バージョン: Ver.1
-- 最終更新: 2026-09-22（§3.8 UI デザイン規則を追加、§12.4 の符号を修正）
+- 最終更新: 2026-09-22（§3.8 UI デザイン規則、§12.4 符号修正、アーチ + 角丸で schemaVersion 3、§13.4.1 加工位置の 3 つの指定手段、§21 部品表、§22 干渉判定）
+- 続編: [DESIGN_V2_MOTION.md](./DESIGN_V2_MOTION.md)（可動部品・動作シミュレーション。設計のみ）
 - 関連: [PHASES_V1.md](./PHASES_V1.md)（実装フェーズ・完成条件）
 
 ---
@@ -46,6 +47,10 @@ Ver.1 の成功条件は「**初心者が、マニュアルなしで、板を3�
 | F-13 | 切断加工（軸平行・位置・残す側）ができる | MUST |
 | F-14 | 角穴加工ができる | SHOULD |
 | F-15 | 切り欠き加工ができる | SHOULD |
+| F-15b | アーチ切り欠き（矩形の上辺を弧にした断面）ができる | SHOULD |
+| F-15c | 角丸（素材の外形の角を円弧で落とす）ができる | SHOULD |
+| F-23 | 部品表を集計し、CSV で書き出せる | SHOULD |
+| F-24 | 部材どうしの干渉（食い込み）を検出できる | SHOULD |
 | F-16 | 加工は非破壊：元寸法 + 加工履歴 + 表示メッシュが分離されている | MUST |
 | F-17 | 既存の加工パラメータを後から編集・無効化・削除できる | MUST |
 | F-18 | 加工位置・寸法の調整中は半透明プレビューを表示し、CSG は実行しない | MUST |
@@ -77,7 +82,8 @@ AI設計支援 / AI部品生成 / STL・STEP出力 / 物理演算 / 可動シミ
 
 | 項目 | Ver.1 の決定 | 理由 |
 |------|--------------|------|
-| 部材形状 | 直方体のみ | 木材の 9 割は矩形材。曲線は Ver.3 |
+| 部材形状 | 直方体のみ | 木材の 9 割は矩形材。素材そのものの曲線は Ver.3 |
+| 曲線 | 加工側だけアーチを許す | 素材は直方体のまま、削る側に弧を持たせる。押し出し断面なので CSG は安定する |
 | 加工の向き | ローカル軸 6 方向のみ（`+x/-x/+y/-y/+z/-z`） | 斜め穴は木工では稀。任意角は Ver.2 |
 | 切断面 | ローカル軸に平行のみ | 45°留めは Ver.1.1 で `cut` を拡張 |
 | エッジスナップ | **実装しない**。代わりに整列(Align)を実装 | §12.5 参照 |
@@ -115,6 +121,7 @@ AI設計支援 / AI部品生成 / STL・STEP出力 / 物理演算 / 可動シミ
   └─ 対象部材を選択（未選択ならガイド表示）
        └─ 加工種類を選ぶ（丸穴 / 角穴 / 切り欠き / 切断）
             └─ パラメータ入力（入力するたび半透明プレビューが更新）
+                 ・位置は「矢印ドラッグ」「微調整ボタン」「座標入力」の 3 通り
                  └─ [加工を実行]
                       └─ CSG 実行 → メッシュ更新 → 加工リストに追加
        │
@@ -257,7 +264,7 @@ AI設計支援 / AI部品生成 / STL・STEP出力 / 物理演算 / 可動シミ
 対象: 側板 A            （未選択時:「部材を選択してください」）
 
 加工を追加
-  [ 丸穴 ] [ 角穴 ] [ 切り欠き ] [ 切断 ]
+  [ 丸穴 ] [ 角穴 ] [ アーチ ] [ 切り欠き ] [ 切断 ]
 
 ── 丸穴 ──────────────────
   直径     [  8 ] mm
@@ -270,6 +277,18 @@ AI設計支援 / AI部品生成 / STL・STEP出力 / 物理演算 / 可動シミ
   [!] 穴の中心が部材の端から 4mm しかありません
 
   [ プレビュー中 ]      [ 加工を実行 ]  [ キャンセル ]
+
+-- アーチ --------------------
+  幅             [ 150 ] mm
+  全高           [ 100 ] mm
+  アーチの高さ    [  75 ] mm
+    [ 半円にする ] [ 角にする ]
+    アーチの高さを 幅の半分（75mm）にすると半円になります
+  断面の回転      [   0 ] °
+  [x] 貫通させる
+  方向           [ -Z 面から   v ]
+  位置の基準 ( ) 中心原点  (*) コーナー原点(X-,Y-,Z-)
+  X [ 300 ]  Y [  40 ] mm
 
 この部材の加工 (3)
   [x] 丸穴 φ8 貫通 @ (100, 50)      [編集] [削除]
@@ -684,6 +703,7 @@ lets-diy/
    │  │  ├─ AlignTools.tsx
    │  │  ├─ MachinePanel.tsx         # 加工モード
    │  │  ├─ OperationForm.tsx        # * 種類別パラメータ入力
+  │  │  ├─ OperationNudge.tsx       # * 加工位置の微調整ボタン（§13.4.1）
    │  │  └─ PartOutliner.tsx
    │  ├─ right/
    │  │  ├─ PropertyPanel.tsx
@@ -889,6 +909,32 @@ export interface RectHoleOperation extends OperationBase {
   rotation: Degree;
 }
 
+/**
+ * アーチ切り欠き。矩形の上辺を弧にした断面を direction 軸方向へ押し出して削る。
+ * 棚の側板の足元を弧状に抜く、といった用途。素材そのものは直方体のままで、
+ * 削る側にだけ曲線を持たせるため CSG は安定する。
+ */
+export interface ArchOperation extends OperationBase {
+  type: 'arch';
+  /** 開口の幅 mm */
+  width: Millimeter;
+  /** 断面の全高 mm（弧の部分を含む） */
+  height: Millimeter;
+  /**
+   * 弧の高さ mm。0 なら矩形、width / 2 なら半円、それ以外は楕円弧になる。
+   * 0 <= rise <= height。
+   */
+  rise: Millimeter;
+  depth: Millimeter;
+  through: boolean;
+  /** 断面を囲む矩形の中心（部材ローカル、中心原点）mm */
+  position: Vec3;
+  /** 押し出す向き。通常は板厚方向 */
+  direction: AxisDirection;
+  /** direction 軸まわりの断面の回転（度）。0 で弧が上を向く */
+  rotation: Degree;
+}
+
 /** 切り欠き。指定した直方体を丸ごと削り取る。 */
 export interface NotchOperation extends OperationBase {
   type: 'notch';
@@ -912,6 +958,7 @@ export interface CutOperation extends OperationBase {
 export type Operation =
   | RoundHoleOperation
   | RectHoleOperation
+  | ArchOperation
   | NotchOperation
   | CutOperation;
 
@@ -954,7 +1001,7 @@ export interface Project {
   updatedAt: string;
 }
 
-export const SCHEMA_VERSION = 1 as const;
+export const SCHEMA_VERSION = 2 as const;
 
 export interface ProjectDocument {
   app: 'lets-diy';
@@ -966,7 +1013,7 @@ export interface ProjectDocument {
 // ------------------------------------------------------------
 // ツール立体（加工の実体。プレビューと CSG で共有する）
 // ------------------------------------------------------------
-export type ToolShape = 'box' | 'cylinder';
+export type ToolShape = 'box' | 'cylinder' | 'arch';
 
 /**
  * Operation から導出される「減算する立体」の仕様。
@@ -975,14 +1022,20 @@ export type ToolShape = 'box' | 'cylinder';
 export interface ToolSolidSpec {
   shape: ToolShape;
   /**
-   * box:      [x, y, z] の 3 辺長
+   * box:      [x, y, z] の 3 辺長（部材ローカル軸に沿う）
    * cylinder: x = 直径, y = 高さ（軸は +Y）, z = 直径（x と同値）
+   * arch:     x = 幅, y = 全高, z = 押し出す深さ（押し出し軸は +Z）
+   *
+   * cylinder と arch はツール自身の座標系での寸法であり、
+   * 部材ローカルへの向き合わせは rotation が担う。
    */
   size: Size3;
   /** ツール立体の中心（部材ローカル mm） */
   position: Vec3;
   /** ツール立体の姿勢（度、Euler 'XYZ'、部材ローカル） */
   rotation: Vec3;
+  /** shape === 'arch' のときの弧の高さ mm。0 なら矩形になる */
+  rise?: Millimeter;
 }
 
 // ------------------------------------------------------------
@@ -1115,6 +1168,7 @@ export function buildPartGeometry(part: Part): Promise<GeometryBuildResult>;
 | `operation/operationLabel.ts` | 一覧表示用の文字列 | `operationLabel(op, part): string` |
 | `operation/operationValidate.ts` | 検証（エラー/警告の分離） | `validateOperation(op, part): ValidationResult` |
 | `operation/toolSolid.ts` | **Operation → ToolSolidSpec**（純粋） | `toolSolidSpec(op, size): ToolSolidSpec` |
+| `operation/operationDrag.ts` | マウス操作 → Operation（純粋） | `draftHandlePosition`, `draggableAxes`, `applyDraftPosition` |
 | `snap/gridSnap.ts` | グリッド量子化 | `snapValue(v, step)`, `snapVec3(v, step)` |
 | `snap/faceSnap.ts` | **面スナップの Transform 計算** | `computeFaceSnapTransform(args): Transform` |
 | `snap/align.ts` | 整列 | `computeAlignedPositions(parts, axis, anchor): Map<PartId, Vec3>` |
@@ -1167,6 +1221,7 @@ export function buildPartGeometry(part: Part): Promise<GeometryBuildResult>;
 | `SelectionOutline.tsx` | 選択中部材の `<lineSegments>` を重ねる |
 | `TransformGizmo.tsx` | 選択が 1 件かつ配置モードのときのみ描画。`translationSnap` / `rotationSnap` をスナップ設定から与える。`dragging-changed` で `beginTransient` / `commitTransient` |
 | `OperationPreview.tsx` | `editorStore.operationDraft` から `toolSolidSpec` → `createToolGeometry` → 半透明メッシュ。**`useMemo` で draft 変更時のみ再生成** |
+| `OperationGizmo.tsx` | 加工位置のドラッグ用ギズモ（§13.4.1）。種類ごとに動かせる軸を絞る |
 | `FacePickOverlay.tsx` | 面スナップ中、ホバー中の面に半透明の板を出す。クリックで `FaceRef` を確定 |
 | `hooks/usePartGeometry.ts` | `GeometryCache` を購読。非同期構築中は直前のジオメトリ（なければ素のボックス）を返す |
 | `hooks/usePointerPick.ts` | 交点のローカル座標・法線 → `AxisDirection` を解決（`pickFace`） |
@@ -1525,7 +1580,7 @@ export function computeFaceSnapTransform(args: FaceSnapArgs): Transform;
 
 ### 13.1 設計の核: 全ての加工は「ツール立体の減算」
 
-Ver.1 の 4 種類の加工は、すべて次の 1 本の流れに帰着する。
+Ver.1 の 6 種類の加工は、すべて次の 1 本の流れに帰着する。
 
 ```
 Operation ──(純粋関数 toolSolidSpec)──▶ ToolSolidSpec ──┬──▶ プレビュー（半透明メッシュ）
@@ -1579,6 +1634,58 @@ position = center
 丸穴と同じ軸計算で `shape = 'box'`、`size = { [幅軸]: width, [axis]: depth, [高さ軸]: height }`。
 `op.rotation` は `axis` まわりの回転として `rotation` に加算する。
 
+#### アーチ (`arch`)
+
+断面（矩形の上辺を弧にした形）を `direction` 軸方向へ押し出す。
+
+```
+profile  = Shape:
+             (-W/2, -H/2) → (-W/2, H/2 - rise)
+             → 楕円弧（x 半径 W/2, y 半径 rise, 角度 PI → 0 を時計回り = 上を通る）
+             → (W/2, -H/2) → close
+solid    = ExtrudeGeometry(profile, depth)   // +Z へ押し出して中心原点へ寄せる
+
+rise = 0      → 矩形（角穴と同じ形）
+rise = W/2    → 半円
+0 < rise < W/2 → 幅広で浅い楕円アーチ
+
+shape    = 'arch'
+size     = { x: W, y: H, z: depth }   // ツール自身の座標系
+rise     = clamp(op.rise, 0, H)
+position = 丸穴と同じ軸方向配置 + 面内は op.position
+rotation = 押し出し軸(+Z) を direction の軸へ、断面の上(+Y) を面内第 2 軸へ向ける姿勢
+           + direction 軸まわりに op.rotation を合成
+```
+
+> **姿勢の作り方**: 面内 2 軸 `otherAxes(axis)` を列ベクトルにした基底行列を作る。
+> ただし `axis === 'y'` のときだけ左手系になるので、幅の向きを反転して右手系に直す
+> （断面は左右対称なので見た目は変わらない）。鏡像になっていないことは
+> `arch.test.ts` の行列式テストで固定している。
+
+#### 角丸 (`roundCorner`)
+
+素材の外形より少し大きい矩形から、角を丸めた外形をくり抜いた「額縁」を押し出す。
+
+```
+outer = 面の矩形を OVERCUT*2 だけ外へ広げたもの
+inner = 角丸矩形（選んだ角だけ半径 r、選ばない角は r = 0）
+solid = ExtrudeGeometry(outer with hole = inner, depth = 板厚 + 2*OVERCUT)
+
+shape    = 'cornerFrame'
+size     = { x: 面の u 寸法, y: 面の v 寸法, z: depth }
+corner   = { radius, keys }
+position = [0, 0, 0]（素材の中心）
+rotation = アーチと同じ姿勢（押し出し軸を direction の軸へ）
+```
+
+> **なぜ枠にするか**: 四隅を 1 つの立体で扱えるので、CSG に渡す形が 1 回で済む。
+> 丸めない角は枠の幅が 0 になり、その角には何も当たらない。
+> コーナーごとに立体を作る方式より、加工の順序に依存しないぶん安定する。
+
+> **順序の注意**: 角丸は**素材の外形**に対する加工なので、先に切断してあっても
+> 「切断後にできた新しい角」ではなく「元の素材の角」を落とす。
+> 切断後の角を丸めたいときは、角丸を切断より前に置く（加工リストの並べ替えで調整できる）。
+
 #### 切り欠き (`notch`)
 
 そのまま `shape = 'box'`, `size = op.size`, `position = op.position`, `rotation = [0,0,0]`。
@@ -1607,6 +1714,8 @@ rotation = [0, 0, 0]
 | 共通 | 対象部材が存在しない / `locked` | — |
 | roundHole | `diameter <= 0` / `!through && depth <= 0` / `!through && depth >= size[axis]`（貫通になる → 「貫通に変更してください」） | 穴が部材の外に完全に出ている / 穴の縁から部材端までが `diameter/2` 未満（割れやすい） |
 | rectHole | `width <= 0` / `height <= 0` / 深さ条件は roundHole と同様 | 同上 |
+| arch | `width <= 0` / `height <= 0` / `rise < 0` / `rise > height` / 深さ条件は roundHole と同様 | 部材と全く交差しない / 弧の頂点から部材の端までの残り材が 10mm 未満 |
+| roundCorner | `radius <= 0` / `radius > 短辺 / 2` / `corners` が空 | 半径が短辺の 1/4 を超える（直線部分がほとんど残らない） |
 | notch | `size` のいずれかが `<= 0` | 部材と全く交差しない（何も削られない） |
 | cut | `abs(offset) >= size[axis] / 2`（切断面が部材の外 → 全部残るか全部消える） | 切り落とす側が `1mm` 未満 |
 | 全体 | **結果の頂点数が 0 になる**（形状が消滅する） | — |
@@ -1631,6 +1740,49 @@ idle ──[既存加工の編集]──▶ editing
                               │    現形状のまま + プレビュー重ね表示で十分）
                               └──[更新]──▶ updateOperation コマンド → CSG 1回
 ```
+
+### 13.4.1 加工位置の 3 つの指定手段（MUST）
+
+下書き中の加工位置は、次の **3 つだけ** で決める。粗い→細かいの順に並んでおり、
+役割が重ならないようにしてある。**どれも履歴には積まない**（下書きはエディタ状態）。
+
+| # | 手段 | 用途 | きざみ |
+|---|------|------|--------|
+| 1 | **ギズモの矢印をドラッグ** | ざっくり合わせる | グリッドスナップ（1/5/10mm、OFF可） |
+| 2 | **微調整ボタン（− / +）** | 少しずらす | 0.5 / 1 / 5 / 10mm から選ぶ |
+| 3 | **座標入力** | 値が決まっているとき | 自由（0.1mm まで） |
+
+```
+core/operation/operationDrag.ts   純粋関数。ドラッグも微調整ボタンもここを通る
+  draftHandlePosition(op, size)   ギズモ・微調整の基準位置
+  draggableAxes(op)               動かせる軸
+  applyDraftPosition(op, local, size)  結果を Operation へ反映
+```
+
+> **3D 上のクリックで配置する方式は採用しない。** 部材を選ぶ・眺めるつもりのクリックで
+> 加工が飛んでしまい、取り消しも効かない（下書きは履歴に積まないため）。
+> 粗い位置決めはドラッグが担うので、機能としても重複する。
+
+**動かせる軸（MUST）**
+
+| 加工 | 動かせる軸 | 理由 |
+|------|-----------|------|
+| 丸穴 / 角穴 / アーチ | `direction` に直交する 2 軸 | 掘る向きの成分は「どの面から掘るか」で決まるため無視される |
+| 角丸 | なし（ギズモも微調整ボタンも出ない） | 素材の外形に対する加工で、動かす位置を持たない |
+| 切り欠き | 3 軸すべて | 自由な直方体なので |
+| 切断 | `axis` の 1 軸のみ | 切断面は軸に垂直な平面 |
+
+**規約**
+
+- ギズモは部材と同じ姿勢を持つ `group` の子に置き、`space="local"` で表示する。
+  こうすると部材が回転していても矢印が「板の縦・横」方向に出る。
+- 動かせない軸は `showX` / `showY` / `showZ` で消し、微調整ボタンの行も出さない。
+  **見えない軸は触れない**という一貫した扱いにする。
+- **ドラッグだけグリッドスナップを通す。** 微調整ボタンと座標入力は通さない。
+  グリッドより細かく詰めたいときの逃げ道がなくなるため。
+- `draftHandlePosition` → `applyDraftPosition` の往復で Operation が変化しないこと
+  （テストで固定。ここが崩れるとギズモを掴んだだけで加工がずれる）。
+- ロックされた部材にはギズモを出さない。
 
 ### 13.5 プレビューの実装規約（MUST）
 
@@ -1903,8 +2055,9 @@ File / localStorage の文字列
 type Migration = (doc: any) => any;
 
 const MIGRATIONS: Record<number, Migration> = {
-  // 1 → 2 の例（Ver.2 で追加する）
-  // 1: (doc) => { ...doc, project: { ...doc.project, joints: [] } },
+  // v1 -> v2: アーチ切り欠き（type: 'arch'）を追加した。
+  // 既存の加工データはそのまま読めるので、変換は不要。
+  1: (doc) => doc,
 };
 
 export function migrate(raw: any): any {
@@ -1925,7 +2078,9 @@ export function migrate(raw: any): any {
 }
 ```
 
-Ver.1 時点で `MIGRATIONS` は空でよいが、**この仕組み自体は Phase 9 で必ず作る**。後から入れると既存ファイルが読めなくなる。
+**アーチ追加時に schemaVersion を 1 から 2 へ上げた。** 加工データの変換は不要なので v1 → v2 は恒等変換だが、
+これにより「v2 のファイルを古いビルドで開くと『新しいバージョンで作成されています』と出る」正しい挙動になる。
+新しい加工種類を足すときは、必ず同じ手順を踏むこと。
 
 ### 16.4 保存先の抽象化（将来のサーバー保存の受け口）
 
@@ -2212,6 +2367,7 @@ S-16 全ての部材の形状・位置・回転・加工が S-11 と完全に一
 | `localFrame` | `cornerToLocal → localToCorner` の往復で元の値に戻る |
 | `partHash` | transform を変えてもハッシュ不変 / size・operation を変えると変化 / operation のキー順が違っても同値 |
 | `toolSolid` | 各加工種類について、貫通時に部材をはみ出す寸法になっている。`direction` 6 方向すべて |
+| `arch` | 幅・全高・弧の高さが正しく反映される / rise が [0, height] にクランプされる / 押し出し軸と断面の上向きが 6 方向すべてで正しい / 鏡像にならない（行列式 +1）/ 端をまたぐ普通の使い方で警告が出ない |
 | `operationValidate` | §13.3 の全ルール |
 | `faceSnap` | §12.4 の必須ケース全て |
 | `align` | min/center/max × X/Y/Z、回転した部材を含む場合 |
@@ -2227,6 +2383,61 @@ S-16 全ての部材の形状・位置・回転・加工が S-11 と完全に一
 - モバイル・タブレット対応
 - Undo 履歴の UI 一覧表示（ボタンと直前ラベルで十分）
 - 3D 上でのドラッグによる面吸着（ウィザードで代替）
+
+---
+
+## 21. 部品表（BOM）
+
+設計データから**その場で集計するだけ**で、保存対象は増やさない。
+`core/bom/buildBom.ts` は `Project` を受け取って `Bom` を返す純粋関数。
+
+### 21.1 まとめ方
+
+同じ行にまとめる条件は「**材質が同じ**」かつ「**形状ハッシュが同じ**」。
+形状ハッシュ（§17.3）は素材寸法と有効な加工を完全に含むので、
+配置や名前が違っても同じ部品ならまとまり、加工が 1 つでも違えば別行になる。
+
+> 左右対称で穴位置が反転している側板は**別の行**になる。実作業でも別々に作るため、これが正しい。
+
+寸法は降順に並べ替えて「長さ・幅・厚み」として出す（木材の慣用表記）。
+
+### 21.2 出力
+
+| 表 | 内容 |
+|----|------|
+| 部品表 | 材質 / 長さ / 幅 / 厚み / 数量 / 加工内訳 / 名前 |
+| 材料集計 | 材質 + 厚みでまとめた枚数と合計面積 (m2) |
+
+CSV は Excel が UTF-8 と判断できるよう先頭に BOM を付け、改行は CRLF にする。
+カンマや引用符を含む名前は正しく引用する（`bomCsv.test.ts` で固定）。
+
+---
+
+## 22. 干渉判定
+
+`core/collision/interference.ts`。部材は直方体なので、
+**有向境界ボックス（OBB）どうしの分離軸判定**で正確に判定できる。新しい幾何ライブラリは要らない。
+
+### 22.1 判定の範囲
+
+| 加工 | 外形への影響 | 判定での扱い |
+|------|-------------|-------------|
+| 切断 | 外形が縮む | **反映する**（`effectiveLocalBox`） |
+| 丸穴 / 角穴 / アーチ / 切り欠き / 角丸 | 外形は変わらない | 無視する |
+
+穴の内側まで見ないのは意図的。Ver.1 の用途（板どうしがぶつかっていないか）には外形で足りるし、
+メッシュ同士の交差判定はコストが桁違いに高い。UI にもその旨を明記する。
+
+### 22.2 接触と干渉の区別
+
+面スナップでぴったり接した部材は**接触であって干渉ではない**。
+`tolerance`（既定 0.5mm）より深く食い込んでいるものだけを報告する。
+これがないと、正しく組んだ設計ほど警告だらけになる。
+
+### 22.3 報告する値
+
+分離軸定理の 15 軸のうち**最小の重なり量**を「食い込み (mm)」として出す。
+これは「その方向へ何 mm 動かせば離れるか」であり、直し方が分かる数字になっている。
 
 ---
 

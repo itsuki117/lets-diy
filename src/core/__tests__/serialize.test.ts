@@ -12,6 +12,7 @@ function richProject(): Project {
     { id: createOperationId(), type: 'rectHole', enabled: true, width: 40, height: 25, depth: 9, through: false, position: [0, 0, 0], direction: '+z', rotation: 15 },
     { id: createOperationId(), type: 'notch', enabled: false, size: { x: 50, y: 40, z: 20 }, position: [275, 130, 0] },
     { id: createOperationId(), type: 'cut', enabled: true, axis: 'x', offset: 150, keep: 'negative' },
+    { id: createOperationId(), type: 'arch', enabled: true, width: 150, height: 100, rise: 75, depth: 9, through: true, position: [0, -110, 0], direction: '-z', rotation: 0 },
   ];
   return {
     ...project,

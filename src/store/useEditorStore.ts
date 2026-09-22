@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { DEFAULT_SNAP } from '../core/constants';
+import type { InterferencePair } from '../core/collision/interference';
 import type {
   AxisDirection,
   EditorMode,
@@ -32,10 +33,16 @@ export interface EditorStore {
   hoveredFace: FaceRef | null;
   gizmoMode: GizmoMode;
   snap: SnapSettings;
+  /** 加工位置の微調整ボタンのきざみ (mm) */
+  nudgeStep: number;
   faceSnap: FaceSnapSession | null;
   operationDraft: OperationDraft | null;
   viewOptions: ViewOptions;
   toasts: Toast[];
+  /** 部品表パネルを開いているか */
+  bomOpen: boolean;
+  /** 干渉チェックの結果。null なら未実行（パネルを閉じている） */
+  interference: InterferencePair[] | null;
   /** ビューポート上部に出す 1 行ガイド。null なら状況から自動生成する。 */
   hintOverride: string | null;
 
@@ -47,6 +54,7 @@ export interface EditorStore {
   setHoveredFace: (ref: FaceRef | null) => void;
   setGizmoMode: (mode: GizmoMode) => void;
   setSnap: (snap: Partial<SnapSettings>) => void;
+  setNudgeStep: (step: number) => void;
   setViewOption: <K extends keyof ViewOptions>(key: K, value: ViewOptions[K]) => void;
 
   startFaceSnap: () => void;
@@ -61,6 +69,8 @@ export interface EditorStore {
 
   pushToast: (kind: ToastKind, message: string) => void;
   dismissToast: (id: number) => void;
+  setBomOpen: (open: boolean) => void;
+  setInterference: (result: InterferencePair[] | null) => void;
 
   /** 履歴操作後に、消えた部材への参照を掃除する */
   reconcile: (aliveIds: readonly PartId[]) => void;
@@ -75,10 +85,13 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
   hoveredFace: null,
   gizmoMode: 'translate',
   snap: { ...DEFAULT_SNAP },
+  nudgeStep: 1,
   faceSnap: null,
   operationDraft: null,
   viewOptions: { grid: true, shadows: true },
   toasts: [],
+  bomOpen: false,
+  interference: null,
   hintOverride: null,
 
   setMode: (mode) => set({ mode, faceSnap: null, hoveredFace: null, operationDraft: null }),
@@ -96,6 +109,7 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
   setHoveredFace: (hoveredFace) => set({ hoveredFace }),
   setGizmoMode: (gizmoMode) => set({ gizmoMode }),
   setSnap: (snap) => set((s) => ({ snap: { ...s.snap, ...snap } })),
+  setNudgeStep: (nudgeStep) => set({ nudgeStep }),
   setViewOption: (key, value) => set((s) => ({ viewOptions: { ...s.viewOptions, [key]: value } })),
 
   startFaceSnap: () => set({ faceSnap: { source: null, target: null, gap: 0, centerAlign: false }, hoveredFace: null }),
@@ -134,6 +148,8 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
   },
 
   dismissToast: (id) => set((s) => ({ toasts: s.toasts.filter((t) => t.id !== id) })),
+  setBomOpen: (bomOpen) => set({ bomOpen, interference: bomOpen ? null : get().interference }),
+  setInterference: (interference) => set({ interference, bomOpen: interference ? false : get().bomOpen }),
 
   reconcile: (aliveIds) => {
     const alive = new Set(aliveIds);

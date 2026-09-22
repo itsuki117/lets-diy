@@ -1,6 +1,7 @@
 import { AXIS_LABELS, axisOf, axisValue, otherAxes } from '../math/axis';
 import { localToCorner } from '../part/localFrame';
 import { OPERATION_TYPE_LABELS } from './operationDefaults';
+import { CORNER_LABELS } from './cornerLabels';
 import type { AxisKey, Operation, Part, Vec3 } from '../types';
 
 const num = (v: number): string => String(Math.round(v * 10) / 10);
@@ -26,6 +27,15 @@ export function operationLabel(op: Operation, part: Part): string {
     case 'rectHole': {
       const depth = op.through ? '貫通' : `深さ${num(op.depth)}`;
       return `${head} ${num(op.width)}x${num(op.height)} ${depth} @ ${positionLabel(op.position, part, otherAxes(axisOf(op.direction)))}`;
+    }
+    case 'arch': {
+      const depth = op.through ? '貫通' : `深さ${num(op.depth)}`;
+      const profile = op.rise <= 0 ? '矩形' : `弧${num(op.rise)}`;
+      return `${head} ${num(op.width)}x${num(op.height)} ${profile} ${depth} @ ${positionLabel(op.position, part, otherAxes(axisOf(op.direction)))}`;
+    }
+    case 'roundCorner': {
+      const where = op.corners.length === 4 ? '四隅' : op.corners.map((c) => CORNER_LABELS[c]).join('・');
+      return `${head} R${num(op.radius)} ${where}`;
     }
     case 'notch':
       return `${head} ${num(op.size.x)}x${num(op.size.y)}x${num(op.size.z)} @ ${positionLabel(op.position, part)}`;

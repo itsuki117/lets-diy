@@ -1,7 +1,7 @@
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { createProject } from '../../core/project/createProject';
 import { fromDocument, parseProjectJson, toDocument } from '../../core/project/serialize';
-import { flushAutosave, scheduleAutosave, setAutosaveCallback } from '../../io/autosave';
+import { cancelAutosave, flushAutosave, scheduleAutosave, setAutosaveCallback } from '../../io/autosave';
 import { clearAutosave, readAutosave } from '../../io/LocalStorageRepository';
 import { downloadProjectJson } from '../../io/fileDownload';
 import { openJsonFile } from '../../io/fileOpen';
@@ -46,15 +46,18 @@ export function useProjectIo(): ProjectIo {
       loadProject(result.value);
       useEditorStore.getState().clearSelection();
       pushToast('success', `「${result.value.name}」を読み込みました`);
+    }).catch((error: unknown) => {
+      pushToast('error', error instanceof Error ? error.message : 'ファイルの読み込みに失敗しました');
     });
   }, [confirmDiscard, loadProject, pushToast]);
 
   const saveToBrowser = useCallback(() => {
-    const doc = toDocument(useProjectStore.getState().project);
+    const project = useProjectStore.getState().project;
+    const doc = toDocument(project);
     getRepository()
       .save(doc)
       .then(() => {
-        markSaved();
+        markSaved(project);
         pushToast('success', 'ブラウザに保存しました');
       })
       .catch((error: unknown) => {
@@ -65,13 +68,28 @@ export function useProjectIo(): ProjectIo {
   }, [markSaved, pushToast]);
 
   const downloadFile = useCallback(() => {
-    downloadProjectJson(toDocument(useProjectStore.getState().project));
-    markSaved();
+    const project = useProjectStore.getState().project;
+    downloadProjectJson(toDocument(project));
+    markSaved(project);
     pushToast('success', 'JSON ファイルを書き出しました');
   }, [markSaved, pushToast]);
 
+  return useMemo(
+    () => ({ newProject, openFromFile, saveToBrowser, downloadFile }),
+    [newProject, openFromFile, saveToBrowser, downloadFile],
+  );
+}
+
+/** App に一度だけ設置。ボタンから使う useProjectIo は副作用を持たない。 */
+export function useProjectLifecycle(): void {
+  const restored = useRef(false);
+
   // 起動時の復元確認。自動で上書きせず、必ずユーザーに聞く（設計書 §16.6）
   useEffect(() => {
+    if (restored.current) return;
+    restored.current = true;
+    const { loadProject } = useProjectStore.getState();
+    const { pushToast } = useEditorStore.getState();
     const raw = readAutosave();
     if (!raw) return;
     const result = fromDocument(raw);
@@ -86,27 +104,37 @@ export function useProjectIo(): ProjectIo {
       clearAutosave();
     }
     // 起動時に 1 回だけ実行する
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // 自動保存（1 秒 debounce）と、離脱時の同期保存
   useEffect(() => {
-    setAutosaveCallback(() => useProjectStore.getState().markSaved());
+    setAutosaveCallback(
+      (project) => useProjectStore.getState().markSaved(project),
+      (error) => useEditorStore.getState().pushToast('error', error instanceof Error ? error.message : '自動保存に失敗しました。JSON を書き出してください'),
+    );
     const unsubscribe = useProjectStore.subscribe((state, prev) => {
-      if (state.project === prev.project) return;
+      if (state.loadRevision !== prev.loadRevision) {
+        cancelAutosave();
+        return;
+      }
+      if (state.transientBase) {
+        cancelAutosave();
+        return;
+      }
+      if (state.project === prev.project && !prev.transientBase) return;
       scheduleAutosave(state.project);
     });
-    const onBeforeUnload = (): void => flushAutosave();
+    const onBeforeUnload = (): void => {
+      const state = useProjectStore.getState();
+      scheduleAutosave(state.transientBase ?? state.project);
+      flushAutosave();
+    };
     window.addEventListener('beforeunload', onBeforeUnload);
     return () => {
       unsubscribe();
       window.removeEventListener('beforeunload', onBeforeUnload);
       setAutosaveCallback(null);
+      cancelAutosave();
     };
   }, []);
-
-  return useMemo(
-    () => ({ newProject, openFromFile, saveToBrowser, downloadFile }),
-    [newProject, openFromFile, saveToBrowser, downloadFile],
-  );
 }

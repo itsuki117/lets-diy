@@ -1,11 +1,11 @@
-import { useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { OrbitControls } from '@react-three/drei/core/OrbitControls';
 import { useThree } from '@react-three/fiber';
-import { MOUSE, Vector3 } from 'three';
+import { MOUSE, PerspectiveCamera, Vector3 } from 'three';
 import type { OrbitControls as OrbitControlsImpl } from 'three-stdlib';
 import { partsAabb } from '../core/part/partBounds';
 import { useProjectStore } from '../store/useProjectStore';
-import { subscribeFocus } from '../store/cameraCommands';
+import { setCameraTarget, subscribeFocus } from '../store/cameraCommands';
 import type { ViewPreset } from './ViewCube';
 
 const directions: Record<ViewPreset, [number, number, number]> = {
@@ -22,6 +22,7 @@ export function CameraRig({ view }: { view: { preset: ViewPreset; revision: numb
   const ref = useRef<OrbitControlsImpl>(null);
   const camera = useThree((s) => s.camera);
   const invalidate = useThree((s) => s.invalidate);
+  const loadRevision = useProjectStore((s) => s.loadRevision);
 
   useEffect(() => {
     const target = ref.current?.target ?? new Vector3();
@@ -33,12 +34,10 @@ export function CameraRig({ view }: { view: { preset: ViewPreset; revision: numb
   }, [view, camera, invalidate]);
 
   // 選択部材にカメラを寄せる（F キー / ボタン）
-  useEffect(
-    () =>
-      subscribeFocus((partIds) => {
+  const focus = useCallback((partIds: readonly string[]) => {
         const parts = useProjectStore
           .getState()
-          .project.parts.filter((p) => (partIds.length === 0 ? true : partIds.includes(p.id)));
+          .project.parts.filter((p) => p.visible && (partIds.length === 0 || partIds.includes(p.id)));
         const box = partsAabb(parts);
         if (!box) return;
         const center = new Vector3(
@@ -46,8 +45,11 @@ export function CameraRig({ view }: { view: { preset: ViewPreset; revision: numb
           (box.min[1] + box.max[1]) / 2,
           (box.min[2] + box.max[2]) / 2,
         );
-        const span = Math.max(box.max[0] - box.min[0], box.max[1] - box.min[1], box.max[2] - box.min[2]);
-        const distance = Math.max(span * 1.8, 300);
+        const radius = new Vector3(...box.max).sub(new Vector3(...box.min)).length() / 2;
+        const vfov = camera instanceof PerspectiveCamera ? camera.fov * Math.PI / 180 : Math.PI / 4;
+        const aspect = camera instanceof PerspectiveCamera ? camera.aspect : 1;
+        const halfFov = Math.min(vfov / 2, Math.atan(Math.tan(vfov / 2) * aspect));
+        const distance = Math.max(radius / Math.sin(halfFov) * 1.12, 100);
         const offset = camera.position.clone().sub(ref.current?.target ?? new Vector3());
         if (offset.lengthSq() < 1) offset.set(0.65, 0.5, 1);
         camera.position.copy(center.clone().add(offset.normalize().multiplyScalar(distance)));
@@ -55,14 +57,18 @@ export function CameraRig({ view }: { view: { preset: ViewPreset; revision: numb
         camera.lookAt(center);
         ref.current?.update();
         invalidate();
-      }),
-    [camera, invalidate],
-  );
+      }, [camera, invalidate]);
+  useEffect(() => subscribeFocus(focus), [focus]);
+  useEffect(() => { focus([]); }, [loadRevision, focus]);
 
   return (
     <OrbitControls
       ref={ref}
       makeDefault
+      onChange={() => {
+        const target = ref.current?.target;
+        if (target) setCameraTarget([target.x, target.y, target.z]);
+      }}
       enableDamping={false}
       minDistance={10}
       maxDistance={40000}

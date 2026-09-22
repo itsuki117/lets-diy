@@ -55,6 +55,13 @@ export function multiply(a: Mat3, b: Mat3): Mat3 {
   ];
 }
 
+/** 3 本の列ベクトルから回転行列を作る（列 0/1/2 がそれぞれ x/y/z 軸の行き先） */
+export const matrixFromColumns = (c0: Vec3, c1: Vec3, c2: Vec3): Mat3 => [
+  c0[0], c1[0], c2[0],
+  c0[1], c1[1], c2[1],
+  c0[2], c1[2], c2[2],
+];
+
 export const transpose = (m: Mat3): Mat3 => [m[0], m[3], m[6], m[1], m[4], m[7], m[2], m[5], m[8]];
 
 export function applyMat3(m: Mat3, v: Vec3): Vec3 {

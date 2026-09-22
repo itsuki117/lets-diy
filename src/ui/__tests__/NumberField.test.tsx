@@ -29,6 +29,7 @@ describe('NumberField', () => {
     await user.clear(input);
     await user.type(input, '450{Enter}');
     expect(onCommit).toHaveBeenCalledWith(450);
+    expect(onCommit).toHaveBeenCalledTimes(1);
   });
 
   it('フォーカスを外すと確定する', async () => {
@@ -76,9 +77,12 @@ describe('NumberField', () => {
     const { onCommit, input } = setup({ step: 1 });
     await user.click(input);
     await user.keyboard('{ArrowUp}');
-    expect(onCommit).toHaveBeenLastCalledWith(601);
+    expect(input.value).toBe('601');
+    expect(onCommit).not.toHaveBeenCalled();
     await user.keyboard('{ArrowDown}{ArrowDown}');
+    await user.tab();
     expect(onCommit).toHaveBeenLastCalledWith(599);
+    expect(onCommit).toHaveBeenCalledTimes(1);
   });
 
   it('Shift + 上下キーで 10 倍動く', async () => {
@@ -86,6 +90,7 @@ describe('NumberField', () => {
     const { onCommit, input } = setup({ step: 1 });
     await user.click(input);
     await user.keyboard('{Shift>}{ArrowUp}{/Shift}');
+    await user.tab();
     expect(onCommit).toHaveBeenLastCalledWith(610);
   });
 
@@ -96,6 +101,17 @@ describe('NumberField', () => {
     await user.type(input, '123{Escape}');
     expect(onCommit).not.toHaveBeenCalled();
     expect(input.value).toBe('600');
+  });
+
+  it.each(['Infinity', '-Infinity', '1e999'])('non-finite input %s is rejected', async (value) => {
+    const user = userEvent.setup();
+    const onPreview = vi.fn();
+    const { onCommit, input } = setup({ onPreview });
+    await user.clear(input);
+    await user.type(input, `${value}{Enter}`);
+    expect(onCommit).not.toHaveBeenCalled();
+    expect(input.value).toBe('600');
+    expect(onPreview.mock.calls.every(([n]) => Number.isFinite(n))).toBe(true);
   });
 
   it('エラーがあるとメッセージを出す', () => {

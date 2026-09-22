@@ -1,6 +1,8 @@
 import { OVERCUT } from '../constants';
-import { axisOf, axisSize, otherAxes, signOf, withAxis, withAxisSize } from '../math/axis';
-import type { AxisKey, Operation, Size3, ToolSolidSpec, Vec3 } from '../types';
+import { axisOf, axisSize, axisUnit, otherAxes, signOf, withAxis, withAxisSize } from '../math/axis';
+import { axisAngleMatrix, matrixFromColumns, matrixToEuler, multiply } from '../math/matrix';
+import { clean, cross, dot, negate } from '../math/vec3';
+import type { ArchOperation, AxisKey, Operation, RoundCornerOperation, Size3, ToolSolidSpec, Vec3 } from '../types';
 
 /** 円柱の軸（+Y）を指定軸に向けるための Euler XYZ（度） */
 function cylinderAlignRotation(axis: AxisKey): Vec3 {
@@ -24,6 +26,54 @@ function holeAxisPlacement(
   const cut = through ? axisSize(size, axis) + 2 * OVERCUT : depth + OVERCUT;
   const entry = sign * (half + OVERCUT);
   return { depth: cut, center: entry - (sign * cut) / 2 };
+}
+
+/**
+ * アーチ断面（ツール座標系の XY 平面）を、部材ローカルの「方向軸に直交する面」へ向ける姿勢を作る。
+ * 押し出し軸(+Z) を direction の軸へ、断面の上(+Y) を面内の第 2 軸へ合わせる。
+ */
+function archOrientation(axis: AxisKey, spinDeg: number): Vec3 {
+  const [ua, va] = otherAxes(axis);
+  let col0 = axisUnit(ua);
+  const col1 = axisUnit(va);
+  const col2 = axisUnit(axis);
+  // 右手系でないと鏡像になる。断面は左右対称なので、幅の向きを反転して直す。
+  if (dot(cross(col0, col1), col2) < 0) col0 = negate(col0);
+  const basis = matrixFromColumns(col0, col1, col2);
+  const spin = axisAngleMatrix(col2, spinDeg);
+  return clean(matrixToEuler(multiply(spin, basis)), 4);
+}
+
+function archSolid(op: ArchOperation, size: Size3): ToolSolidSpec {
+  const axis = axisOf(op.direction);
+  const { depth, center } = holeAxisPlacement(axis, signOf(op.direction), size, op.through, op.depth);
+  return {
+    shape: 'arch',
+    size: { x: op.width, y: op.height, z: depth },
+    position: withAxis(op.position, axis, center),
+    rotation: archOrientation(axis, op.rotation),
+    rise: Math.min(Math.max(op.rise, 0), op.height),
+  };
+}
+
+/**
+ * 角丸のツール立体。
+ *
+ * 「素材の外形より少し大きい矩形」から「角を丸めた外形」をくり抜いた枠を押し出す。
+ * こうすると 1 つの立体で四隅すべてを一度に落とせるし、丸めない角は枠が接しないので
+ * 何も削られない。コーナーごとに立体を作るより、CSG に渡す形が単純になる。
+ */
+function roundCornerSolid(op: RoundCornerOperation, size: Size3): ToolSolidSpec {
+  const axis = axisOf(op.direction);
+  const [ua, va] = otherAxes(axis);
+  const depth = axisSize(size, axis) + 2 * OVERCUT;
+  return {
+    shape: 'cornerFrame',
+    size: { x: axisSize(size, ua), y: axisSize(size, va), z: depth },
+    position: withAxis([0, 0, 0], axis, 0),
+    rotation: archOrientation(axis, 0),
+    corner: { radius: op.radius, keys: [...op.corners] },
+  };
 }
 
 export function toolSolidSpec(op: Operation, size: Size3): ToolSolidSpec {
@@ -53,6 +103,10 @@ export function toolSolidSpec(op: Operation, size: Size3): ToolSolidSpec {
         rotation: withAxis([0, 0, 0], axis, op.rotation),
       };
     }
+    case 'arch':
+      return archSolid(op, size);
+    case 'roundCorner':
+      return roundCornerSolid(op, size);
     case 'notch':
       return { shape: 'box', size: { ...op.size }, position: op.position, rotation: [0, 0, 0] };
     case 'cut': {

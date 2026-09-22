@@ -28,8 +28,9 @@ export async function buildPartGeometry(part: Part): Promise<GeometryBuildResult
 
   for (const op of part.operations) {
     if (!op.enabled) continue;
-    const tool = createToolGeometry(toolSolidSpec(op, part.size));
+    let tool: BufferGeometry | undefined;
     try {
+      tool = createToolGeometry(toolSolidSpec(op, part.size));
       const next = await engine.subtract(current, tool);
       if (isEmptyGeometry(next)) {
         next.dispose();
@@ -44,7 +45,7 @@ export async function buildPartGeometry(part: Part): Promise<GeometryBuildResult
       warnings.push({ operationId: op.id, message: '加工の計算に失敗しました' });
       console.error('[csg] operation failed', { partId: part.id, operationId: op.id }, error);
     } finally {
-      tool.dispose();
+      tool?.dispose();
     }
   }
 

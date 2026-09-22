@@ -3,6 +3,7 @@ import { hashPartShape } from '../core/part/partHash';
 import type { GeometryBuildWarning, OperationId, Part, PartId } from '../core/types';
 import { createEdgesGeometry } from './edgesGeometry';
 import { buildPartGeometry } from './geometryBuilder';
+import { createBoxGeometry } from './boxGeometry';
 
 interface CacheEntry {
   hash: string;
@@ -28,11 +29,12 @@ type Listener = (partId: PartId) => void;
  * 形状ハッシュをキーにした部材ジオメトリのキャッシュ。
  * transform はハッシュに含まれないので、移動・回転では再構築が走らない。
  */
-class GeometryCache {
+export class GeometryCache {
   private entries = new Map<PartId, CacheEntry>();
-  private pending = new Map<PartId, string>();
-  private tokens = new Map<PartId, number>();
+  private pending = new Map<PartId, { hash: string }>();
   private listeners = new Set<Listener>();
+
+  constructor(private build = buildPartGeometry) {}
 
   /** 副作用なしの参照。構築中は直前のジオメトリ（なければ null）を返す。 */
   peek(partId: PartId): BufferGeometry | null {
@@ -61,16 +63,30 @@ class GeometryCache {
   /** 必要なら構築を開始する。ハッシュが一致していれば何もしない。 */
   ensure(part: Part): void {
     const hash = hashPartShape(part);
-    if (this.entries.get(part.id)?.hash === hash) return;
-    if (this.pending.get(part.id) === hash) return;
+    if (this.entries.get(part.id)?.hash === hash) {
+      if (this.pending.delete(part.id)) this.emit(part.id);
+      return;
+    }
+    if (this.pending.get(part.id)?.hash === hash) return;
 
-    this.pending.set(part.id, hash);
-    const token = (this.tokens.get(part.id) ?? 0) + 1;
-    this.tokens.set(part.id, token);
+    // Request identity cannot be reused after delete and undo with the same part ID.
+    const request = { hash };
+    this.pending.set(part.id, request);
+    this.emit(part.id);
 
-    void buildPartGeometry(part).then((result) => {
+    void this.build(part).catch((error: unknown) => {
+      console.error('[geometry] build failed', error);
+      return {
+        geometry: createBoxGeometry(part.size),
+        failedOperationIds: part.operations.filter((op) => op.enabled).map((op) => op.id),
+        warnings: part.operations.filter((op) => op.enabled).map((op) => ({
+          operationId: op.id, message: '形状を構築できませんでした。加工パラメータを確認してください',
+        })),
+        durationMs: 0,
+      };
+    }).then((result) => {
       // 構築中にパラメータが変わっていたら、古い結果は捨てる
-      if (this.tokens.get(part.id) !== token) {
+      if (this.pending.get(part.id) !== request) {
         result.geometry.dispose();
         return;
       }
@@ -97,19 +113,19 @@ class GeometryCache {
     entry?.edges?.dispose();
     this.entries.delete(partId);
     this.pending.delete(partId);
-    this.tokens.delete(partId);
+    this.emit(partId);
   }
 
   /** project.parts に存在しない部材のジオメトリを解放する */
   syncWith(parts: readonly Part[]): void {
     const alive = new Set(parts.map((p) => p.id));
-    for (const id of [...this.entries.keys()]) {
+    for (const id of new Set([...this.entries.keys(), ...this.pending.keys()])) {
       if (!alive.has(id)) this.release(id);
     }
   }
 
   clear(): void {
-    for (const id of [...this.entries.keys()]) this.release(id);
+    for (const id of new Set([...this.entries.keys(), ...this.pending.keys()])) this.release(id);
   }
 
   subscribe(listener: Listener): () => void {

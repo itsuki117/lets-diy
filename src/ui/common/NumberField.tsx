@@ -80,7 +80,7 @@ export function NumberField({
 
   const commit = (raw: string): void => {
     const parsed = Number(raw);
-    if (raw.trim() === '' || Number.isNaN(parsed)) {
+    if (raw.trim() === '' || !Number.isFinite(parsed)) {
       setText(String(round(value, precision)));
       return;
     }
@@ -92,16 +92,14 @@ export function NumberField({
   const nudge = (direction: 1 | -1, event: KeyboardEvent<HTMLInputElement>): void => {
     const amount = event.shiftKey ? step * 10 : event.altKey ? step / 10 : step;
     const base = Number(text);
-    const next = clamp((Number.isNaN(base) ? value : base) + direction * amount);
+    const next = clamp((Number.isFinite(base) ? base : value) + direction * amount);
     setText(String(next));
     onPreview?.(next);
-    onCommit(next);
   };
 
   const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>): void => {
     if (event.key === 'Enter') {
       event.preventDefault();
-      commit(text);
       inputRef.current?.blur();
       return;
     }
@@ -138,7 +136,7 @@ export function NumberField({
           onChange={(event) => {
             setText(event.target.value);
             const parsed = Number(event.target.value);
-            if (event.target.value.trim() !== '' && !Number.isNaN(parsed)) onPreview?.(parsed);
+            if (event.target.value.trim() !== '' && Number.isFinite(parsed)) onPreview?.(parsed);
           }}
           onFocus={() => setFocused(true)}
           onBlur={() => {

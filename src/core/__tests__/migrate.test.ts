@@ -36,3 +36,22 @@ describe('migrate', () => {
     }
   });
 });
+
+describe('migrate: 版上げ（アーチ切り欠き / 角丸の追加）', () => {
+  it('v1 のファイルは変換を通って現行バージョンになる', () => {
+    const v1 = { app: 'lets-diy', schemaVersion: 1, savedAt: '2026-09-22T00:00:00.000Z', project: { parts: [] } };
+    const out = migrate(v1);
+    expect(out.schemaVersion).toBe(SCHEMA_VERSION);
+    // 加工データの変換は不要なので中身は変わらない
+    expect(out.project).toEqual({ parts: [] });
+  });
+
+  it('v2 のファイルも現行バージョンになる', () => {
+    const v2 = { app: 'lets-diy', schemaVersion: 2, savedAt: '2026-09-22T00:00:00.000Z', project: { parts: [] } };
+    expect(migrate(v2).schemaVersion).toBe(SCHEMA_VERSION);
+  });
+
+  it('現行バージョンは 3', () => {
+    expect(SCHEMA_VERSION).toBe(3);
+  });
+});

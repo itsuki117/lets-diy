@@ -22,6 +22,7 @@ export const PREVIEW_COLOR = 0xff4444;
 export const FACE_HIGHLIGHT_COLOR = 0x6fb3e0;
 
 const base = new Map<MaterialKind, MeshStandardMaterial>();
+let interferenceMaterial: MeshStandardMaterial | null = null;
 const hovered = new Map<MaterialKind, MeshStandardMaterial>();
 
 /** 部材ごとに new せず、材質ごとに 1 インスタンスを共有する（設計書 §3.7） */
@@ -38,6 +39,17 @@ export function getPartMaterial(kind: MaterialKind, isHovered: boolean): MeshSta
     cache.set(kind, material);
   }
   return material;
+}
+
+/** 干渉している部材を示す材質。1 インスタンスを共有する。 */
+export function getInterferenceMaterial(): MeshStandardMaterial {
+  interferenceMaterial ??= new MeshStandardMaterial({
+    color: 0xd98a7a,
+    roughness: 0.7,
+    metalness: 0.02,
+    emissive: 0x3a1410,
+  });
+  return interferenceMaterial;
 }
 
 export const outlineMaterial = new LineBasicMaterial({ color: SELECTION_COLOR, depthTest: false, transparent: true });

@@ -1,4 +1,4 @@
-import { Circle, Drill, Play, Scissors, Square, SquareDashedBottom, X } from 'lucide-react';
+import { Circle, Drill, Play, Rainbow, Scissors, Square, SquareDashedBottom, SquareRoundCorner, X } from 'lucide-react';
 import { defaultOperation, OPERATION_TYPE_LABELS } from '../../core/operation/operationDefaults';
 import { validateOperation } from '../../core/operation/operationValidate';
 import type { OperationType } from '../../core/types';
@@ -11,6 +11,8 @@ import { OperationList } from '../right/OperationList';
 const TYPES: Array<{ type: OperationType; Icon: typeof Circle }> = [
   { type: 'roundHole', Icon: Circle },
   { type: 'rectHole', Icon: Square },
+  { type: 'arch', Icon: Rainbow },
+  { type: 'roundCorner', Icon: SquareRoundCorner },
   { type: 'notch', Icon: SquareDashedBottom },
   { type: 'cut', Icon: Scissors },
 ];
@@ -77,7 +79,7 @@ export function MachinePanel() {
           </span>
           <OperationForm part={part} draft={active} />
           <p className="muted">
-            <Drill size={13} aria-hidden /> 半透明の赤い部分が削り取られます
+            <Drill size={13} aria-hidden /> 半透明の赤い部分が削り取られます。矢印のドラッグでも動かせます
           </p>
           <div className="button-row">
             <button type="button" className="btn-primary" disabled={!canRun} onClick={run}>

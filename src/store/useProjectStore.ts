@@ -12,6 +12,8 @@ export interface ProjectStore {
   transientBase: Project | null;
   /** 最後にファイル／localStorage へ保存した時点の updatedAt */
   savedAt: string | null;
+  savedProject: Project | null;
+  loadRevision: number;
 
   applyCommand: (label: string, recipe: (draft: Project) => void) => void;
   beginTransient: () => void;
@@ -22,7 +24,7 @@ export interface ProjectStore {
   undo: () => void;
   redo: () => void;
   loadProject: (project: Project) => void;
-  markSaved: () => void;
+  markSaved: (project?: Project) => void;
 }
 
 const touch = (draft: Project): void => {
@@ -37,8 +39,11 @@ export const useProjectStore = create<ProjectStore>((set, get) => ({
   future: [],
   transientBase: null,
   savedAt: initialProject.updatedAt,
+  savedProject: initialProject,
+  loadRevision: 0,
 
   applyCommand(label, recipe) {
+    get().abortTransient();
     const [next, patches, inversePatches] = produceWithPatches(get().project, (draft) => {
       recipe(draft);
       touch(draft);
@@ -58,6 +63,7 @@ export const useProjectStore = create<ProjectStore>((set, get) => ({
   },
 
   updateTransient(recipe) {
+    if (!get().transientBase) return;
     set({ project: produce(get().project, (draft) => { recipe(draft); touch(draft); }) });
   },
 
@@ -89,6 +95,7 @@ export const useProjectStore = create<ProjectStore>((set, get) => ({
   },
 
   undo() {
+    get().abortTransient();
     const past = get().past;
     const entry = past[past.length - 1];
     if (!entry) return;
@@ -100,6 +107,7 @@ export const useProjectStore = create<ProjectStore>((set, get) => ({
   },
 
   redo() {
+    get().abortTransient();
     const [entry, ...rest] = get().future;
     if (!entry) return;
     set({
@@ -110,11 +118,13 @@ export const useProjectStore = create<ProjectStore>((set, get) => ({
   },
 
   loadProject(project) {
-    set({ project, past: [], future: [], transientBase: null, savedAt: project.updatedAt });
+    set({ project, past: [], future: [], transientBase: null, savedAt: project.updatedAt,
+      savedProject: project, loadRevision: get().loadRevision + 1 });
   },
 
-  markSaved() {
-    set({ savedAt: get().project.updatedAt });
+  markSaved(project = get().project) {
+    if (project.id !== get().project.id) return;
+    set({ savedAt: project.updatedAt, savedProject: project });
   },
 }));
 
@@ -122,4 +132,4 @@ export const canUndo = (s: ProjectStore): boolean => s.past.length > 0;
 export const canRedo = (s: ProjectStore): boolean => s.future.length > 0;
 export const lastLabel = (s: ProjectStore): string | null => s.past[s.past.length - 1]?.label ?? null;
 export const nextLabel = (s: ProjectStore): string | null => s.future[0]?.label ?? null;
-export const hasUnsavedChanges = (s: ProjectStore): boolean => s.savedAt !== s.project.updatedAt;
+export const hasUnsavedChanges = (s: ProjectStore): boolean => s.savedProject !== s.project;

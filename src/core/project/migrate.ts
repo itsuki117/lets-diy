@@ -3,8 +3,14 @@ import { SCHEMA_VERSION } from '../types';
 
 type Migration = (doc: Record<string, unknown>) => Record<string, unknown>;
 
-/** v(n) -> v(n+1) の変換。Ver.1 時点では空だが、仕組みだけ先に用意する（設計書 §16.3）。 */
-const MIGRATIONS: Record<number, Migration> = {};
+/** v(n) -> v(n+1) の変換（設計書 §16.3） */
+const MIGRATIONS: Record<number, Migration> = {
+  // v1 -> v2: アーチ切り欠き（type: 'arch'）を追加した。
+  // 既存の加工データはそのまま読めるので、変換は不要。
+  1: (doc) => doc,
+  // v2 -> v3: 角丸（type: 'roundCorner'）を追加した。同じく変換は不要。
+  2: (doc) => doc,
+};
 
 export function migrate(raw: unknown): Record<string, unknown> {
   if (typeof raw !== 'object' || raw === null) {

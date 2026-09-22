@@ -5,21 +5,24 @@ import { writeAutosave } from './LocalStorageRepository';
 
 let timer: ReturnType<typeof setTimeout> | null = null;
 let queued: Project | null = null;
-let onSaved: ((at: string) => void) | null = null;
+let onSaved: ((project: Project) => void) | null = null;
+let onError: ((error: unknown) => void) | null = null;
 
-export function setAutosaveCallback(fn: ((at: string) => void) | null): void {
+export function setAutosaveCallback(fn: ((project: Project) => void) | null, failed: ((error: unknown) => void) | null = null): void {
   onSaved = fn;
+  onError = failed;
 }
 
 function flush(): void {
   if (!queued) return;
-  const doc = toDocument(queued);
-  queued = null;
+  const project = queued;
+  const doc = toDocument(project);
   try {
     writeAutosave(doc);
-    onSaved?.(doc.savedAt);
+    queued = null;
+    onSaved?.(project);
   } catch (error) {
-    console.error('[io] autosave failed', error);
+    onError?.(error);
   }
 }
 
@@ -40,4 +43,10 @@ export function flushAutosave(): void {
     timer = null;
   }
   flush();
+}
+
+export function cancelAutosave(): void {
+  if (timer) clearTimeout(timer);
+  timer = null;
+  queued = null;
 }

@@ -1,17 +1,22 @@
 import { useState } from 'react';
-import { Download, FilePlus2, FolderOpen, Hammer, Save, Upload } from 'lucide-react';
+import { ClipboardList, FilePlus2, FolderOpen, Hammer, Save, ScanSearch, Upload } from 'lucide-react';
 import { useEditorStore } from '../../store/useEditorStore';
 import { useProjectStore } from '../../store/useProjectStore';
+import { findInterferences } from '../../core/collision/interference';
 import { useProjectIo } from '../hooks/useProjectIo';
 import { UndoRedoButtons } from './UndoRedoButtons';
+import { ProjectLibrary } from './ProjectLibrary';
 
 export function TopBar() {
   const name = useProjectStore((s) => s.project.name);
   const applyCommand = useProjectStore((s) => s.applyCommand);
   const viewOptions = useEditorStore((s) => s.viewOptions);
   const setViewOption = useEditorStore((s) => s.setViewOption);
+  const setBomOpen = useEditorStore((s) => s.setBomOpen);
+  const setInterference = useEditorStore((s) => s.setInterference);
   const io = useProjectIo();
   const [editingName, setEditingName] = useState(false);
+  const [libraryOpen, setLibraryOpen] = useState(false);
 
   return (
     <header className="topbar">
@@ -31,13 +36,28 @@ export function TopBar() {
           <Upload size={15} aria-hidden />
           読込
         </button>
-        <button type="button" onClick={io.saveToBrowser} title="ブラウザに保存 (Ctrl+S)">
+        <button type="button" onClick={io.downloadFile} title="JSON ファイルに保存 (Ctrl+S)">
           <Save size={15} aria-hidden />
           保存
         </button>
-        <button type="button" onClick={io.downloadFile} title="JSON ファイルとして書き出す">
-          <Download size={15} aria-hidden />
-          書出
+        <button type="button" onClick={() => setLibraryOpen(true)} title="ブラウザの保存一覧を開く">
+          <FolderOpen size={16} aria-hidden />
+          保存一覧
+        </button>
+      </div>
+
+      <div className="topbar-group">
+        <button type="button" onClick={() => setBomOpen(true)} title="部品表を開く">
+          <ClipboardList size={15} aria-hidden />
+          部品表
+        </button>
+        <button
+          type="button"
+          onClick={() => setInterference(findInterferences(useProjectStore.getState().project.parts))}
+          title="部材どうしの食い込みを調べる"
+        >
+          <ScanSearch size={15} aria-hidden />
+          干渉
         </button>
       </div>
 
@@ -85,6 +105,7 @@ export function TopBar() {
           </button>
         )}
       </div>
+      {libraryOpen ? <ProjectLibrary onClose={() => setLibraryOpen(false)} /> : null}
     </header>
   );
 }

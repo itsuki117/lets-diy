@@ -5,11 +5,12 @@ import { nextPartName } from '../../core/part/createPart';
 import { worldAabb } from '../../core/part/partBounds';
 import type { MaterialKind, Size3, Vec3 } from '../../core/types';
 import { addPart } from '../../store/commands/partCommands';
+import { getCameraTarget } from '../../store/cameraCommands';
 import { useEditorStore } from '../../store/useEditorStore';
 import { useProjectStore } from '../../store/useProjectStore';
 import { NumberField } from '../common/NumberField';
 
-type Placement = 'origin' | 'nextTo';
+type Placement = 'origin' | 'nextTo' | 'camera';
 
 export function CreatePanel() {
   const parts = useProjectStore((s) => s.project.parts);
@@ -24,6 +25,7 @@ export function CreatePanel() {
   const setAxis = (axis: keyof Size3, value: number): void => setSize((prev) => ({ ...prev, [axis]: value }));
 
   const computePosition = (): Vec3 => {
+    if (placement === 'camera') return getCameraTarget();
     const selected = parts.find((p) => p.id === selectedIds[0]);
     if (placement === 'nextTo' && selected) {
       const box = worldAabb(selected);
@@ -109,6 +111,10 @@ export function CreatePanel() {
         <label className="radio">
           <input type="radio" name="placement" checked={placement === 'origin'} onChange={() => setPlacement('origin')} />
           原点
+        </label>
+        <label className="radio">
+          <input type="radio" name="placement" checked={placement === 'camera'} onChange={() => setPlacement('camera')} />
+          カメラの注視点
         </label>
         <label className="radio">
           <input type="radio" name="placement" checked={placement === 'nextTo'} onChange={() => setPlacement('nextTo')} />

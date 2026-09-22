@@ -3,14 +3,15 @@ import { startStoreSync } from './store/sync';
 import { AppShell } from './ui/AppShell';
 import { ErrorBoundary } from './ui/common/ErrorBoundary';
 import { useKeyboardShortcuts } from './ui/hooks/useKeyboardShortcuts';
-import { useProjectIo } from './ui/hooks/useProjectIo';
+import { useProjectIo, useProjectLifecycle } from './ui/hooks/useProjectIo';
 import { focusOnParts } from './store/cameraCommands';
 import { Viewport } from './viewport/Viewport';
 
 export default function App() {
   const io = useProjectIo();
   const focus = useCallback((ids: string[]) => focusOnParts(ids), []);
-  useKeyboardShortcuts(io.saveToBrowser, focus);
+  useKeyboardShortcuts(io.downloadFile, focus);
+  useProjectLifecycle();
   useEffect(() => startStoreSync(), []);
 
   return (

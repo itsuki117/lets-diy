@@ -19,7 +19,7 @@ function useHint(): string {
   if (mode === 'arrange' && selectedIds.length === 0) return '部材をクリックするか、左の一覧から選んでください';
   if (mode === 'arrange') return '右のパネルで数値を入力するか、ギズモをドラッグして動かします';
   if (mode === 'machine' && selectedIds.length !== 1) return '加工する部材を 1 つ選んでください';
-  if (draft) return '数値を入力して［加工を実行］を押してください';
+  if (draft) return '矢印のドラッグ・微調整ボタン・座標入力の 3 つで位置を決められます';
   return '加工の種類を選んでください';
 }
 

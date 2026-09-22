@@ -10,6 +10,10 @@ function normalizeOperationForHash(op: Operation): unknown[] {
       return ['roundHole', op.diameter, op.depth, op.through, ...op.position, op.direction];
     case 'rectHole':
       return ['rectHole', op.width, op.height, op.depth, op.through, ...op.position, op.direction, op.rotation];
+    case 'arch':
+      return ['arch', op.width, op.height, op.rise, op.depth, op.through, ...op.position, op.direction, op.rotation];
+    case 'roundCorner':
+      return ['roundCorner', op.radius, op.direction, [...op.corners].sort().join(',')];
     case 'notch':
       return ['notch', op.size.x, op.size.y, op.size.z, ...op.position];
     case 'cut':

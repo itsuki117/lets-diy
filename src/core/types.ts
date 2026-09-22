@@ -77,6 +77,53 @@ export interface RectHoleOperation extends OperationBase {
   rotation: Degree;
 }
 
+/**
+ * アーチ切り欠き。矩形の上辺を弧にした断面を direction 軸方向へ押し出して削る。
+ * 棚の側板の足元を弧状に抜く、といった用途。
+ */
+export interface ArchOperation extends OperationBase {
+  type: 'arch';
+  /** 開口の幅 mm */
+  width: Millimeter;
+  /** 断面の全高 mm（弧の部分を含む） */
+  height: Millimeter;
+  /**
+   * 弧の高さ mm。0 なら矩形、width / 2 なら半円、それ以外は楕円弧になる。
+   * 0 <= rise <= height。
+   */
+  rise: Millimeter;
+  depth: Millimeter;
+  through: boolean;
+  /** 断面を囲む矩形の中心（部材ローカル、中心原点）mm */
+  position: Vec3;
+  /** 押し出す向き。通常は板厚方向 */
+  direction: AxisDirection;
+  /** direction 軸まわりの断面の回転（度）。0 で弧が上を向く */
+  rotation: Degree;
+}
+
+/**
+ * 面の四隅のうち、どの角を指すか。
+ * 面内の第 1 軸(u)・第 2 軸(v) の最小側を left / bottom、最大側を right / top と呼ぶ。
+ */
+export type CornerKey = 'bottomLeft' | 'bottomRight' | 'topLeft' | 'topRight';
+
+export const ALL_CORNERS: CornerKey[] = ['bottomLeft', 'bottomRight', 'topLeft', 'topRight'];
+
+/**
+ * 角丸。素材の外形の角を、指定半径の円弧で落とす。
+ * 板厚を貫通して落とすので depth / through は持たない（ルーターや糸ノコの実作業に合わせている）。
+ */
+export interface RoundCornerOperation extends OperationBase {
+  type: 'roundCorner';
+  /** 丸める半径 mm */
+  radius: Millimeter;
+  /** どの面から見た四隅か。この軸方向へ貫通する */
+  direction: AxisDirection;
+  /** 丸める角。空にはできない */
+  corners: CornerKey[];
+}
+
 /** 切り欠き。指定した直方体を丸ごと削り取る。 */
 export interface NotchOperation extends OperationBase {
   type: 'notch';
@@ -100,6 +147,8 @@ export interface CutOperation extends OperationBase {
 export type Operation =
   | RoundHoleOperation
   | RectHoleOperation
+  | ArchOperation
+  | RoundCornerOperation
   | NotchOperation
   | CutOperation;
 
@@ -142,7 +191,7 @@ export interface Project {
   updatedAt: string;
 }
 
-export const SCHEMA_VERSION = 1 as const;
+export const SCHEMA_VERSION = 3 as const;
 
 export interface ProjectDocument {
   app: 'lets-diy';
@@ -154,7 +203,7 @@ export interface ProjectDocument {
 // ------------------------------------------------------------
 // ツール立体（加工の実体。プレビューと CSG で共有する）
 // ------------------------------------------------------------
-export type ToolShape = 'box' | 'cylinder';
+export type ToolShape = 'box' | 'cylinder' | 'arch' | 'cornerFrame';
 
 /**
  * Operation から導出される「減算する立体」の仕様。
@@ -163,14 +212,23 @@ export type ToolShape = 'box' | 'cylinder';
 export interface ToolSolidSpec {
   shape: ToolShape;
   /**
-   * box:      [x, y, z] の 3 辺長
+   * box:      [x, y, z] の 3 辺長（部材ローカル軸に沿う）
    * cylinder: x = 直径, y = 高さ（軸は +Y）, z = 直径（x と同値）
+   * arch:     x = 幅, y = 全高, z = 押し出す深さ（押し出し軸は +Z）
+   * cornerFrame: x = 面の u 寸法, y = 面の v 寸法, z = 押し出す深さ（押し出し軸は +Z）
+   *
+   * cylinder と arch はツール自身の座標系での寸法であり、
+   * 部材ローカルへの向き合わせは rotation が担う。
    */
   size: Size3;
   /** ツール立体の中心（部材ローカル mm） */
   position: Vec3;
   /** ツール立体の姿勢（度、Euler 'XYZ'、部材ローカル） */
   rotation: Vec3;
+  /** shape === 'arch' のときの弧の高さ mm。0 なら矩形になる */
+  rise?: Millimeter;
+  /** shape === 'cornerFrame' のときの丸め半径と対象コーナー */
+  corner?: { radius: Millimeter; keys: CornerKey[] };
 }
 
 // ------------------------------------------------------------

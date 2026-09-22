@@ -27,9 +27,13 @@ export function TransformGizmo() {
     () => undefined,
   );
 
-  useEffect(() => () => { dragging.partId = null; }, []);
-
-  const active = mode === 'arrange' && !faceSnapActive && !!part && !part.locked && !!object;
+  const active = mode === 'arrange' && !faceSnapActive && !!part && !part.locked && part.visible && !!object;
+  useEffect(() => () => {
+    if (dragging.partId !== null) {
+      dragging.partId = null;
+      useProjectStore.getState().abortTransient();
+    }
+  }, [partId, active, gizmoMode]);
   if (!active || !part || !object || !partId) return null;
 
   return (
@@ -45,19 +49,21 @@ export function TransformGizmo() {
         useProjectStore.getState().beginTransient();
       }}
       onMouseUp={() => {
+        if (dragging.partId !== partId) return;
         dragging.partId = null;
         const next = readTransform(object);
         // ドラッグ結果にもスナップを効かせてから 1 履歴として確定する
-        const position: Vec3 = snapVec3(next.position, snap.grid);
-        const rotation: Vec3 = [
+        const position: Vec3 = gizmoMode === 'translate' ? snapVec3(next.position, snap.grid) : next.position;
+        const rotation: Vec3 = gizmoMode === 'rotate' ? [
           snapAngle(next.rotation[0], snap.angle),
           snapAngle(next.rotation[1], snap.angle),
           snapAngle(next.rotation[2], snap.angle),
-        ];
+        ] : next.rotation;
         updateTransientTransform(partId, { position, rotation });
         useProjectStore.getState().commitTransient(gizmoMode === 'translate' ? '部材を移動' : '部材を回転');
       }}
       onObjectChange={() => {
+        if (dragging.partId !== partId) return;
         updateTransientTransform(partId, readTransform(object));
       }}
     />
