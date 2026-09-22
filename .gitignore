@@ -35,3 +35,4 @@ Desktop.ini
 # Test artifacts
 playwright-report/
 test-results/
+*.tsbuildinfo
