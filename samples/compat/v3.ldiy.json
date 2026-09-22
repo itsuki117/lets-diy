@@ -1,0 +1,105 @@
+{
+  "app": "lets-diy",
+  "schemaVersion": 3,
+  "savedAt": "2026-09-20T00:00:00.000Z",
+  "project": {
+    "id": "prj-compat03",
+    "name": "互換検体 v3（角丸）",
+    "unit": "mm",
+    "parts": [
+      {
+        "id": "part-v3top",
+        "kind": "wood",
+        "name": "天板",
+        "size": {
+          "x": 600,
+          "y": 300,
+          "z": 18
+        },
+        "transform": {
+          "position": [
+            0,
+            150,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ]
+        },
+        "material": "plywood",
+        "operations": [
+          {
+            "id": "op-round001",
+            "type": "roundCorner",
+            "enabled": true,
+            "radius": 20,
+            "direction": "-z",
+            "corners": [
+              "topLeft",
+              "topRight",
+              "bottomLeft",
+              "bottomRight"
+            ]
+          },
+          {
+            "id": "op-hole0001",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "position": [
+              -200,
+              50,
+              0
+            ],
+            "direction": "-z"
+          }
+        ],
+        "visible": true,
+        "locked": false,
+        "createdAt": "2026-09-20T00:00:00.000Z"
+      },
+      {
+        "id": "part-v3side",
+        "kind": "wood",
+        "name": "側板",
+        "size": {
+          "x": 400,
+          "y": 300,
+          "z": 18
+        },
+        "transform": {
+          "position": [
+            700,
+            150,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ]
+        },
+        "material": "plywood",
+        "operations": [
+          {
+            "id": "op-cut00001",
+            "type": "cut",
+            "enabled": true,
+            "axis": "x",
+            "offset": 100,
+            "keep": "negative"
+          }
+        ],
+        "visible": true,
+        "locked": false,
+        "createdAt": "2026-09-20T00:00:00.000Z"
+      }
+    ],
+    "createdAt": "2026-09-20T00:00:00.000Z",
+    "updatedAt": "2026-09-20T00:00:00.000Z"
+  }
+}

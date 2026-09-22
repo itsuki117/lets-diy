@@ -81,12 +81,94 @@ const part = z.object({
   createdAt: z.string(),
 });
 
+const jointBase = {
+  id: z.string().min(1),
+  name: z.string(),
+  enabled: z.boolean(),
+  basePartId: z.string().min(1),
+  movingPartId: z.string().min(1),
+};
+
+const range = z.object({ min: z.number().finite(), max: z.number().finite() });
+
+const joint = z
+  .discriminatedUnion('kind', [
+    z.object({ ...jointBase, kind: z.literal('fixed') }),
+    z.object({
+      ...jointBase,
+      kind: z.literal('revolute'),
+      origin: vec3,
+      axis: vec3,
+      value: z.number().finite(),
+      range,
+    }),
+    z.object({
+      ...jointBase,
+      kind: z.literal('prismatic'),
+      axis: vec3,
+      value: z.number().finite(),
+      range,
+    }),
+  ])
+  .superRefine((value, ctx) => {
+    if (value.basePartId === value.movingPartId) {
+      ctx.addIssue({ code: 'custom', message: '同じ部材どうしは結合できません', path: ['movingPartId'] });
+    }
+    if (value.kind !== 'fixed' && value.range.min > value.range.max) {
+      ctx.addIssue({ code: 'custom', message: '可動範囲の最小が最大を超えています', path: ['range'] });
+    }
+  });
+
+const hardwareHole = z.object({
+  target: z.enum(['base', 'moving']),
+  shape: z.enum(['round', 'rect']),
+  width: z.number().positive(),
+  height: z.number().positive().optional(),
+  depth: z.number().positive(),
+  through: z.boolean(),
+  offset: vec3,
+});
+
+const hardwarePreset = z.object({
+  presetId: z.string().min(1),
+  label: z.string(),
+  kind: z.enum(['hinge', 'slideRail', 'gasSpring']),
+  partNumber: z.string().optional(),
+  jointKind: z.enum(['fixed', 'revolute', 'prismatic']),
+  defaultRange: range.optional(),
+  holes: z.array(hardwareHole),
+});
+
+const hardware = z.object({
+  id: z.string().min(1),
+  preset: hardwarePreset,
+  jointId: z.string().min(1).nullable(),
+  position: vec3,
+  rotation: vec3,
+  quantity: z.number().int().positive(),
+  note: z.string().optional(),
+});
+
+const gasSpring = z.object({
+  id: z.string().min(1),
+  hardwareId: z.string().min(1),
+  jointId: z.string().min(1),
+  baseAnchor: vec3,
+  movingAnchor: vec3,
+  strokeMin: z.number().positive(),
+  strokeMax: z.number().positive(),
+  forceN: z.number().positive(),
+});
+
 const project = z
   .object({
     id: z.string().min(1),
     name: z.string(),
     unit: z.literal('mm'),
     parts: z.array(part),
+    joints: z.array(joint),
+    hardware: z.array(hardware),
+    gasSprings: z.array(gasSpring),
     createdAt: z.string(),
     updatedAt: z.string(),
   })
@@ -103,6 +185,41 @@ const project = z
           ctx.addIssue({ code: 'custom', message: `加工 ID が重複しています: ${op.id}`, path: ['parts'] });
         }
         opIds.add(op.id);
+      }
+    }
+
+    const partIds = new Set(value.parts.map((p) => p.id));
+    const jointIds = new Set<string>();
+    const driven = new Set<string>();
+    for (const j of value.joints) {
+      if (jointIds.has(j.id)) {
+        ctx.addIssue({ code: 'custom', message: `joint ID が重複しています: ${j.id}`, path: ['joints'] });
+      }
+      jointIds.add(j.id);
+      if (!partIds.has(j.basePartId) || !partIds.has(j.movingPartId)) {
+        ctx.addIssue({ code: 'custom', message: `joint が存在しない部材を指しています: ${j.id}`, path: ['joints'] });
+      }
+      if (driven.has(j.movingPartId)) {
+        ctx.addIssue({
+          code: 'custom',
+          message: `1 つの部材が複数の joint で動かされています: ${j.movingPartId}`,
+          path: ['joints'],
+        });
+      }
+      driven.add(j.movingPartId);
+    }
+
+    for (const h of value.hardware) {
+      if (h.jointId !== null && !jointIds.has(h.jointId)) {
+        ctx.addIssue({ code: 'custom', message: `金物が存在しない joint を指しています: ${h.id}`, path: ['hardware'] });
+      }
+    }
+    for (const g of value.gasSprings) {
+      if (!jointIds.has(g.jointId)) {
+        ctx.addIssue({ code: 'custom', message: `ガススプリングが存在しない joint を指しています: ${g.id}`, path: ['gasSprings'] });
+      }
+      if (g.strokeMin >= g.strokeMax) {
+        ctx.addIssue({ code: 'custom', message: '縮んだ長さが伸びた長さ以上です', path: ['gasSprings'] });
       }
     }
   });

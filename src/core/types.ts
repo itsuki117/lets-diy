@@ -25,13 +25,20 @@ export interface Size3 {
 export type ProjectId = string;   // "prj-xxxxxxxx"
 export type PartId = string;      // "part-xxxxxxxx"
 export type OperationId = string; // "op-xxxxxxxx"
+export type JointId = string;     // "jnt-xxxxxxxx"
+export type HardwareId = string;  // "hw-xxxxxxxx"
 
 // ------------------------------------------------------------
 // Transform
 // ------------------------------------------------------------
 /**
  * 部材ローカル原点（= 直方体の中心）のワールド配置。
- * scale は Ver.1 では扱わない（寸法変更は size で行う）。
+ * scale は扱わない（寸法変更は size で行う）。
+ *
+ * **Ver.2 以降、これは rest pose（すべての joint の値が 0 のときの姿勢）である。**
+ * 画面に出る姿勢は `solvePoses()` が rest pose と joint の値から毎回計算する。
+ * 保存されるのは rest pose と joint の値だけで、表示姿勢は保存しない
+ * （設計書 DESIGN_V2 §2）。
  */
 export interface Transform {
   /** ワールド座標 mm */
@@ -179,6 +186,132 @@ export interface Part {
 }
 
 // ------------------------------------------------------------
+// 可動・結合の関係（Ver.2）
+// ------------------------------------------------------------
+export type JointKind = 'fixed' | 'revolute' | 'prismatic';
+
+interface JointBase {
+  id: JointId;
+  name: string;
+  enabled: boolean;
+  /** 固定側の部材 */
+  basePartId: PartId;
+  /** 動く側の部材。この部材の姿勢は joint から計算される */
+  movingPartId: PartId;
+}
+
+/** 固定。自由度 0。親に貼り付けるだけ（取っ手を扉に付ける、など）。 */
+export interface FixedJoint extends JointBase {
+  kind: 'fixed';
+}
+
+/** ヒンジ。base のローカル座標で定義した軸まわりに回る。 */
+export interface RevoluteJoint extends JointBase {
+  kind: 'revolute';
+  /** 回転軸が通る点（base ローカル mm） */
+  origin: Vec3;
+  /** 回転軸の向き（base ローカル。正規化して使う） */
+  axis: Vec3;
+  /** 現在の角度（度） */
+  value: Degree;
+  range: { min: Degree; max: Degree };
+}
+
+/** スライドレール。base のローカル座標で定義した方向へ直進する。 */
+export interface PrismaticJoint extends JointBase {
+  kind: 'prismatic';
+  /** 移動方向（base ローカル。正規化して使う） */
+  axis: Vec3;
+  /** 現在の移動量 mm */
+  value: Millimeter;
+  range: { min: Millimeter; max: Millimeter };
+}
+
+export type Joint = FixedJoint | RevoluteJoint | PrismaticJoint;
+
+/** 値を持つ joint（fixed 以外） */
+export type MovableJoint = RevoluteJoint | PrismaticJoint;
+
+export const isMovableJoint = (joint: Joint): joint is MovableJoint => joint.kind !== 'fixed';
+
+export const JOINT_KIND_LABELS: Record<JointKind, string> = {
+  fixed: '固定',
+  revolute: 'ヒンジ',
+  prismatic: 'スライド',
+};
+
+/** joint の値の単位。fixed は値を持たない */
+export const jointUnit = (kind: JointKind): 'deg' | 'mm' | null =>
+  kind === 'revolute' ? 'deg' : kind === 'prismatic' ? 'mm' : null;
+
+// ------------------------------------------------------------
+// 金物（Ver.2）
+// ------------------------------------------------------------
+export type HardwareKind = 'hinge' | 'slideRail' | 'gasSpring';
+
+/** 金物が要求する穴。target で「どちらの部材にあける穴か」を決める */
+export interface HardwareHole {
+  target: 'base' | 'moving';
+  shape: 'round' | 'rect';
+  /** round: 直径 / rect: 幅 */
+  width: Millimeter;
+  /** rect のみ */
+  height?: Millimeter;
+  depth: Millimeter;
+  through: boolean;
+  /** 金物の取付点からのオフセット（金物ローカル mm） */
+  offset: Vec3;
+}
+
+/** 内蔵プリセット 1 件ぶんの仕様。データとして持ち、コードで分岐しない */
+export interface HardwarePreset {
+  presetId: string;
+  label: string;
+  kind: HardwareKind;
+  partNumber?: string;
+  /** この金物が作る joint の種類 */
+  jointKind: JointKind;
+  /** 既定の可動範囲 */
+  defaultRange?: { min: number; max: number };
+  /** 必要な穴 */
+  holes: HardwareHole[];
+}
+
+export interface Hardware {
+  id: HardwareId;
+  preset: HardwarePreset;
+  /** この金物が実現している joint。未接続なら null */
+  jointId: JointId | null;
+  /** 取り付け位置（base 部材のローカル座標 mm） */
+  position: Vec3;
+  /** 取り付け姿勢（度、base 部材ローカル） */
+  rotation: Vec3;
+  /** 数量。扉 1 枚にヒンジ 2 個など */
+  quantity: number;
+  note?: string;
+}
+
+/**
+ * ガススプリング。自由度を持たず、revolute joint に付く補助部品として扱う。
+ * 取付 2 点の距離が伸縮することで扉を支える。
+ */
+export interface GasSpringMount {
+  id: string;
+  hardwareId: HardwareId;
+  /** 支える対象の joint（revolute のみ） */
+  jointId: JointId;
+  /** 固定側の取付点（base 部材ローカル mm） */
+  baseAnchor: Vec3;
+  /** 可動側の取付点（moving 部材ローカル mm） */
+  movingAnchor: Vec3;
+  /** 縮んだ長さ / 伸びた長さ mm */
+  strokeMin: Millimeter;
+  strokeMax: Millimeter;
+  /** 呼び力 N */
+  forceN: number;
+}
+
+// ------------------------------------------------------------
 // Project / 保存フォーマット
 // ------------------------------------------------------------
 export interface Project {
@@ -187,11 +320,15 @@ export interface Project {
   /** Ver.1 は mm 固定。将来 'inch' 表示を追加する余地 */
   unit: 'mm';
   parts: Part[];
+  /** Ver.2 追加。Ver.1 のファイルを読んだときは空配列が入る */
+  joints: Joint[];
+  hardware: Hardware[];
+  gasSprings: GasSpringMount[];
   createdAt: string;
   updatedAt: string;
 }
 
-export const SCHEMA_VERSION = 3 as const;
+export const SCHEMA_VERSION = 4 as const;
 
 export interface ProjectDocument {
   app: 'lets-diy';

@@ -35,3 +35,39 @@ export const MATERIAL_LABELS: Record<MaterialKind, string> = {
   mdf: 'MDF',
   generic: 'その他',
 };
+
+// ============================================================
+// Ver.2 追加分
+// ============================================================
+
+/** 材質ごとの密度 kg/m3。ガススプリングの計算に使う概算値 */
+export const MATERIAL_DENSITY: Record<MaterialKind, number> = {
+  plywood: 600,
+  pine: 450,
+  lauan: 450,
+  mdf: 750,
+  generic: 550,
+};
+
+/** 鋸刃の幅 mm。木取り図でピースの間に入れる */
+export const DEFAULT_KERF_MM = 3;
+
+/** 可動範囲の干渉走査の分割数 */
+export const MOTION_SCAN_STEPS = 36;
+
+/** ガススプリングの計算の分割数 */
+export const GAS_SPRING_STEPS = 24;
+
+/** 重力加速度 m/s2 */
+export const GRAVITY = 9.81;
+
+/** 定尺板のプリセット */
+export const STOCK_SHEETS = [
+  { id: 'sanroku', label: 'サブロク 910x1820', width: 910, height: 1820 },
+  { id: 'shiroku', label: 'シハチ 1230x2430', width: 1230, height: 2430 },
+  { id: 'half', label: 'ハーフ 910x910', width: 910, height: 910 },
+] as const;
+
+/** joint の既定の可動範囲 */
+export const DEFAULT_REVOLUTE_RANGE = { min: 0, max: 110 };
+export const DEFAULT_PRISMATIC_RANGE = { min: 0, max: 350 };

@@ -1,0 +1,4214 @@
+{
+  "app": "lets-diy",
+  "schemaVersion": 1,
+  "savedAt": "2026-09-22T05:01:47.090Z",
+  "project": {
+    "id": "prj-7ffa869a",
+    "name": "性能検証 50部材 200加工",
+    "unit": "mm",
+    "parts": [
+      {
+        "id": "part-a08cf2af",
+        "kind": "wood",
+        "name": "検証板 1",
+        "size": {
+          "x": 600,
+          "y": 300,
+          "z": 18
+        },
+        "transform": {
+          "position": [
+            0,
+            150,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ]
+        },
+        "material": "plywood",
+        "operations": [
+          {
+            "id": "op-part-a08cf2af-0",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -250,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-a08cf2af-1",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -150,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-a08cf2af-2",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -50,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-a08cf2af-3",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              50,
+              -80,
+              0
+            ]
+          }
+        ],
+        "visible": true,
+        "locked": false,
+        "createdAt": "2026-09-22T05:01:47.090Z"
+      },
+      {
+        "id": "part-ad49a3bf",
+        "kind": "wood",
+        "name": "検証板 2",
+        "size": {
+          "x": 600,
+          "y": 300,
+          "z": 18
+        },
+        "transform": {
+          "position": [
+            650,
+            150,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ]
+        },
+        "material": "plywood",
+        "operations": [
+          {
+            "id": "op-part-ad49a3bf-0",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -250,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-ad49a3bf-1",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -150,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-ad49a3bf-2",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -50,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-ad49a3bf-3",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              50,
+              -80,
+              0
+            ]
+          }
+        ],
+        "visible": true,
+        "locked": false,
+        "createdAt": "2026-09-22T05:01:47.090Z"
+      },
+      {
+        "id": "part-9d5892d2",
+        "kind": "wood",
+        "name": "検証板 3",
+        "size": {
+          "x": 600,
+          "y": 300,
+          "z": 18
+        },
+        "transform": {
+          "position": [
+            1300,
+            150,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ]
+        },
+        "material": "plywood",
+        "operations": [
+          {
+            "id": "op-part-9d5892d2-0",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -250,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-9d5892d2-1",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -150,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-9d5892d2-2",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -50,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-9d5892d2-3",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              50,
+              -80,
+              0
+            ]
+          }
+        ],
+        "visible": true,
+        "locked": false,
+        "createdAt": "2026-09-22T05:01:47.090Z"
+      },
+      {
+        "id": "part-9eeaaecc",
+        "kind": "wood",
+        "name": "検証板 4",
+        "size": {
+          "x": 600,
+          "y": 300,
+          "z": 18
+        },
+        "transform": {
+          "position": [
+            1950,
+            150,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ]
+        },
+        "material": "plywood",
+        "operations": [
+          {
+            "id": "op-part-9eeaaecc-0",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -250,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-9eeaaecc-1",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -150,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-9eeaaecc-2",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -50,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-9eeaaecc-3",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              50,
+              -80,
+              0
+            ]
+          }
+        ],
+        "visible": true,
+        "locked": false,
+        "createdAt": "2026-09-22T05:01:47.090Z"
+      },
+      {
+        "id": "part-25099fe8",
+        "kind": "wood",
+        "name": "検証板 5",
+        "size": {
+          "x": 600,
+          "y": 300,
+          "z": 18
+        },
+        "transform": {
+          "position": [
+            2600,
+            150,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ]
+        },
+        "material": "plywood",
+        "operations": [
+          {
+            "id": "op-part-25099fe8-0",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -250,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-25099fe8-1",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -150,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-25099fe8-2",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -50,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-25099fe8-3",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              50,
+              -80,
+              0
+            ]
+          }
+        ],
+        "visible": true,
+        "locked": false,
+        "createdAt": "2026-09-22T05:01:47.090Z"
+      },
+      {
+        "id": "part-b918d6d9",
+        "kind": "wood",
+        "name": "検証板 6",
+        "size": {
+          "x": 600,
+          "y": 300,
+          "z": 18
+        },
+        "transform": {
+          "position": [
+            3250,
+            150,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ]
+        },
+        "material": "plywood",
+        "operations": [
+          {
+            "id": "op-part-b918d6d9-0",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -250,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-b918d6d9-1",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -150,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-b918d6d9-2",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -50,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-b918d6d9-3",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              50,
+              -80,
+              0
+            ]
+          }
+        ],
+        "visible": true,
+        "locked": false,
+        "createdAt": "2026-09-22T05:01:47.090Z"
+      },
+      {
+        "id": "part-3aca752b",
+        "kind": "wood",
+        "name": "検証板 7",
+        "size": {
+          "x": 600,
+          "y": 300,
+          "z": 18
+        },
+        "transform": {
+          "position": [
+            3900,
+            150,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ]
+        },
+        "material": "plywood",
+        "operations": [
+          {
+            "id": "op-part-3aca752b-0",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -250,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-3aca752b-1",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -150,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-3aca752b-2",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -50,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-3aca752b-3",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              50,
+              -80,
+              0
+            ]
+          }
+        ],
+        "visible": true,
+        "locked": false,
+        "createdAt": "2026-09-22T05:01:47.090Z"
+      },
+      {
+        "id": "part-c48e1fd4",
+        "kind": "wood",
+        "name": "検証板 8",
+        "size": {
+          "x": 600,
+          "y": 300,
+          "z": 18
+        },
+        "transform": {
+          "position": [
+            4550,
+            150,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ]
+        },
+        "material": "plywood",
+        "operations": [
+          {
+            "id": "op-part-c48e1fd4-0",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -250,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-c48e1fd4-1",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -150,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-c48e1fd4-2",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -50,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-c48e1fd4-3",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              50,
+              -80,
+              0
+            ]
+          }
+        ],
+        "visible": true,
+        "locked": false,
+        "createdAt": "2026-09-22T05:01:47.090Z"
+      },
+      {
+        "id": "part-870368b0",
+        "kind": "wood",
+        "name": "検証板 9",
+        "size": {
+          "x": 600,
+          "y": 300,
+          "z": 18
+        },
+        "transform": {
+          "position": [
+            5200,
+            150,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ]
+        },
+        "material": "plywood",
+        "operations": [
+          {
+            "id": "op-part-870368b0-0",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -250,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-870368b0-1",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -150,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-870368b0-2",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -50,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-870368b0-3",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              50,
+              -80,
+              0
+            ]
+          }
+        ],
+        "visible": true,
+        "locked": false,
+        "createdAt": "2026-09-22T05:01:47.090Z"
+      },
+      {
+        "id": "part-82d3a489",
+        "kind": "wood",
+        "name": "検証板 10",
+        "size": {
+          "x": 600,
+          "y": 300,
+          "z": 18
+        },
+        "transform": {
+          "position": [
+            5850,
+            150,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ]
+        },
+        "material": "plywood",
+        "operations": [
+          {
+            "id": "op-part-82d3a489-0",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -250,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-82d3a489-1",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -150,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-82d3a489-2",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -50,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-82d3a489-3",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              50,
+              -80,
+              0
+            ]
+          }
+        ],
+        "visible": true,
+        "locked": false,
+        "createdAt": "2026-09-22T05:01:47.090Z"
+      },
+      {
+        "id": "part-4f654fd5",
+        "kind": "wood",
+        "name": "検証板 11",
+        "size": {
+          "x": 600,
+          "y": 300,
+          "z": 18
+        },
+        "transform": {
+          "position": [
+            0,
+            150,
+            400
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ]
+        },
+        "material": "plywood",
+        "operations": [
+          {
+            "id": "op-part-4f654fd5-0",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -250,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-4f654fd5-1",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -150,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-4f654fd5-2",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -50,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-4f654fd5-3",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              50,
+              -80,
+              0
+            ]
+          }
+        ],
+        "visible": true,
+        "locked": false,
+        "createdAt": "2026-09-22T05:01:47.090Z"
+      },
+      {
+        "id": "part-9ffef5c1",
+        "kind": "wood",
+        "name": "検証板 12",
+        "size": {
+          "x": 600,
+          "y": 300,
+          "z": 18
+        },
+        "transform": {
+          "position": [
+            650,
+            150,
+            400
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ]
+        },
+        "material": "plywood",
+        "operations": [
+          {
+            "id": "op-part-9ffef5c1-0",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -250,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-9ffef5c1-1",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -150,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-9ffef5c1-2",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -50,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-9ffef5c1-3",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              50,
+              -80,
+              0
+            ]
+          }
+        ],
+        "visible": true,
+        "locked": false,
+        "createdAt": "2026-09-22T05:01:47.090Z"
+      },
+      {
+        "id": "part-ced40f20",
+        "kind": "wood",
+        "name": "検証板 13",
+        "size": {
+          "x": 600,
+          "y": 300,
+          "z": 18
+        },
+        "transform": {
+          "position": [
+            1300,
+            150,
+            400
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ]
+        },
+        "material": "plywood",
+        "operations": [
+          {
+            "id": "op-part-ced40f20-0",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -250,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-ced40f20-1",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -150,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-ced40f20-2",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -50,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-ced40f20-3",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              50,
+              -80,
+              0
+            ]
+          }
+        ],
+        "visible": true,
+        "locked": false,
+        "createdAt": "2026-09-22T05:01:47.090Z"
+      },
+      {
+        "id": "part-20a9a5e1",
+        "kind": "wood",
+        "name": "検証板 14",
+        "size": {
+          "x": 600,
+          "y": 300,
+          "z": 18
+        },
+        "transform": {
+          "position": [
+            1950,
+            150,
+            400
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ]
+        },
+        "material": "plywood",
+        "operations": [
+          {
+            "id": "op-part-20a9a5e1-0",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -250,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-20a9a5e1-1",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -150,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-20a9a5e1-2",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -50,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-20a9a5e1-3",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              50,
+              -80,
+              0
+            ]
+          }
+        ],
+        "visible": true,
+        "locked": false,
+        "createdAt": "2026-09-22T05:01:47.090Z"
+      },
+      {
+        "id": "part-2835beb5",
+        "kind": "wood",
+        "name": "検証板 15",
+        "size": {
+          "x": 600,
+          "y": 300,
+          "z": 18
+        },
+        "transform": {
+          "position": [
+            2600,
+            150,
+            400
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ]
+        },
+        "material": "plywood",
+        "operations": [
+          {
+            "id": "op-part-2835beb5-0",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -250,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-2835beb5-1",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -150,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-2835beb5-2",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -50,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-2835beb5-3",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              50,
+              -80,
+              0
+            ]
+          }
+        ],
+        "visible": true,
+        "locked": false,
+        "createdAt": "2026-09-22T05:01:47.090Z"
+      },
+      {
+        "id": "part-11a7a09c",
+        "kind": "wood",
+        "name": "検証板 16",
+        "size": {
+          "x": 600,
+          "y": 300,
+          "z": 18
+        },
+        "transform": {
+          "position": [
+            3250,
+            150,
+            400
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ]
+        },
+        "material": "plywood",
+        "operations": [
+          {
+            "id": "op-part-11a7a09c-0",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -250,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-11a7a09c-1",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -150,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-11a7a09c-2",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -50,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-11a7a09c-3",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              50,
+              -80,
+              0
+            ]
+          }
+        ],
+        "visible": true,
+        "locked": false,
+        "createdAt": "2026-09-22T05:01:47.090Z"
+      },
+      {
+        "id": "part-144f5a51",
+        "kind": "wood",
+        "name": "検証板 17",
+        "size": {
+          "x": 600,
+          "y": 300,
+          "z": 18
+        },
+        "transform": {
+          "position": [
+            3900,
+            150,
+            400
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ]
+        },
+        "material": "plywood",
+        "operations": [
+          {
+            "id": "op-part-144f5a51-0",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -250,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-144f5a51-1",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -150,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-144f5a51-2",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -50,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-144f5a51-3",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              50,
+              -80,
+              0
+            ]
+          }
+        ],
+        "visible": true,
+        "locked": false,
+        "createdAt": "2026-09-22T05:01:47.090Z"
+      },
+      {
+        "id": "part-52d62a02",
+        "kind": "wood",
+        "name": "検証板 18",
+        "size": {
+          "x": 600,
+          "y": 300,
+          "z": 18
+        },
+        "transform": {
+          "position": [
+            4550,
+            150,
+            400
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ]
+        },
+        "material": "plywood",
+        "operations": [
+          {
+            "id": "op-part-52d62a02-0",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -250,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-52d62a02-1",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -150,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-52d62a02-2",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -50,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-52d62a02-3",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              50,
+              -80,
+              0
+            ]
+          }
+        ],
+        "visible": true,
+        "locked": false,
+        "createdAt": "2026-09-22T05:01:47.090Z"
+      },
+      {
+        "id": "part-09de92d2",
+        "kind": "wood",
+        "name": "検証板 19",
+        "size": {
+          "x": 600,
+          "y": 300,
+          "z": 18
+        },
+        "transform": {
+          "position": [
+            5200,
+            150,
+            400
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ]
+        },
+        "material": "plywood",
+        "operations": [
+          {
+            "id": "op-part-09de92d2-0",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -250,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-09de92d2-1",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -150,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-09de92d2-2",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -50,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-09de92d2-3",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              50,
+              -80,
+              0
+            ]
+          }
+        ],
+        "visible": true,
+        "locked": false,
+        "createdAt": "2026-09-22T05:01:47.090Z"
+      },
+      {
+        "id": "part-959461a3",
+        "kind": "wood",
+        "name": "検証板 20",
+        "size": {
+          "x": 600,
+          "y": 300,
+          "z": 18
+        },
+        "transform": {
+          "position": [
+            5850,
+            150,
+            400
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ]
+        },
+        "material": "plywood",
+        "operations": [
+          {
+            "id": "op-part-959461a3-0",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -250,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-959461a3-1",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -150,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-959461a3-2",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -50,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-959461a3-3",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              50,
+              -80,
+              0
+            ]
+          }
+        ],
+        "visible": true,
+        "locked": false,
+        "createdAt": "2026-09-22T05:01:47.090Z"
+      },
+      {
+        "id": "part-1cc40544",
+        "kind": "wood",
+        "name": "検証板 21",
+        "size": {
+          "x": 600,
+          "y": 300,
+          "z": 18
+        },
+        "transform": {
+          "position": [
+            0,
+            150,
+            800
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ]
+        },
+        "material": "plywood",
+        "operations": [
+          {
+            "id": "op-part-1cc40544-0",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -250,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-1cc40544-1",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -150,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-1cc40544-2",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -50,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-1cc40544-3",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              50,
+              -80,
+              0
+            ]
+          }
+        ],
+        "visible": true,
+        "locked": false,
+        "createdAt": "2026-09-22T05:01:47.090Z"
+      },
+      {
+        "id": "part-285243be",
+        "kind": "wood",
+        "name": "検証板 22",
+        "size": {
+          "x": 600,
+          "y": 300,
+          "z": 18
+        },
+        "transform": {
+          "position": [
+            650,
+            150,
+            800
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ]
+        },
+        "material": "plywood",
+        "operations": [
+          {
+            "id": "op-part-285243be-0",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -250,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-285243be-1",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -150,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-285243be-2",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -50,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-285243be-3",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              50,
+              -80,
+              0
+            ]
+          }
+        ],
+        "visible": true,
+        "locked": false,
+        "createdAt": "2026-09-22T05:01:47.090Z"
+      },
+      {
+        "id": "part-7510a5ee",
+        "kind": "wood",
+        "name": "検証板 23",
+        "size": {
+          "x": 600,
+          "y": 300,
+          "z": 18
+        },
+        "transform": {
+          "position": [
+            1300,
+            150,
+            800
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ]
+        },
+        "material": "plywood",
+        "operations": [
+          {
+            "id": "op-part-7510a5ee-0",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -250,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-7510a5ee-1",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -150,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-7510a5ee-2",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -50,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-7510a5ee-3",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              50,
+              -80,
+              0
+            ]
+          }
+        ],
+        "visible": true,
+        "locked": false,
+        "createdAt": "2026-09-22T05:01:47.090Z"
+      },
+      {
+        "id": "part-dbb008f8",
+        "kind": "wood",
+        "name": "検証板 24",
+        "size": {
+          "x": 600,
+          "y": 300,
+          "z": 18
+        },
+        "transform": {
+          "position": [
+            1950,
+            150,
+            800
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ]
+        },
+        "material": "plywood",
+        "operations": [
+          {
+            "id": "op-part-dbb008f8-0",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -250,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-dbb008f8-1",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -150,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-dbb008f8-2",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -50,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-dbb008f8-3",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              50,
+              -80,
+              0
+            ]
+          }
+        ],
+        "visible": true,
+        "locked": false,
+        "createdAt": "2026-09-22T05:01:47.090Z"
+      },
+      {
+        "id": "part-dc934d85",
+        "kind": "wood",
+        "name": "検証板 25",
+        "size": {
+          "x": 600,
+          "y": 300,
+          "z": 18
+        },
+        "transform": {
+          "position": [
+            2600,
+            150,
+            800
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ]
+        },
+        "material": "plywood",
+        "operations": [
+          {
+            "id": "op-part-dc934d85-0",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -250,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-dc934d85-1",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -150,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-dc934d85-2",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -50,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-dc934d85-3",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              50,
+              -80,
+              0
+            ]
+          }
+        ],
+        "visible": true,
+        "locked": false,
+        "createdAt": "2026-09-22T05:01:47.090Z"
+      },
+      {
+        "id": "part-7e01746e",
+        "kind": "wood",
+        "name": "検証板 26",
+        "size": {
+          "x": 600,
+          "y": 300,
+          "z": 18
+        },
+        "transform": {
+          "position": [
+            3250,
+            150,
+            800
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ]
+        },
+        "material": "plywood",
+        "operations": [
+          {
+            "id": "op-part-7e01746e-0",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -250,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-7e01746e-1",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -150,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-7e01746e-2",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -50,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-7e01746e-3",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              50,
+              -80,
+              0
+            ]
+          }
+        ],
+        "visible": true,
+        "locked": false,
+        "createdAt": "2026-09-22T05:01:47.090Z"
+      },
+      {
+        "id": "part-088999a6",
+        "kind": "wood",
+        "name": "検証板 27",
+        "size": {
+          "x": 600,
+          "y": 300,
+          "z": 18
+        },
+        "transform": {
+          "position": [
+            3900,
+            150,
+            800
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ]
+        },
+        "material": "plywood",
+        "operations": [
+          {
+            "id": "op-part-088999a6-0",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -250,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-088999a6-1",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -150,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-088999a6-2",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -50,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-088999a6-3",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              50,
+              -80,
+              0
+            ]
+          }
+        ],
+        "visible": true,
+        "locked": false,
+        "createdAt": "2026-09-22T05:01:47.090Z"
+      },
+      {
+        "id": "part-6d5a8947",
+        "kind": "wood",
+        "name": "検証板 28",
+        "size": {
+          "x": 600,
+          "y": 300,
+          "z": 18
+        },
+        "transform": {
+          "position": [
+            4550,
+            150,
+            800
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ]
+        },
+        "material": "plywood",
+        "operations": [
+          {
+            "id": "op-part-6d5a8947-0",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -250,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-6d5a8947-1",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -150,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-6d5a8947-2",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -50,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-6d5a8947-3",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              50,
+              -80,
+              0
+            ]
+          }
+        ],
+        "visible": true,
+        "locked": false,
+        "createdAt": "2026-09-22T05:01:47.090Z"
+      },
+      {
+        "id": "part-033b2511",
+        "kind": "wood",
+        "name": "検証板 29",
+        "size": {
+          "x": 600,
+          "y": 300,
+          "z": 18
+        },
+        "transform": {
+          "position": [
+            5200,
+            150,
+            800
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ]
+        },
+        "material": "plywood",
+        "operations": [
+          {
+            "id": "op-part-033b2511-0",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -250,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-033b2511-1",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -150,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-033b2511-2",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -50,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-033b2511-3",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              50,
+              -80,
+              0
+            ]
+          }
+        ],
+        "visible": true,
+        "locked": false,
+        "createdAt": "2026-09-22T05:01:47.090Z"
+      },
+      {
+        "id": "part-a5a23e24",
+        "kind": "wood",
+        "name": "検証板 30",
+        "size": {
+          "x": 600,
+          "y": 300,
+          "z": 18
+        },
+        "transform": {
+          "position": [
+            5850,
+            150,
+            800
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ]
+        },
+        "material": "plywood",
+        "operations": [
+          {
+            "id": "op-part-a5a23e24-0",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -250,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-a5a23e24-1",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -150,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-a5a23e24-2",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -50,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-a5a23e24-3",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              50,
+              -80,
+              0
+            ]
+          }
+        ],
+        "visible": true,
+        "locked": false,
+        "createdAt": "2026-09-22T05:01:47.090Z"
+      },
+      {
+        "id": "part-5059412f",
+        "kind": "wood",
+        "name": "検証板 31",
+        "size": {
+          "x": 600,
+          "y": 300,
+          "z": 18
+        },
+        "transform": {
+          "position": [
+            0,
+            150,
+            1200
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ]
+        },
+        "material": "plywood",
+        "operations": [
+          {
+            "id": "op-part-5059412f-0",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -250,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-5059412f-1",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -150,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-5059412f-2",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -50,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-5059412f-3",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              50,
+              -80,
+              0
+            ]
+          }
+        ],
+        "visible": true,
+        "locked": false,
+        "createdAt": "2026-09-22T05:01:47.090Z"
+      },
+      {
+        "id": "part-57771729",
+        "kind": "wood",
+        "name": "検証板 32",
+        "size": {
+          "x": 600,
+          "y": 300,
+          "z": 18
+        },
+        "transform": {
+          "position": [
+            650,
+            150,
+            1200
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ]
+        },
+        "material": "plywood",
+        "operations": [
+          {
+            "id": "op-part-57771729-0",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -250,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-57771729-1",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -150,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-57771729-2",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -50,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-57771729-3",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              50,
+              -80,
+              0
+            ]
+          }
+        ],
+        "visible": true,
+        "locked": false,
+        "createdAt": "2026-09-22T05:01:47.090Z"
+      },
+      {
+        "id": "part-9be16b09",
+        "kind": "wood",
+        "name": "検証板 33",
+        "size": {
+          "x": 600,
+          "y": 300,
+          "z": 18
+        },
+        "transform": {
+          "position": [
+            1300,
+            150,
+            1200
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ]
+        },
+        "material": "plywood",
+        "operations": [
+          {
+            "id": "op-part-9be16b09-0",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -250,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-9be16b09-1",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -150,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-9be16b09-2",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -50,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-9be16b09-3",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              50,
+              -80,
+              0
+            ]
+          }
+        ],
+        "visible": true,
+        "locked": false,
+        "createdAt": "2026-09-22T05:01:47.090Z"
+      },
+      {
+        "id": "part-4b3ae535",
+        "kind": "wood",
+        "name": "検証板 34",
+        "size": {
+          "x": 600,
+          "y": 300,
+          "z": 18
+        },
+        "transform": {
+          "position": [
+            1950,
+            150,
+            1200
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ]
+        },
+        "material": "plywood",
+        "operations": [
+          {
+            "id": "op-part-4b3ae535-0",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -250,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-4b3ae535-1",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -150,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-4b3ae535-2",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -50,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-4b3ae535-3",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              50,
+              -80,
+              0
+            ]
+          }
+        ],
+        "visible": true,
+        "locked": false,
+        "createdAt": "2026-09-22T05:01:47.090Z"
+      },
+      {
+        "id": "part-586366c1",
+        "kind": "wood",
+        "name": "検証板 35",
+        "size": {
+          "x": 600,
+          "y": 300,
+          "z": 18
+        },
+        "transform": {
+          "position": [
+            2600,
+            150,
+            1200
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ]
+        },
+        "material": "plywood",
+        "operations": [
+          {
+            "id": "op-part-586366c1-0",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -250,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-586366c1-1",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -150,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-586366c1-2",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -50,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-586366c1-3",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              50,
+              -80,
+              0
+            ]
+          }
+        ],
+        "visible": true,
+        "locked": false,
+        "createdAt": "2026-09-22T05:01:47.090Z"
+      },
+      {
+        "id": "part-dfadc8bf",
+        "kind": "wood",
+        "name": "検証板 36",
+        "size": {
+          "x": 600,
+          "y": 300,
+          "z": 18
+        },
+        "transform": {
+          "position": [
+            3250,
+            150,
+            1200
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ]
+        },
+        "material": "plywood",
+        "operations": [
+          {
+            "id": "op-part-dfadc8bf-0",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -250,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-dfadc8bf-1",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -150,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-dfadc8bf-2",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -50,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-dfadc8bf-3",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              50,
+              -80,
+              0
+            ]
+          }
+        ],
+        "visible": true,
+        "locked": false,
+        "createdAt": "2026-09-22T05:01:47.090Z"
+      },
+      {
+        "id": "part-7a177ee4",
+        "kind": "wood",
+        "name": "検証板 37",
+        "size": {
+          "x": 600,
+          "y": 300,
+          "z": 18
+        },
+        "transform": {
+          "position": [
+            3900,
+            150,
+            1200
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ]
+        },
+        "material": "plywood",
+        "operations": [
+          {
+            "id": "op-part-7a177ee4-0",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -250,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-7a177ee4-1",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -150,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-7a177ee4-2",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -50,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-7a177ee4-3",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              50,
+              -80,
+              0
+            ]
+          }
+        ],
+        "visible": true,
+        "locked": false,
+        "createdAt": "2026-09-22T05:01:47.090Z"
+      },
+      {
+        "id": "part-69493c62",
+        "kind": "wood",
+        "name": "検証板 38",
+        "size": {
+          "x": 600,
+          "y": 300,
+          "z": 18
+        },
+        "transform": {
+          "position": [
+            4550,
+            150,
+            1200
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ]
+        },
+        "material": "plywood",
+        "operations": [
+          {
+            "id": "op-part-69493c62-0",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -250,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-69493c62-1",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -150,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-69493c62-2",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -50,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-69493c62-3",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              50,
+              -80,
+              0
+            ]
+          }
+        ],
+        "visible": true,
+        "locked": false,
+        "createdAt": "2026-09-22T05:01:47.090Z"
+      },
+      {
+        "id": "part-7dc7fdf9",
+        "kind": "wood",
+        "name": "検証板 39",
+        "size": {
+          "x": 600,
+          "y": 300,
+          "z": 18
+        },
+        "transform": {
+          "position": [
+            5200,
+            150,
+            1200
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ]
+        },
+        "material": "plywood",
+        "operations": [
+          {
+            "id": "op-part-7dc7fdf9-0",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -250,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-7dc7fdf9-1",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -150,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-7dc7fdf9-2",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -50,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-7dc7fdf9-3",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              50,
+              -80,
+              0
+            ]
+          }
+        ],
+        "visible": true,
+        "locked": false,
+        "createdAt": "2026-09-22T05:01:47.090Z"
+      },
+      {
+        "id": "part-36b0ab8b",
+        "kind": "wood",
+        "name": "検証板 40",
+        "size": {
+          "x": 600,
+          "y": 300,
+          "z": 18
+        },
+        "transform": {
+          "position": [
+            5850,
+            150,
+            1200
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ]
+        },
+        "material": "plywood",
+        "operations": [
+          {
+            "id": "op-part-36b0ab8b-0",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -250,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-36b0ab8b-1",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -150,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-36b0ab8b-2",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -50,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-36b0ab8b-3",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              50,
+              -80,
+              0
+            ]
+          }
+        ],
+        "visible": true,
+        "locked": false,
+        "createdAt": "2026-09-22T05:01:47.090Z"
+      },
+      {
+        "id": "part-f2bd95c1",
+        "kind": "wood",
+        "name": "検証板 41",
+        "size": {
+          "x": 600,
+          "y": 300,
+          "z": 18
+        },
+        "transform": {
+          "position": [
+            0,
+            150,
+            1600
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ]
+        },
+        "material": "plywood",
+        "operations": [
+          {
+            "id": "op-part-f2bd95c1-0",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -250,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-f2bd95c1-1",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -150,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-f2bd95c1-2",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -50,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-f2bd95c1-3",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              50,
+              -80,
+              0
+            ]
+          }
+        ],
+        "visible": true,
+        "locked": false,
+        "createdAt": "2026-09-22T05:01:47.090Z"
+      },
+      {
+        "id": "part-e95da0cb",
+        "kind": "wood",
+        "name": "検証板 42",
+        "size": {
+          "x": 600,
+          "y": 300,
+          "z": 18
+        },
+        "transform": {
+          "position": [
+            650,
+            150,
+            1600
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ]
+        },
+        "material": "plywood",
+        "operations": [
+          {
+            "id": "op-part-e95da0cb-0",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -250,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-e95da0cb-1",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -150,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-e95da0cb-2",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -50,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-e95da0cb-3",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              50,
+              -80,
+              0
+            ]
+          }
+        ],
+        "visible": true,
+        "locked": false,
+        "createdAt": "2026-09-22T05:01:47.090Z"
+      },
+      {
+        "id": "part-ed624cc2",
+        "kind": "wood",
+        "name": "検証板 43",
+        "size": {
+          "x": 600,
+          "y": 300,
+          "z": 18
+        },
+        "transform": {
+          "position": [
+            1300,
+            150,
+            1600
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ]
+        },
+        "material": "plywood",
+        "operations": [
+          {
+            "id": "op-part-ed624cc2-0",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -250,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-ed624cc2-1",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -150,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-ed624cc2-2",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -50,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-ed624cc2-3",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              50,
+              -80,
+              0
+            ]
+          }
+        ],
+        "visible": true,
+        "locked": false,
+        "createdAt": "2026-09-22T05:01:47.090Z"
+      },
+      {
+        "id": "part-8d72ddc7",
+        "kind": "wood",
+        "name": "検証板 44",
+        "size": {
+          "x": 600,
+          "y": 300,
+          "z": 18
+        },
+        "transform": {
+          "position": [
+            1950,
+            150,
+            1600
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ]
+        },
+        "material": "plywood",
+        "operations": [
+          {
+            "id": "op-part-8d72ddc7-0",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -250,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-8d72ddc7-1",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -150,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-8d72ddc7-2",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -50,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-8d72ddc7-3",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              50,
+              -80,
+              0
+            ]
+          }
+        ],
+        "visible": true,
+        "locked": false,
+        "createdAt": "2026-09-22T05:01:47.090Z"
+      },
+      {
+        "id": "part-ab8046aa",
+        "kind": "wood",
+        "name": "検証板 45",
+        "size": {
+          "x": 600,
+          "y": 300,
+          "z": 18
+        },
+        "transform": {
+          "position": [
+            2600,
+            150,
+            1600
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ]
+        },
+        "material": "plywood",
+        "operations": [
+          {
+            "id": "op-part-ab8046aa-0",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -250,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-ab8046aa-1",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -150,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-ab8046aa-2",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -50,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-ab8046aa-3",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              50,
+              -80,
+              0
+            ]
+          }
+        ],
+        "visible": true,
+        "locked": false,
+        "createdAt": "2026-09-22T05:01:47.090Z"
+      },
+      {
+        "id": "part-7547bb9e",
+        "kind": "wood",
+        "name": "検証板 46",
+        "size": {
+          "x": 600,
+          "y": 300,
+          "z": 18
+        },
+        "transform": {
+          "position": [
+            3250,
+            150,
+            1600
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ]
+        },
+        "material": "plywood",
+        "operations": [
+          {
+            "id": "op-part-7547bb9e-0",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -250,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-7547bb9e-1",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -150,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-7547bb9e-2",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -50,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-7547bb9e-3",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              50,
+              -80,
+              0
+            ]
+          }
+        ],
+        "visible": true,
+        "locked": false,
+        "createdAt": "2026-09-22T05:01:47.090Z"
+      },
+      {
+        "id": "part-e32c8141",
+        "kind": "wood",
+        "name": "検証板 47",
+        "size": {
+          "x": 600,
+          "y": 300,
+          "z": 18
+        },
+        "transform": {
+          "position": [
+            3900,
+            150,
+            1600
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ]
+        },
+        "material": "plywood",
+        "operations": [
+          {
+            "id": "op-part-e32c8141-0",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -250,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-e32c8141-1",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -150,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-e32c8141-2",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -50,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-e32c8141-3",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              50,
+              -80,
+              0
+            ]
+          }
+        ],
+        "visible": true,
+        "locked": false,
+        "createdAt": "2026-09-22T05:01:47.090Z"
+      },
+      {
+        "id": "part-9c088e5c",
+        "kind": "wood",
+        "name": "検証板 48",
+        "size": {
+          "x": 600,
+          "y": 300,
+          "z": 18
+        },
+        "transform": {
+          "position": [
+            4550,
+            150,
+            1600
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ]
+        },
+        "material": "plywood",
+        "operations": [
+          {
+            "id": "op-part-9c088e5c-0",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -250,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-9c088e5c-1",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -150,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-9c088e5c-2",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -50,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-9c088e5c-3",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              50,
+              -80,
+              0
+            ]
+          }
+        ],
+        "visible": true,
+        "locked": false,
+        "createdAt": "2026-09-22T05:01:47.090Z"
+      },
+      {
+        "id": "part-5e5b5ff7",
+        "kind": "wood",
+        "name": "検証板 49",
+        "size": {
+          "x": 600,
+          "y": 300,
+          "z": 18
+        },
+        "transform": {
+          "position": [
+            5200,
+            150,
+            1600
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ]
+        },
+        "material": "plywood",
+        "operations": [
+          {
+            "id": "op-part-5e5b5ff7-0",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -250,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-5e5b5ff7-1",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -150,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-5e5b5ff7-2",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -50,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-5e5b5ff7-3",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              50,
+              -80,
+              0
+            ]
+          }
+        ],
+        "visible": true,
+        "locked": false,
+        "createdAt": "2026-09-22T05:01:47.090Z"
+      },
+      {
+        "id": "part-07ecc1ee",
+        "kind": "wood",
+        "name": "検証板 50",
+        "size": {
+          "x": 600,
+          "y": 300,
+          "z": 18
+        },
+        "transform": {
+          "position": [
+            5850,
+            150,
+            1600
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ]
+        },
+        "material": "plywood",
+        "operations": [
+          {
+            "id": "op-part-07ecc1ee-0",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -250,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-07ecc1ee-1",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -150,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-07ecc1ee-2",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              -50,
+              -80,
+              0
+            ]
+          },
+          {
+            "id": "op-part-07ecc1ee-3",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "direction": "-z",
+            "position": [
+              50,
+              -80,
+              0
+            ]
+          }
+        ],
+        "visible": true,
+        "locked": false,
+        "createdAt": "2026-09-22T05:01:47.090Z"
+      }
+    ],
+    "createdAt": "2026-09-22T05:01:47.089Z",
+    "updatedAt": "2026-09-22T05:01:47.089Z"
+  }
+}

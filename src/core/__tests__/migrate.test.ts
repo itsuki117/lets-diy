@@ -3,16 +3,23 @@ import { migrate } from '../project/migrate';
 import { AppError } from '../result';
 import { SCHEMA_VERSION } from '../types';
 
+const docAt = (version: number, project: Record<string, unknown> = { parts: [] }) => ({
+  app: 'lets-diy',
+  schemaVersion: version,
+  savedAt: '2026-09-20T00:00:00.000Z',
+  project,
+});
+
 describe('migrate', () => {
   it('現行バージョンは素通し', () => {
-    const doc = { schemaVersion: SCHEMA_VERSION, app: 'lets-diy' };
+    const doc = docAt(SCHEMA_VERSION, { parts: [], joints: [], hardware: [], gasSprings: [] });
     expect(migrate(doc)).toEqual(doc);
   });
 
   it('未来のバージョンは UNSUPPORTED_VERSION', () => {
-    expect(() => migrate({ schemaVersion: SCHEMA_VERSION + 1 })).toThrow(AppError);
+    expect(() => migrate(docAt(SCHEMA_VERSION + 1))).toThrow(AppError);
     try {
-      migrate({ schemaVersion: SCHEMA_VERSION + 1 });
+      migrate(docAt(SCHEMA_VERSION + 1));
     } catch (error) {
       expect((error as AppError).code).toBe('UNSUPPORTED_VERSION');
     }
@@ -20,7 +27,7 @@ describe('migrate', () => {
 
   it('変換手順がない古いバージョンは MIGRATION_MISSING', () => {
     try {
-      migrate({ schemaVersion: 0 });
+      migrate(docAt(0));
       expect.unreachable();
     } catch (error) {
       expect((error as AppError).code).toBe('MIGRATION_MISSING');
@@ -37,21 +44,32 @@ describe('migrate', () => {
   });
 });
 
-describe('migrate: 版上げ（アーチ切り欠き / 角丸の追加）', () => {
-  it('v1 のファイルは変換を通って現行バージョンになる', () => {
-    const v1 = { app: 'lets-diy', schemaVersion: 1, savedAt: '2026-09-22T00:00:00.000Z', project: { parts: [] } };
-    const out = migrate(v1);
+describe('migrate: v1 / v2 / v3 から v4 へ', () => {
+  it('現行バージョンは 4', () => {
+    expect(SCHEMA_VERSION).toBe(4);
+  });
+
+  it.each([1, 2, 3])('v%i のファイルが現行バージョンになる', (version) => {
+    const out = migrate(docAt(version));
     expect(out.schemaVersion).toBe(SCHEMA_VERSION);
-    // 加工データの変換は不要なので中身は変わらない
-    expect(out.project).toEqual({ parts: [] });
   });
 
-  it('v2 のファイルも現行バージョンになる', () => {
-    const v2 = { app: 'lets-diy', schemaVersion: 2, savedAt: '2026-09-22T00:00:00.000Z', project: { parts: [] } };
-    expect(migrate(v2).schemaVersion).toBe(SCHEMA_VERSION);
+  it.each([1, 2, 3])('v%i から変換すると可動・金物の配列が空で足される', (version) => {
+    const out = migrate(docAt(version)) as { project: Record<string, unknown> };
+    expect(out.project.joints).toEqual([]);
+    expect(out.project.hardware).toEqual([]);
+    expect(out.project.gasSprings).toEqual([]);
   });
 
-  it('現行バージョンは 3', () => {
-    expect(SCHEMA_VERSION).toBe(3);
+  it('既存の parts は変換で壊れない', () => {
+    const parts = [{ id: 'part-1', name: 'A' }];
+    const out = migrate(docAt(1, { parts })) as { project: { parts: unknown } };
+    expect(out.project.parts).toEqual(parts);
+  });
+
+  it('すでに配列を持っている v3 ファイルは上書きしない', () => {
+    const joints = [{ id: 'jnt-1' }];
+    const out = migrate(docAt(3, { parts: [], joints })) as { project: { joints: unknown } };
+    expect(out.project.joints).toEqual(joints);
   });
 });

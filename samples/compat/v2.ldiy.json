@@ -1,0 +1,73 @@
+{
+  "app": "lets-diy",
+  "schemaVersion": 2,
+  "savedAt": "2026-09-20T00:00:00.000Z",
+  "project": {
+    "id": "prj-compat02",
+    "name": "互換検体 v2（アーチ）",
+    "unit": "mm",
+    "parts": [
+      {
+        "id": "part-v2side",
+        "kind": "wood",
+        "name": "側板",
+        "size": {
+          "x": 600,
+          "y": 300,
+          "z": 18
+        },
+        "transform": {
+          "position": [
+            0,
+            150,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ]
+        },
+        "material": "plywood",
+        "operations": [
+          {
+            "id": "op-arch0001",
+            "type": "arch",
+            "enabled": true,
+            "width": 150,
+            "height": 100,
+            "rise": 75,
+            "depth": 9,
+            "through": true,
+            "position": [
+              0,
+              -110,
+              0
+            ],
+            "direction": "-z",
+            "rotation": 0
+          },
+          {
+            "id": "op-hole0001",
+            "type": "roundHole",
+            "enabled": true,
+            "diameter": 8,
+            "depth": 9,
+            "through": true,
+            "position": [
+              -200,
+              50,
+              0
+            ],
+            "direction": "-z"
+          }
+        ],
+        "visible": true,
+        "locked": false,
+        "createdAt": "2026-09-20T00:00:00.000Z"
+      }
+    ],
+    "createdAt": "2026-09-20T00:00:00.000Z",
+    "updatedAt": "2026-09-20T00:00:00.000Z"
+  }
+}
