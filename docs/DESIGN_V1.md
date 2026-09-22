@@ -2,7 +2,7 @@
 
 - ステータス: 確定（Codex 実装開始可）
 - 対象バージョン: Ver.1
-- 最終更新: 2026-09-22
+- 最終更新: 2026-09-22（§3.8 UI デザイン規則を追加、§12.4 の符号を修正）
 - 関連: [PHASES_V1.md](./PHASES_V1.md)（実装フェーズ・完成条件）
 
 ---
@@ -170,7 +170,7 @@ AI設計支援 / AI部品生成 / STL・STEP出力 / 物理演算 / 可動シミ
 ```
 ┌─────────────────────────────────────────────────────────────────────┐
 │ TopBar (48px)                                                        │
-│ [Let's DIY] [新規][開く][保存][JSON書出] │ [↶ Undo][↷ Redo] │        │
+│ [Let's DIY] [新規][開く][保存][JSON書出] │ [元に戻す][やり直す] │        │
 │                              [表示:グリッド/影/ワイヤー] │ プロジェクト名 │
 ├───────────────┬─────────────────────────────────┬───────────────────┤
 │ LeftPanel     │  Viewport                        │ RightPanel        │
@@ -178,18 +178,18 @@ AI設計支援 / AI部品生成 / STL・STEP出力 / 物理演算 / 可動シミ
 │               │                                  │                   │
 │ ┌───────────┐ │  ┌────────────────────────────┐ │ 選択: 側板 A      │
 │ │生成│配置│加工│ │  │ モードヒントバー(上部中央)  │ │ ─────────────    │
-│ └───────────┘ │  └────────────────────────────┘ │ ▸ 基本情報        │
+│ └───────────┘ │  └────────────────────────────┘ │ > 基本情報        │
 │               │                                  │   名前 / 材質     │
-│  モード別      │         3D シーン                 │ ▸ 寸法 (mm)      │
+│  モード別      │         3D シーン                 │ > 寸法 (mm)      │
 │  フォーム      │                                  │   幅/高さ/厚み    │
-│               │                                  │ ▸ 位置 (mm)      │
+│               │                                  │ > 位置 (mm)      │
 │               │  [視点: 正面/上/右/等角] (右下)    │   X / Y / Z      │
-│               │  [軸ジズモ] (左下)                │ ▸ 回転 (°)       │
+│               │  [軸ジズモ] (左下)                │ > 回転 (°)       │
 ├───────────────┤                                  │   X / Y / Z      │
-│ パーツ一覧     │                                  │ ▸ 加工 (3)       │
-│ ☑ 側板 A      │                                  │   ● 丸穴 φ8 貫通  │
-│ ☑ 側板 B      │                                  │   ● 丸穴 φ8 貫通  │
-│ ☐ 天板        │                                  │   ● 切断 X=450   │
+│ パーツ一覧     │                                  │ > 加工 (3)       │
+│ [x] 側板 A      │                                  │   - 丸穴 φ8 貫通  │
+│ [x] 側板 B      │                                  │   - 丸穴 φ8 貫通  │
+│ [ ] 天板        │                                  │   - 切断 X=450   │
 │ (flex:1,スクロール)│                              │   [+ 加工を追加]  │
 ├───────────────┴─────────────────────────────────┴───────────────────┤
 │ StatusBar (28px)  選択 1 / 3 ｜ グリッド 10mm ｜ 角度 90° ｜ 単位 mm   │
@@ -215,12 +215,12 @@ AI設計支援 / AI部品生成 / STL・STEP出力 / 物理演算 / 可動シミ
   高さ (Y)   [  300 ] mm
   厚み (Z)   [   18 ] mm
 
-材質  [ 合板 ▾ ]
+材質  [ 合板         v ]
 名前  [ 側板 A          ]   ← 空なら「木材 1」を自動採番
 
 配置先
   ( ) 原点
-  (•) 選択中の部材の右隣
+  (*) 選択中の部材の右隣
   ( ) カメラ注視点
 
           [ 木材を生成する ]
@@ -232,14 +232,14 @@ AI設計支援 / AI部品生成 / STL・STEP出力 / 物理演算 / 可動シミ
 ギズモ        [ 移動 (G) ] [ 回転 (R) ]
 
 スナップ
-  グリッド   [OFF] [1] [5] [•10] mm
-  角度       [OFF] [15] [45] [•90] °
+  グリッド   [OFF] [1] [5] [*10] mm
+  角度       [OFF] [15] [45] [*90] °
 
 面スナップ
   [ 面スナップを開始 ]
-  ① 動かす部材の面をクリック  → 側板A / +X 面 ✓
-  ② 接触させる相手の面をクリック → 天板 / -X 面 ✓
-  隙間 [ 0 ] mm   ☐ 面の中心を合わせる
+  ① 動かす部材の面をクリック  → 側板A / +X 面 [選択済み]
+  ② 接触させる相手の面をクリック → 天板 / -X 面 [選択済み]
+  隙間 [ 0 ] mm   [ ] 面の中心を合わせる
   [ 適用 ]  [ やめる ]
 
 整列（2つ以上選択時）
@@ -261,20 +261,20 @@ AI設計支援 / AI部品生成 / STL・STEP出力 / 物理演算 / 可動シミ
 
 ── 丸穴 ──────────────────
   直径     [  8 ] mm
-  ☑ 貫通させる
+  [x] 貫通させる
   深さ     [ 18 ] mm   （貫通時は無効化）
-  方向     [ -Z 面から ▾ ]
-  位置の基準 ( ) 中心原点  (•) コーナー原点(X-,Y-,Z-)
+  方向     [ -Z 面から   v ]
+  位置の基準 ( ) 中心原点  (*) コーナー原点(X-,Y-,Z-)
   X [ 100 ]  Y [  50 ]  Z [   0 ] mm
 
-  ⚠ 穴の中心が部材の端から 4mm しかありません
+  [!] 穴の中心が部材の端から 4mm しかありません
 
   [ プレビュー中 ]      [ 加工を実行 ]  [ キャンセル ]
 
 この部材の加工 (3)
-  ☑ 丸穴 φ8 貫通 @ (100, 50)      [編集] [削除]
-  ☑ 丸穴 φ8 貫通 @ (500, 50)      [編集] [削除]
-  ☐ 切断 X = 450 / 左を残す        [編集] [削除]
+  [x] 丸穴 φ8 貫通 @ (100, 50)      [編集] [削除]
+  [x] 丸穴 φ8 貫通 @ (500, 50)      [編集] [削除]
+  [ ] 切断 X = 450 / 左を残す        [編集] [削除]
 ```
 
 ### 3.5 RightPanel: プロパティ
@@ -320,6 +320,75 @@ export const PREVIEW_COLOR   = 0xff4444;
 ```
 
 `MeshStandardMaterial` はマテリアル種別ごとに **1 インスタンスを共有**する（部材ごとに new しない）。選択状態はマテリアル差し替えではなくアウトライン追加で表現し、マテリアル再生成を避ける。
+
+### 3.8 UI デザイン規則（拘束力あり）
+
+本節は Ver.1 全 Phase に適用される。**§3.1〜§3.4 のワイヤーフレーム内の記号は、レイアウトを示すための代用表記であり、実装時にそのまま画面へ出してはならない。**
+
+#### 規則 1: 絵文字・記号文字を UI に出さない（MUST NOT）
+
+アイコンが必要な箇所は **すべて `lucide-react` のコンポーネント**で描く。
+以下の文字を JSX・CSS の `content`・文字列リテラルとして画面に出すことを禁止する。
+
+```
+禁止: ✅ ❌ ⚠️ ⚠ ★ ☆ ● ○ ☑ ☐ ▸ ▾ ► ✓ ✗ ↶ ↷ 🔒 👁 📁 💾 ⚙ ℹ️ など一切の絵文字・幾何記号
+```
+
+代替の対応表（Lucide のコンポーネント名）:
+
+| 用途 | Lucide |
+|------|--------|
+| チェックボックス | ネイティブ `<input type="checkbox">`（記号文字で描かない） |
+| チェック済み・成功 | `Check` / `CircleCheck` |
+| エラー | `CircleAlert` |
+| 警告 | `TriangleAlert` |
+| 情報 | `Info` |
+| 元に戻す / やり直す | `Undo2` / `Redo2` |
+| 折りたたみ見出し | `ChevronRight` / `ChevronDown` |
+| 表示 / 非表示 | `Eye` / `EyeOff` |
+| ロック / 解除 | `Lock` / `LockOpen` |
+| 部材・パーツ | `Box` |
+| 生成 / 配置 / 加工モード | `Plus` / `Move3d` / `Drill` |
+| 複製 / 削除 | `Copy` / `Trash2` |
+| 保存 / 開く / 新規 | `Save` / `FolderOpen` / `FilePlus2` |
+| 加工の種類（丸穴 / 角穴 / 切り欠き / 切断） | `Circle` / `Square` / `SquareDashedBottom` / `Scissors` |
+| 整列 | `AlignStartVertical` / `AlignCenterVertical` / `AlignEndVertical` |
+| 面スナップ | `Magnet` |
+| リスト行のドラッグ | `GripVertical` |
+
+**アイコン単独のボタンには必ず `aria-label` と `title` を付ける。** テキストラベルが併記されている場合、アイコンは `aria-hidden` にする。
+サイズは 14 / 16 / 21 / 30 px のいずれかに揃え、`strokeWidth` は既定（2）を使う。
+
+#### 規則 2: 左縁アクセントボーダーのカードを使わない（MUST NOT）
+
+警告・エラー・ヒント・注記などを、色付きの `border-left` を持つカードで表現してはならない。
+
+```css
+/* 禁止 */
+.warning { border-left: 3px solid var(--accent); background: #3a3229; padding: 12px; }
+```
+
+状態は次の 3 要素だけで伝える。
+
+1. **Lucide アイコン**（`TriangleAlert` / `CircleAlert` / `Info`）
+2. **文字色**（`--warning` / `--error` / `--muted`）
+3. 必要なら **全周 1px ボーダー**（`border: 1px solid var(--border)`）
+
+```css
+/* 可 */
+.notice { display: flex; gap: 8px; align-items: flex-start; color: var(--warning); font-size: 12px; }
+.notice-boxed { border: 1px solid var(--border); border-radius: 6px; padding: 10px 12px; }
+```
+
+背景色での塗り分けは、**アクティブなタブ 1 箇所のみ**に留める（現行の `.mode-tabs .active`）。
+入力欄のエラー表示は枠線の色変更（全周）とし、左縁だけを着色しない。
+
+#### 規則 3: 付随ルール
+
+- 区切りとしての `border-left`（トップバーの仕切り、パネルの外周）は規則 2 の対象外。**「カード状のまとまりの左端を着色する」パターンだけを禁止する。**
+- 状態色は CSS 変数に集約する: `--accent` `--error` `--warning` `--success` `--muted`。ハードコードした hex を新規に増やさない。
+- 角丸は `5px`（コントロール）と `6px`（パネル・カード）の 2 種類のみ。
+- 影（`box-shadow`）は使わない。境界はすべて 1px ボーダーで表現する（CAD らしい平坦な見た目を保つ）。
 
 ---
 
@@ -369,7 +438,7 @@ export const PREVIEW_COLOR   = 0xff4444;
 
 | 候補 | 評価 |
 |------|------|
-| **three-bvh-csg** | ✅ 採用。three.js 専用で `BufferGeometry` を直に扱える。BVH による高速化。矩形＋円筒の減算という Ver.1 の用途に十分。API が `Evaluator.evaluate(brushA, brushB, SUBTRACTION)` と単純 |
+| **three-bvh-csg** | **採用**。three.js 専用で `BufferGeometry` を直に扱える。BVH による高速化。矩形＋円筒の減算という Ver.1 の用途に十分。API が `Evaluator.evaluate(brushA, brushB, SUBTRACTION)` と単純 |
 | manifold-3d | 幾何学的堅牢性は最高（WASM）。ただし WASM ロード・型変換のオーバーヘッドと学習コストが Ver.1 には過剰。**Ver.2 で堅牢性が問題になった場合の差し替え先**として想定する |
 | three-csg-ts / ThreeCSG | メンテナンス停滞・大きなメッシュで破綻しやすい。不採用 |
 
@@ -527,7 +596,7 @@ lets-diy/
    ├─ App.tsx                        # AppShell のみを描画
    │
    ├─ core/                          # 純粋 TS（three/react 禁止）
-   │  ├─ types.ts                    # ★ 全ドメイン型（§8）
+   │  ├─ types.ts                    # * 全ドメイン型（§8）
    │  ├─ constants.ts                # SCENE_SCALE, EPS, 既定値, 上限値
    │  ├─ ids.ts                      # createPartId / createOperationId
    │  ├─ result.ts                   # Result<T, E> / Validation 型
@@ -546,10 +615,10 @@ lets-diy/
    │  │  ├─ operationDefaults.ts     # 種類ごとの初期パラメータ
    │  │  ├─ operationLabel.ts        # 「丸穴 φ8 貫通 @ (100, 50)」の表示文字列
    │  │  ├─ operationValidate.ts     # errors / warnings を返す
-   │  │  └─ toolSolid.ts             # ★ Operation → ToolSolidSpec（純粋・数値のみ）
+   │  │  └─ toolSolid.ts             # * Operation → ToolSolidSpec（純粋・数値のみ）
    │  ├─ snap/
    │  │  ├─ gridSnap.ts              # snapValue / snapVec3
-   │  │  ├─ faceSnap.ts              # ★ 面スナップの Transform 計算
+   │  │  ├─ faceSnap.ts              # * 面スナップの Transform 計算
    │  │  └─ align.ts                 # 整列（min/center/max）
    │  └─ project/
    │     ├─ createProject.ts
@@ -560,19 +629,19 @@ lets-diy/
    ├─ geometry/                      # three 依存・React 非依存
    │  ├─ boxGeometry.ts              # 中心原点の BoxGeometry 生成
    │  ├─ toolGeometry.ts             # ToolSolidSpec → BufferGeometry（配置済み）
-   │  ├─ geometryBuilder.ts          # ★ Part → BufferGeometry（CSG 適用）
+   │  ├─ geometryBuilder.ts          # * Part → BufferGeometry（CSG 適用）
    │  ├─ edgesGeometry.ts            # アウトライン用 EdgesGeometry 生成
-   │  ├─ GeometryCache.ts            # ★ partId → {hash, geometry} + dispose 管理
+   │  ├─ GeometryCache.ts            # * partId → {hash, geometry} + dispose 管理
    │  ├─ transformUtils.ts           # Transform → THREE.Matrix4 / Euler
    │  └─ csg/
-   │     ├─ CsgEngine.ts             # ★ インターフェース定義
+   │     ├─ CsgEngine.ts             # * インターフェース定義
    │     ├─ BvhCsgEngine.ts          # three-bvh-csg 実装（唯一の直接 import）
    │     └─ index.ts                 # getCsgEngine() シングルトン
    │
    ├─ store/                         # zustand（three/react 禁止）
-   │  ├─ useProjectStore.ts          # ★ Project 本体 + 履歴
-   │  ├─ useEditorStore.ts           # ★ モード/選択/スナップ/プレビュー（履歴対象外）
-   │  ├─ history.ts                  # ★ patches ベースの Undo/Redo
+   │  ├─ useProjectStore.ts          # * Project 本体 + 履歴
+   │  ├─ useEditorStore.ts           # * モード/選択/スナップ/プレビュー（履歴対象外）
+   │  ├─ history.ts                  # * patches ベースの Undo/Redo
    │  ├─ selectors.ts               # getSelectedPart など派生値
    │  └─ commands/
    │     ├─ partCommands.ts          # addPart/removeParts/duplicateParts/renamePart/resizePart
@@ -586,14 +655,14 @@ lets-diy/
    │  ├─ Lighting.tsx
    │  ├─ GridFloor.tsx
    │  ├─ PartsLayer.tsx              # parts.map → <PartMesh>
-   │  ├─ PartMesh.tsx                # ★ 1部材の表示・ピッキング（React.memo）
+   │  ├─ PartMesh.tsx                # * 1部材の表示・ピッキング（React.memo）
    │  ├─ SelectionOutline.tsx
-   │  ├─ TransformGizmo.tsx          # ★ drei TransformControls のラップ
-   │  ├─ OperationPreview.tsx        # ★ 半透明ツール立体
+   │  ├─ TransformGizmo.tsx          # * drei TransformControls のラップ
+   │  ├─ OperationPreview.tsx        # * 半透明ツール立体
    │  ├─ FacePickOverlay.tsx         # 面スナップ用の面ハイライト＆ピック
    │  ├─ ViewCube.tsx                # 右下の視点ボタン群
    │  ├─ hooks/
-   │  │  ├─ usePartGeometry.ts       # ★ GeometryCache と React を繋ぐ
+   │  │  ├─ usePartGeometry.ts       # * GeometryCache と React を繋ぐ
    │  │  ├─ useInvalidateOnStore.ts  # ストア変化で invalidate()
    │  │  └─ usePointerPick.ts        # クリック→partId/面 の解決
    │  └─ materials/
@@ -614,7 +683,7 @@ lets-diy/
    │  │  ├─ FaceSnapWizard.tsx
    │  │  ├─ AlignTools.tsx
    │  │  ├─ MachinePanel.tsx         # 加工モード
-   │  │  ├─ OperationForm.tsx        # ★ 種類別パラメータ入力
+   │  │  ├─ OperationForm.tsx        # * 種類別パラメータ入力
    │  │  └─ PartOutliner.tsx
    │  ├─ right/
    │  │  ├─ PropertyPanel.tsx
@@ -623,7 +692,7 @@ lets-diy/
    │  │  ├─ TransformSection.tsx
    │  │  └─ OperationListSection.tsx
    │  ├─ common/
-   │  │  ├─ NumberField.tsx          # ★ 数値入力の共通実装
+   │  │  ├─ NumberField.tsx          # * 数値入力の共通実装
    │  │  ├─ Vec3Field.tsx
    │  │  ├─ SegmentedControl.tsx
    │  │  ├─ Section.tsx              # 折りたたみ見出し
@@ -637,7 +706,7 @@ lets-diy/
    │     └─ useToast.ts
    │
    ├─ io/
-   │  ├─ ProjectRepository.ts        # ★ 保存先の抽象（将来サーバー化の受け口）
+   │  ├─ ProjectRepository.ts        # * 保存先の抽象（将来サーバー化の受け口）
    │  ├─ LocalStorageRepository.ts
    │  ├─ fileDownload.ts             # JSON 書き出し
    │  ├─ fileOpen.ts                 # JSON 読み込み
@@ -647,7 +716,7 @@ lets-diy/
       └─ index.css                   # Tailwind エントリ + CSS 変数
 ```
 
-`★` が付いたファイルは本設計の中核。実装時に迷ったら §9 の責務表と該当章を参照すること。
+`*` が付いたファイルは本設計の中核。実装時に迷ったら §9 の責務表と該当章を参照すること。
 
 ---
 
@@ -1153,7 +1222,7 @@ interface NumberFieldProps {
 ```tsx
 // src/viewport/Viewport.tsx
 <Canvas
-  frameloop="demand"              // ★ 変化があるときだけ描画
+  frameloop="demand"              // * 変化があるときだけ描画
   shadows
   dpr={[1, 2]}
   gl={{ antialias: true, preserveDrawingBuffer: false }}
@@ -1337,13 +1406,13 @@ export function computeAlignedPositions(
 
 | 機能 | Ver.1 | 判断根拠 |
 |------|-------|----------|
-| グリッドスナップ | ✅ 実装 | 実装コスト極小、効果大。TransformControls が標準対応 |
-| 角度スナップ | ✅ 実装 | 同上。90° があると箱組みが一気に楽になる |
-| 面スナップ | ✅ 実装 | 家具設計の中核。ただし「面を 2 つ選ぶウィザード」に限定し、ドラッグ中の自動吸着は Ver.2 |
-| 整列（Align） | ✅ 実装 | エッジスナップの実用ニーズの大半を、はるかに安い実装で満たす |
-| エッジスナップ | ❌ 非実装 | ドラッグ中に全部材のエッジを毎フレーム評価する必要があり、空間インデックスと吸着 UI の設計が必要。Ver.1 のコスト対効果が悪い |
-| 頂点スナップ | ❌ 非実装 | 同上 |
-| ドラッグ中の自動面吸着 | ❌ 非実装 | Ver.2。Ver.1 はウィザード方式で同じ結果を得られる |
+| グリッドスナップ | 実装する | 実装コスト極小、効果大。TransformControls が標準対応 |
+| 角度スナップ | 実装する | 同上。90° があると箱組みが一気に楽になる |
+| 面スナップ | 実装する | 家具設計の中核。ただし「面を 2 つ選ぶウィザード」に限定し、ドラッグ中の自動吸着は Ver.2 |
+| 整列（Align） | 実装する | エッジスナップの実用ニーズの大半を、はるかに安い実装で満たす |
+| エッジスナップ | 実装しない | ドラッグ中に全部材のエッジを毎フレーム評価する必要があり、空間インデックスと吸着 UI の設計が必要。Ver.1 のコスト対効果が悪い |
+| 頂点スナップ | 実装しない | 同上 |
+| ドラッグ中の自動面吸着 | 実装しない | Ver.2。Ver.1 はウィザード方式で同じ結果を得られる |
 
 **この判断が本設計の最大のトレードオフである。** 「選択 → 数値入力 → 実行」という本アプリの操作哲学に、ウィザード方式の面スナップは完全に一致しており、ドラッグ吸着より初心者に分かりやすい。
 
@@ -1422,8 +1491,14 @@ export function computeFaceSnapTransform(args: FaceSnapArgs): Transform;
    - 求めた回転を source の既存回転に合成し、度に戻して `rotation` とする。
 3. **平行移動**: 姿勢合わせ後の source について、
    - `pA` = source 面の中心（ワールド）、`pB` = target 面の中心（ワールド）
-   - 法線方向の移動量 `d = dot(pB - pA, nB) - gap`
+   - 法線方向の移動量 `d = dot(pB - pA, nB) + gap`
    - `position += nB * d`
+
+   > **符号について（2026-09-22 修正）**: `nB` は target の**外向き**法線である。
+   > source は target の面の外側に接するので、目標平面は `pB + nB * gap`。
+   > したがって `d = dot((pB + nB * gap) - pA, nB) = dot(pB - pA, nB) + gap` となり、
+   > 正の `gap` がそのまま「隙間」になる。`gap = 0` で密着、負値でめり込む。
+   > （初版は `- gap` と記載していたが符号が逆だった。Codex の指摘により修正。）
 4. **中心合わせ**（`centerAlign === true` のとき）: `nB` に直交する 2 軸方向についても `pB - pA` の成分だけ移動する。
    - `false` のときは法線方向のみ動かし、他 2 軸は保持する（ユーザーが決めた位置を壊さない）。
 5. 結果の `position` を、グリッドスナップが ON なら `snapValue` に通す。ただし **法線方向の接触がずれないよう、スナップは中心合わせ軸のみに適用**する。
@@ -1641,14 +1716,14 @@ export async function buildPartGeometry(part: Part): Promise<GeometryBuildResult
         warnings.push({ operationId: op.id, message: '形状が消滅するため適用できません' });
         continue;                    // current を維持して次へ
       }
-      current.dispose();             // ★ 中間結果を解放
+      current.dispose();             // * 中間結果を解放
       current = next;
     } catch (e) {
       failedOperationIds.push(op.id);
       warnings.push({ operationId: op.id, message: '加工の計算に失敗しました' });
       console.error('[csg] operation failed', { partId: part.id, op }, e);
     } finally {
-      tool.dispose();                // ★ ツール立体は毎回解放
+      tool.dispose();                // * ツール立体は毎回解放
     }
   }
 
@@ -1779,24 +1854,24 @@ abortTransient(): void {
 
 | 対象 | 履歴 |
 |------|------|
-| 部材の追加・削除・複製・リネーム | ✅ |
-| 寸法・材質の変更 | ✅ |
-| 位置・回転の変更（確定時） | ✅ |
-| 加工の追加・更新・削除・有効無効・並べ替え | ✅ |
-| 整列・面スナップの適用 | ✅ |
-| プロジェクト名の変更 | ✅ |
-| 選択・ホバー | ❌ |
-| モード切替・タブ切替 | ❌ |
-| スナップ設定・表示オプション | ❌ |
-| カメラ視点 | ❌ |
-| 加工の下書き（draft）編集 | ❌ |
-| ファイル読み込み | ❌（履歴をクリアする） |
+| 部材の追加・削除・複製・リネーム | 記録する |
+| 寸法・材質の変更 | 記録する |
+| 位置・回転の変更（確定時） | 記録する |
+| 加工の追加・更新・削除・有効無効・並べ替え | 記録する |
+| 整列・面スナップの適用 | 記録する |
+| プロジェクト名の変更 | 記録する |
+| 選択・ホバー | 記録しない |
+| モード切替・タブ切替 | 記録しない |
+| スナップ設定・表示オプション | 記録しない |
+| カメラ視点 | 記録しない |
+| 加工の下書き（draft）編集 | 記録しない |
+| ファイル読み込み | 記録しない（履歴をクリアする） |
 
 ### 15.6 UI
 
 - TopBar の Undo/Redo ボタンは `canUndo` / `canRedo` で `disabled`。
 - `title` に直前の操作ラベルを出す（例: `元に戻す: 丸穴を追加 (Ctrl+Z)`）。
-- StatusBar に「最後の操作: ○○」を表示する。
+- StatusBar に「最後の操作: <操作ラベル>」を表示する。
 
 ---
 
@@ -2002,8 +2077,8 @@ export type AppErrorCode =
 export class AppError extends Error {
   constructor(
     readonly code: AppErrorCode,
-    message: string,                          // ★ ユーザーに見せる日本語
-    readonly detail?: unknown,                // ★ console 用の技術情報
+    message: string,                          // * ユーザーに見せる日本語
+    readonly detail?: unknown,                // * console 用の技術情報
   ) { super(message); this.name = 'AppError'; }
 }
 
@@ -2019,7 +2094,7 @@ export type Result<T> =
 ```
 加工を実行 → CSG 失敗
   ├─ 形状は「その加工をスキップした状態」で表示される
-  ├─ 加工リストの該当行に ⚠ バッジと理由を表示
+  ├─ 加工リストの該当行に警告アイコン（Lucide `AlertTriangle`）と理由を表示
   ├─ Toast「加工を適用できませんでした: <理由>」
   ├─ Operation 自体はデータに残る（削除しない）
   │    → パラメータを直して再実行できる

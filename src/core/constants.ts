@@ -1,4 +1,4 @@
-import type { Size3, SnapSettings } from './types';
+import type { MaterialKind, Size3, SnapSettings } from './types';
 // src/core/constants.ts
 export const SCENE_SCALE = 1;          // 1 Three.js unit = 1 mm
 
@@ -27,3 +27,11 @@ export const MATERIAL_PRESETS = [
 ] as const;
 
 export const CYLINDER_SEGMENTS = 24;   // 丸穴の分割数
+
+export const MATERIAL_LABELS: Record<MaterialKind, string> = {
+  plywood: '合板',
+  pine: '松・SPF',
+  lauan: 'ラワン',
+  mdf: 'MDF',
+  generic: 'その他',
+};

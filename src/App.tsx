@@ -1,2 +1,25 @@
+import { useCallback, useEffect } from 'react';
+import { startStoreSync } from './store/sync';
 import { AppShell } from './ui/AppShell';
-export default function App() { return <AppShell />; }
+import { ErrorBoundary } from './ui/common/ErrorBoundary';
+import { useKeyboardShortcuts } from './ui/hooks/useKeyboardShortcuts';
+import { useProjectIo } from './ui/hooks/useProjectIo';
+import { focusOnParts } from './store/cameraCommands';
+import { Viewport } from './viewport/Viewport';
+
+export default function App() {
+  const io = useProjectIo();
+  const focus = useCallback((ids: string[]) => focusOnParts(ids), []);
+  useKeyboardShortcuts(io.saveToBrowser, focus);
+  useEffect(() => startStoreSync(), []);
+
+  return (
+    <ErrorBoundary scope="app">
+      <AppShell>
+        <ErrorBoundary scope="viewport">
+          <Viewport />
+        </ErrorBoundary>
+      </AppShell>
+    </ErrorBoundary>
+  );
+}

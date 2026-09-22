@@ -1,7 +1,7 @@
 # Let's DIY — Ver.1 実装フェーズ
 
 - 対応設計書: [DESIGN_V1.md](./DESIGN_V1.md)
-- 最終更新: 2026-09-22
+- 最終更新: 2026-09-22（DoD に UI デザイン規則を追加）
 
 ---
 
@@ -35,7 +35,11 @@ Conventional Commits を使い、1 コミットは 1 つの意味のある単位
 6. `npm run build` が成功
 7. ブラウザのコンソールにエラー・警告が出ない
 8. 「手動確認」の項目を実際に操作して確認した
-9. 設計書と実装が食い違う場合、**実装を変える前に該当箇所を引用して報告する**
+9. **DESIGN_V1 §3.8「UI デザイン規則」に違反していない**
+   - 画面に絵文字・幾何記号を出していない（アイコンは `lucide-react` のみ）
+   - 色付き `border-left` のカードを作っていない
+   - 確認コマンド: `npm run lint`（§3.8 の禁止文字は ESLint ルールで検出する）
+10. 設計書と実装が食い違う場合、**実装を変える前に該当箇所を引用して報告する**
 
 ### テストの置き場所
 
@@ -109,6 +113,11 @@ src/ui/**/__tests__/*.test.tsx         ← Testing Library。重要フォーム�
 9. `AppShell` の中央に `Viewport` を差し込む
 10. `ErrorBoundary`（`ui/common/ErrorBoundary.tsx`）で Viewport を包む
 11. WebGL2 非対応時のフォールバック表示（§18.5）
+12. **DESIGN_V1 §3.8 規則 1 の禁止文字を検出する ESLint ルールを追加する**
+    - `no-restricted-syntax` で JSX テキスト・文字列リテラル中の絵文字／幾何記号を拒否する
+    - 対象は `src/**/*.tsx` と `src/**/*.css`（CSS は `content:` の値）
+    - `src/core/**` の日本語メッセージは対象だが、禁止文字を含まないので影響しない
+13. `--warning` / `--success` を `styles/index.css` の CSS 変数に追加する（§3.8 規則 3）
 
 ### 完了条件
 
@@ -117,6 +126,8 @@ src/ui/**/__tests__/*.test.tsx         ← Testing Library。重要フォーム�
 - 視点ボタンで 7 方向に切り替わる
 - 左下の軸ジズモがカメラの向きに追従する
 - **マウスを動かしていないとき、描画が止まっている**（下記で検証）
+- **検証用の `useFrame` ログを削除済みである**（`SceneRoot.tsx` に `console.log('frame', ...)` が残っていない）
+- `npm run lint` が §3.8 の禁止文字ルールを実際に検出する（違反コードを入れて確認し、消す）
 
 ### テスト項目
 
@@ -405,7 +416,7 @@ useFrame(() => { console.log('frame', ++n); });
 8. `MachinePanel` の「加工を実行」「更新」ボタンを接続
 9. 加工リストの [編集] [削除] [有効/無効チェック] を接続
 10. `ui/right/OperationListSection.tsx` — 右パネルにも加工リストを表示
-11. 失敗した加工への ⚠ バッジ表示
+11. 失敗した加工への警告アイコン（Lucide `AlertTriangle`）表示
 12. `ui/common/Toast.tsx` + `ToastHost` + `useToast`
 13. 構築中インジケータ（StatusBar に「計算中…」）
 
@@ -457,12 +468,12 @@ useFrame(() => { console.log('frame', ++n); });
 5. `reconcileAfterHistory()`（§15.3）
 6. `ui/topbar/UndoRedoButtons.tsx` — `disabled` と `title`（直前操作ラベル）
 7. `Ctrl+Z` / `Ctrl+Y` / `Ctrl+Shift+Z` ショートカット
-8. StatusBar に「最後の操作: ○○」
+8. StatusBar に「最後の操作: <操作ラベル>」
 9. 履歴上限 100 件（`HISTORY_LIMIT`）
 
 ### 完了条件
 
-- 全ての編集操作（DESIGN_V1 §15.5 の ✅ 行すべて）が Undo できる
+- 全ての編集操作（DESIGN_V1 §15.5 の「記録する」行すべて）が Undo できる
 - Undo 後に Redo で完全に元に戻る
 - ギズモで 1 回ドラッグしたら、Undo 1 回で移動前に戻る（何十回も押す必要がない）
 - 削除した部材を Undo すると、加工履歴ごと完全に復活する
@@ -592,18 +603,21 @@ DESIGN_V1 §20.1 の S-1 〜 S-16 を上から順に実施し、各ステップ�
 ## 進捗チェックリスト
 
 ```
-[ ] Phase 0  プロジェクト初期化
-[ ] Phase 1  Three.js ビューポート
-[ ] Phase 2  木材生成
-[ ] Phase 3  選択とプロパティ表示
-[ ] Phase 4  移動・回転・複製・削除
-[ ] Phase 5  スナップ
-[ ] Phase 6  加工プレビュー
-[ ] Phase 7  CSG 加工
-[ ] Phase 8  Undo / Redo
-[ ] Phase 9  保存 / 読み込み
-[ ] Phase 10 UI 仕上げ・エラー処理・性能検証
+[x] Phase 0  プロジェクト初期化              Codex        2026-09-22
+[x] Phase 1  Three.js ビューポート           Codex/Claude 2026-09-22
+[x] Phase 2  木材生成                        Claude       2026-09-22
+[x] Phase 3  選択とプロパティ表示            Claude       2026-09-22
+[x] Phase 4  移動・回転・複製・削除          Claude       2026-09-22
+[x] Phase 5  スナップ                        Claude       2026-09-22
+[x] Phase 6  加工プレビュー                  Claude       2026-09-22
+[x] Phase 7  CSG 加工                        Claude       2026-09-22
+[x] Phase 8  Undo / Redo                     Claude       2026-09-22
+[x] Phase 9  保存 / 読み込み                 Claude       2026-09-22
+[~] Phase 10 UI 仕上げ・エラー処理・性能検証  Claude       一部のみ
 ```
+
+Phase 10 の残り（性能計測・PERF_V1.md・README 追記・受け入れシナリオ通し）は
+[REVIEW_LOG.md](./REVIEW_LOG.md) の T-01 / T-03 / T-05 を参照。
 
 ---
 

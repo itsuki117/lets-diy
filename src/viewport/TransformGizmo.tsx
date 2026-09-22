@@ -1,0 +1,65 @@
+import { useEffect, useSyncExternalStore } from 'react';
+import { TransformControls } from '@react-three/drei/core/TransformControls';
+import { degToRad } from '../core/math/angle';
+import { readTransform } from '../geometry/transformUtils';
+import { snapVec3 } from '../core/snap/gridSnap';
+import { snapAngle } from '../core/math/angle';
+import { updateTransientTransform } from '../store/commands/transformCommands';
+import { useEditorStore } from '../store/useEditorStore';
+import { useProjectStore } from '../store/useProjectStore';
+import { dragging, getPartObject, subscribePartObjects } from './partObjects';
+import type { Vec3 } from '../core/types';
+
+export function TransformGizmo() {
+  const mode = useEditorStore((s) => s.mode);
+  const gizmoMode = useEditorStore((s) => s.gizmoMode);
+  const snap = useEditorStore((s) => s.snap);
+  const faceSnapActive = useEditorStore((s) => s.faceSnap !== null);
+  const selectedIds = useEditorStore((s) => s.selectedIds);
+  const parts = useProjectStore((s) => s.project.parts);
+
+  const partId = selectedIds.length === 1 ? selectedIds[0] : undefined;
+  const part = partId ? parts.find((p) => p.id === partId) : undefined;
+
+  const object = useSyncExternalStore(
+    subscribePartObjects,
+    () => (partId ? getPartObject(partId) : undefined),
+    () => undefined,
+  );
+
+  useEffect(() => () => { dragging.partId = null; }, []);
+
+  const active = mode === 'arrange' && !faceSnapActive && !!part && !part.locked && !!object;
+  if (!active || !part || !object || !partId) return null;
+
+  return (
+    <TransformControls
+      object={object}
+      mode={gizmoMode}
+      space="world"
+      size={0.8}
+      translationSnap={snap.grid > 0 ? snap.grid : null}
+      rotationSnap={snap.angle > 0 ? degToRad(snap.angle) : null}
+      onMouseDown={() => {
+        dragging.partId = partId;
+        useProjectStore.getState().beginTransient();
+      }}
+      onMouseUp={() => {
+        dragging.partId = null;
+        const next = readTransform(object);
+        // ドラッグ結果にもスナップを効かせてから 1 履歴として確定する
+        const position: Vec3 = snapVec3(next.position, snap.grid);
+        const rotation: Vec3 = [
+          snapAngle(next.rotation[0], snap.angle),
+          snapAngle(next.rotation[1], snap.angle),
+          snapAngle(next.rotation[2], snap.angle),
+        ];
+        updateTransientTransform(partId, { position, rotation });
+        useProjectStore.getState().commitTransient(gizmoMode === 'translate' ? '部材を移動' : '部材を回転');
+      }}
+      onObjectChange={() => {
+        updateTransientTransform(partId, readTransform(object));
+      }}
+    />
+  );
+}
