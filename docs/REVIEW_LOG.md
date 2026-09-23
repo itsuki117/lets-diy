@@ -190,3 +190,51 @@ d = dot((pB + nB * gap) - pA, nB) = dot(pB - pA, nB) + gap
 干渉チェック（食い込み 18mm を検出し、該当部材が赤く表示される）。
 
 ---
+
+## 2026-09-23 — Ver.2 Phase M0〜M6 実装
+
+Ver.1 の GitHub / Vercel 公開後、ユーザー依頼により Claude Code が Ver.2 の
+可動部品まわり（M0〜M6）を実装した。ブランチ `feat/v2-motion`、コミット 5 本。
+
+| Phase | 内容 | コミット |
+|-------|------|----------|
+| M0 | 型・schemaVersion 4・migration・互換検体 | `cde5505` |
+| M1 | 運動学（solvePoses / jointValidate / defaultJoint） | `24067e5` |
+| M2 | joint コマンド・useMotionStore | `49f49d3` |
+| M3 + M4 | 姿勢の描画・JointGizmo・可動モード UI | `03f62df` |
+| M5 + M6 | rest pose のガード・可動範囲の干渉走査 | `d0a653f` |
+
+テストは 328 件から **432 件**へ。typecheck / lint / build すべてゼロエラー。
+
+### 設計どおりに効いたこと
+
+- **joint を動かしても CSG が走らない。** 実機で 0〜90 度を 6 段階動かし、
+  コンソールに `[geometry] build` が 1 件も出ないことを確認した（DoD 13）。
+- `hashPartShape` と `GeometryCache` は一行も変えていない（DoD 12）。
+- M1 を UI なしで単独に切ったのが効いた。扉の回転座標を手計算と突き合わせて
+  33 件のテストで固定してから描画に繋いだので、表示側は一発で動いた。
+
+### 実装中に見つけて直した不具合
+
+| # | 内容 |
+|---|------|
+| B-06 | `commitTransient` が `parts` しか写していなかったため、joint だけを動かした Transient が履歴に残らなかった。Ver.2 で joints を足して初めて露見。可変フィールドを全部写すように修正し、コメントで理由を残した。 |
+
+### Codex への確認事項
+
+| # | 内容 |
+|---|------|
+| A-13 | `Part.transform` は **rest pose** になった。JSDoc も書き換えてある。位置を読むときは、表示姿勢が要るなら `useMotionStore` の `poses` を見ること。 |
+| A-14 | `schemaVersion` 4。v3 -> v4 は Ver.1 を通じて初めて実際に変換が要る migration（3 配列を足す）。`samples/compat/` に v1 / v2 / v3 の実ファイルを置き、`compat.test.ts` で読み込みと往復一致を固定した。 |
+| A-15 | joint を足すコマンドは `canAddJoint` を必ず通すこと。閉路と多重駆動は「作らせない」方針で、壊れた状態を作ってから直させない。 |
+| A-16 | 新しい joint 系コマンドを足したら `jointCommands.test.ts` の「全コマンドの undo 網羅」に 1 行足すこと（Ver.1 の history.test.ts と同じ約束）。 |
+| A-17 | M7（金物）に入る前に `docs/DESIGN_V2.md` §10 を読むこと。プリセットは**データで持ちコードで分岐しない**のが Ver.3 のカタログ連携の前提になっている。 |
+
+### 検証の範囲
+
+- 自動テスト: 432 件（運動学 33 / joint コマンド 23 / 走査 11 / 互換 11 / スキーマ 16 ほか）
+- 実機: 部材 2 枚 + ヒンジを作り、スライダーで 0〜90 度開閉、Undo/Redo が 1 回で往復、
+  走査ボタンが結果を描くところまで確認。ブラウザペインが描画不能になった以降は
+  自動テストのみで検証している。
+
+---
