@@ -52,4 +52,24 @@ describe('hardware commands', () => {
     removeHardware(gasId);
     expect(useProjectStore.getState().project.joints).toHaveLength(1);
   });
+
+  it('adds a concealed hinge automatically when a gas spring has no hinge', () => {
+    const [base, moving] = parts();
+    const before = structuredClone(useProjectStore.getState().project);
+    const id = addHardware({
+      preset: preset('gas.100n.250'), basePartId: base, movingPartId: moving,
+      position: [20, 30, 0], quantity: 2,
+    });
+    expect(id).not.toBeNull();
+    const current = useProjectStore.getState();
+    expect(current.project.joints).toHaveLength(1);
+    expect(current.project.joints[0]?.kind).toBe('revolute');
+    expect(current.project.hardware.map((item) => item.preset.kind)).toEqual(['hinge', 'gasSpring']);
+    expect(current.project.hardware[0]?.note).toBe('ガススプリングと同時に自動追加');
+    expect(current.project.gasSprings).toHaveLength(1);
+    expect(current.project.parts.flatMap((part) => part.operations)).toHaveLength(5);
+    expect(useEditorStore.getState().toasts.at(-1)?.message).toContain('スライド丁番');
+    current.undo();
+    expect(useProjectStore.getState().project).toEqual(before);
+  });
 });

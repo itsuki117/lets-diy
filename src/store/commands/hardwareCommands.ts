@@ -1,5 +1,6 @@
 import { createGasSpringId, createHardwareId } from '../../core/ids';
 import { hardwareOperations } from '../../core/hardware/hardwareOperations';
+import { getHardwarePreset } from '../../core/hardware/presets';
 import { defaultJoint } from '../../core/motion/jointDefaults';
 import { canAddJoint } from '../../core/motion/jointValidate';
 import type { Hardware, HardwareId, HardwarePreset, PartId, Vec3 } from '../../core/types';
@@ -25,15 +26,16 @@ export function addHardware(input: AddHardwareInput): HardwareId | null {
     return null;
   }
 
-  const existingGasJoint = input.preset.kind === 'gasSpring'
+  const isGasSpring = input.preset.kind === 'gasSpring';
+  const existingGasJoint = isGasSpring
     ? state.project.joints.find((item) => item.kind === 'revolute' && item.basePartId === base.id && item.movingPartId === moving.id)
     : undefined;
-  if (input.preset.kind === 'gasSpring' && !existingGasJoint) {
-    useEditorStore.getState().pushToast('warning', '先に固定側と動く側へヒンジを追加してください');
-    return null;
-  }
-  const joint = input.preset.kind === 'gasSpring' ? null : defaultJoint(input.preset.jointKind, base, moving);
-  if (joint && input.preset.defaultRange && joint.kind !== 'fixed') joint.range = { ...input.preset.defaultRange };
+  const automaticHingePreset = isGasSpring && !existingGasJoint ? getHardwarePreset('hinge.concealed.35') : undefined;
+  const joint = isGasSpring
+    ? (existingGasJoint ? null : defaultJoint('revolute', base, moving))
+    : defaultJoint(input.preset.jointKind, base, moving);
+  const range = automaticHingePreset?.defaultRange ?? input.preset.defaultRange;
+  if (joint && range && joint.kind !== 'fixed') joint.range = { ...range };
   if (joint) {
     const check = canAddJoint(state.project.joints, joint, state.project.parts);
     if (!check.ok) {
@@ -43,22 +45,36 @@ export function addHardware(input: AddHardwareInput): HardwareId | null {
   }
 
   const hardware: Hardware = {
-    id: createHardwareId(), preset: input.preset, jointId: joint?.id ?? null,
+    id: createHardwareId(), preset: input.preset, jointId: (joint ?? existingGasJoint)?.id ?? null,
     position: input.position, rotation: input.rotation ?? [0, 0, 0], quantity: Math.max(1, Math.floor(input.quantity ?? 1)),
   };
-  if (existingGasJoint) hardware.jointId = existingGasJoint.id;
   const operations = input.autoHoles === false ? { base: [], moving: [] } : hardwareOperations(hardware, base, moving);
+  const automaticHinge: Hardware | null = automaticHingePreset && joint ? {
+    id: createHardwareId(),
+    preset: automaticHingePreset,
+    jointId: joint.id,
+    position: input.position,
+    rotation: input.rotation ?? [0, 0, 0],
+    quantity: 2,
+    note: 'ガススプリングと同時に自動追加',
+  } : null;
+  const automaticHingeOperations = automaticHinge && input.autoHoles !== false
+    ? hardwareOperations(automaticHinge, base, moving)
+    : { base: [], moving: [] };
+  const gasJoint = isGasSpring ? (joint ?? existingGasJoint) : undefined;
   state.applyCommand(`${input.preset.label}を取り付け`, (draft) => {
     if (joint) draft.joints.push(joint);
+    if (automaticHinge) draft.hardware.push(automaticHinge);
     draft.hardware.push(hardware);
-    if (existingGasJoint && input.preset.gasSpring) draft.gasSprings.push({
-      id: createGasSpringId(), hardwareId: hardware.id, jointId: existingGasJoint.id,
+    if (gasJoint && input.preset.gasSpring) draft.gasSprings.push({
+      id: createGasSpringId(), hardwareId: hardware.id, jointId: gasJoint.id,
       baseAnchor: input.position, movingAnchor: [input.position[0] + 150, input.position[1], input.position[2]],
       ...input.preset.gasSpring,
     });
-    draft.parts.find((part) => part.id === base.id)?.operations.push(...operations.base);
-    draft.parts.find((part) => part.id === moving.id)?.operations.push(...operations.moving);
+    draft.parts.find((part) => part.id === base.id)?.operations.push(...automaticHingeOperations.base, ...operations.base);
+    draft.parts.find((part) => part.id === moving.id)?.operations.push(...automaticHingeOperations.moving, ...operations.moving);
   });
+  if (automaticHinge) useEditorStore.getState().pushToast('success', '必要なスライド丁番も一緒に追加しました');
   if (joint ?? existingGasJoint) useEditorStore.getState().selectJoint((joint ?? existingGasJoint)!.id);
   return hardware.id;
 }

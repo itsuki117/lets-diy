@@ -21,6 +21,9 @@ export function HardwarePanel() {
   const [position, setPosition] = useState<Vec3>([0, 0, 0]);
   const [autoHoles, setAutoHoles] = useState(true);
   const preset = useMemo(() => HARDWARE_PRESETS.find((item) => item.presetId === presetId)!, [presetId]);
+  const hasHinge = project.joints.some((joint) =>
+    joint.kind === 'revolute' && joint.basePartId === basePartId && joint.movingPartId === movingPartId,
+  );
   const gasCurves = useMemo(() => project.gasSprings.flatMap((mount) => {
     const joint = project.joints.find((item) => item.id === mount.jointId);
     if (!joint || joint.kind !== 'revolute') return [];
@@ -45,6 +48,7 @@ export function HardwarePanel() {
         <div className="field"><span>取付位置（固定側ローカル）</span>{(['X', 'Y', 'Z'] as const).map((axis, index) => <div className="nudge-row" key={axis}><span className="nudge-axis">{axis}</span><button type="button" className="icon-btn" aria-label={`${axis}を減らす`} onClick={() => setCoord(index as 0 | 1 | 2, position[index]! - 1)}><Minus size={13}/></button><NumberField label={axis} unit="mm" value={position[index]!} onCommit={(value) => setCoord(index as 0 | 1 | 2, value)} /><button type="button" className="icon-btn" aria-label={`${axis}を増やす`} onClick={() => setCoord(index as 0 | 1 | 2, position[index]! + 1)}><Plus size={13}/></button></div>)}</div>
         <label className="toggle"><input type="checkbox" checked={autoHoles} onChange={(event) => setAutoHoles(event.target.checked)} />必要な穴を自動であける</label>
         {preset.kind === 'hinge' && preset.presetId === 'hinge.concealed.35' ? <p className="notice">軌跡は回転で近似しています。</p> : null}
+        {preset.kind === 'gasSpring' && !hasHinge ? <p className="notice notice-ok">この2つの部材にヒンジがなければ、必要なスライド丁番も一緒に追加します。</p> : null}
         <button type="button" className="primary" disabled={!basePartId || !movingPartId || basePartId === movingPartId} onClick={() => addHardware({ preset, basePartId, movingPartId, position, quantity, autoHoles })}>取り付ける</button>
       </Section>
       <Section title={`取り付け済み (${project.hardware.length})`} icon={<Wrench size={15} aria-hidden />}>
