@@ -320,6 +320,10 @@ legend { padding: 0; }
 .joint-value { float: right; color: var(--text); font-variant-numeric: tabular-nums; }
 .joint-slider { width: 100%; padding: 0; height: 22px; background: transparent; border: 0; accent-color: var(--accent); }
 .joint-slider:disabled { opacity: .4; }
+.motion-range-bar { position: relative; height: 6px; border: 1px solid var(--border); border-radius: 3px; overflow: hidden; }
+.motion-range-blocked { position: absolute; top: 0; bottom: 0; background: var(--warning); opacity: .7; }
+.scan-row { display: flex; align-items: flex-start; gap: 4px; }
+.scan-row .notice { flex: 1; }
 
 /* ---------------- オーバーレイ（部品表など） ---------------- */
 .overlay-panel {

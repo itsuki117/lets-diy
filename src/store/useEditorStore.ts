@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { DEFAULT_SNAP } from '../core/constants';
 import type { InterferencePair } from '../core/collision/interference';
+import type { MotionScanResult } from '../core/motion/motionScan';
 import type {
   AxisDirection,
   JointDraft,
@@ -35,6 +36,8 @@ export interface EditorStore {
   selectedJointId: JointId | null;
   /** 可動の追加ウィザードの下書き */
   jointDraft: JointDraft | null;
+  /** 可動範囲の走査結果。null なら未実行 */
+  motionScan: MotionScanResult | null;
   hoveredId: PartId | null;
   /** 面スナップ中にホバーしている面 */
   hoveredFace: FaceRef | null;
@@ -62,6 +65,7 @@ export interface EditorStore {
   pickJointPart: (partId: PartId) => void;
   resetJointDraftPicks: () => void;
   cancelJointDraft: () => void;
+  setMotionScan: (result: MotionScanResult | null) => void;
   setHovered: (id: PartId | null) => void;
   setHoveredFace: (ref: FaceRef | null) => void;
   setGizmoMode: (mode: GizmoMode) => void;
@@ -95,6 +99,7 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
   selectedIds: [],
   selectedJointId: null,
   jointDraft: null,
+  motionScan: null,
   hoveredId: null,
   hoveredFace: null,
   gizmoMode: 'translate',
@@ -119,7 +124,7 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
     })),
 
   clearSelection: () => set({ selectedIds: [] }),
-  selectJoint: (selectedJointId) => set({ selectedJointId }),
+  selectJoint: (selectedJointId) => set({ selectedJointId, motionScan: null }),
 
   startJointDraft: (kind) => set({ jointDraft: { kind, basePartId: null, movingPartId: null } }),
 
@@ -141,6 +146,7 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
     set((s) => (s.jointDraft ? { jointDraft: { ...s.jointDraft, basePartId: null, movingPartId: null } } : {})),
 
   cancelJointDraft: () => set({ jointDraft: null }),
+  setMotionScan: (motionScan) => set({ motionScan }),
   setHovered: (hoveredId) => set({ hoveredId }),
   setHoveredFace: (hoveredFace) => set({ hoveredFace }),
   setGizmoMode: (gizmoMode) => set({ gizmoMode }),

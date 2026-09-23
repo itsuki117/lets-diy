@@ -9,6 +9,7 @@ import { NumberField } from '../common/NumberField';
 import { Section } from '../common/Section';
 import { Vec3Field } from '../common/Vec3Field';
 import { MotionSection } from './MotionSection';
+import { RestPoseNotice } from './RestPoseNotice';
 import { OperationList } from './OperationList';
 
 export function PropertyPanel() {
@@ -108,6 +109,8 @@ export function PropertyPanel() {
           <NumberField label="高さ (Y)" unit="mm" min={MIN_SIZE_MM} max={MAX_SIZE_MM} disabled={locked} value={part.size.y} onCommit={(y) => setPartSize(part.id, { ...part.size, y })} />
           <NumberField label="厚み (Z)" unit="mm" min={MIN_SIZE_MM} max={MAX_SIZE_MM} disabled={locked} value={part.size.z} onCommit={(z) => setPartSize(part.id, { ...part.size, z })} />
         </Section>
+
+        <RestPoseNotice partId={part.id} />
 
         <Section title="位置 (mm)">
           <Vec3Field

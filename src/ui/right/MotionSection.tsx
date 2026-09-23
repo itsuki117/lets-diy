@@ -1,4 +1,4 @@
-import { DoorClosed, DoorOpen } from 'lucide-react';
+import { CircleCheck, Crosshair, DoorClosed, DoorOpen, ScanSearch, TriangleAlert } from 'lucide-react';
 import { isMovableJoint, jointUnit, JOINT_KIND_LABELS } from '../../core/types';
 import {
   renameJoint,
@@ -7,6 +7,8 @@ import {
   setJointValue,
   updateTransientJointValue,
 } from '../../store/commands/jointCommands';
+import { scanJointMotion } from '../../core/motion/motionScan';
+import { focusOnParts } from '../../store/cameraCommands';
 import { useEditorStore } from '../../store/useEditorStore';
 import { useProjectStore } from '../../store/useProjectStore';
 import { NumberField } from '../common/NumberField';
@@ -24,6 +26,10 @@ export function MotionSection() {
   const parts = useProjectStore((s) => s.project.parts);
   const beginTransient = useProjectStore((s) => s.beginTransient);
   const commitTransient = useProjectStore((s) => s.commitTransient);
+  const project = useProjectStore((s) => s.project);
+  const scan = useEditorStore((s) => s.motionScan);
+  const setScan = useEditorStore((s) => s.setMotionScan);
+  const select = useEditorStore((s) => s.select);
 
   const joint = joints.find((j) => j.id === selectedJointId);
   if (!joint) return null;
@@ -106,6 +112,18 @@ export function MotionSection() {
             </button>
           </div>
 
+          <MotionScanBlock
+            joint={joint}
+            unitLabel={unit === 'deg' ? '°' : 'mm'}
+            scan={scan && scan.jointId === joint.id ? scan : null}
+            onScan={() => setScan(scanJointMotion(project, joint.id))}
+            onShow={(value, ids) => {
+              setJointValue(joint.id, value, '干渉位置へ移動');
+              select(ids);
+              focusOnParts(ids);
+            }}
+          />
+
           <div className="field-group">
             <span className="field-label">可動範囲</span>
             <div className="vec3-field">
@@ -130,5 +148,80 @@ export function MotionSection() {
         <p className="muted">固定なので動きません。親を動かすと一緒に付いてきます。</p>
       )}
     </Section>
+  );
+}
+
+
+interface ScanProps {
+  joint: Extract<import('../../core/types').Joint, { kind: 'revolute' | 'prismatic' }>;
+  unitLabel: string;
+  scan: import('../../core/motion/motionScan').MotionScanResult | null;
+  onScan: () => void;
+  onShow: (value: number, partIds: string[]) => void;
+}
+
+/** 可動範囲を走査して、ぶつかる区間を出す（設計書 DESIGN_V2 §9.3） */
+function MotionScanBlock({ joint, unitLabel, scan, onScan, onShow }: ScanProps) {
+  const span = joint.range.max - joint.range.min || 1;
+  const ratio = (value: number): number => ((value - joint.range.min) / span) * 100;
+
+  return (
+    <div className="tool-block">
+      <button type="button" onClick={onScan} disabled={!joint.enabled}>
+        <ScanSearch size={15} aria-hidden />
+        全範囲をチェック
+      </button>
+
+      {scan ? (
+        <>
+          <div className="motion-range-bar" aria-hidden>
+            {scan.blocked.map((block) => (
+              <span
+                key={`${block.fromValue}-${block.toValue}`}
+                className="motion-range-blocked"
+                style={{
+                  left: `${ratio(block.fromValue)}%`,
+                  width: `${Math.max(ratio(block.toValue) - ratio(block.fromValue), 1.5)}%`,
+                }}
+              />
+            ))}
+          </div>
+
+          {scan.usable ? (
+            <p className="notice notice-ok">
+              <CircleCheck size={14} aria-hidden />
+              {scan.usable.min}
+              {unitLabel} 〜 {scan.usable.max}
+              {unitLabel} は動きます
+            </p>
+          ) : (
+            <p className="notice notice-error">
+              <TriangleAlert size={14} aria-hidden />
+              全範囲でぶつかっています
+            </p>
+          )}
+
+          {scan.blocked.map((block) => (
+            <div key={`${block.fromValue}-${block.toValue}`} className="scan-row">
+              <span className="notice notice-warning">
+                <TriangleAlert size={13} aria-hidden />
+                {block.fromValue}
+                {unitLabel} 〜 {block.toValue}
+                {unitLabel}: {block.pairs.map((p) => `${Math.round(p.depthMm * 10) / 10}mm`).join(' / ')}
+              </span>
+              <button
+                type="button"
+                className="icon-btn"
+                title="この位置を表示"
+                aria-label="この位置を表示"
+                onClick={() => onShow(block.fromValue, block.pairs.flatMap((p) => [p.a, p.b]))}
+              >
+                <Crosshair size={13} aria-hidden />
+              </button>
+            </div>
+          ))}
+        </>
+      ) : null}
+    </div>
   );
 }
