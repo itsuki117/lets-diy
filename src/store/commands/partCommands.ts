@@ -64,8 +64,27 @@ export function removeParts(ids: readonly PartId[]): void {
   }
   if (removable.length === 0) return;
 
-  store().applyCommand(removable.length > 1 ? '部材を削除' : '部材を削除', (draft) => {
+  store().applyCommand('部材を削除', (draft) => {
     draft.parts = draft.parts.filter((p) => !removable.includes(p.id));
+
+    // 可動と金物を道連れにする。別コマンドにすると Undo が 2 回必要になり、
+    // 「消したのに結合だけ残る」中途半端な状態も作れてしまう（設計書 DESIGN_V2 §18.1）。
+    const orphaned = draft.joints.filter(
+      (j) => removable.includes(j.basePartId) || removable.includes(j.movingPartId),
+    );
+    const orphanedIds = new Set(orphaned.map((j) => j.id));
+    draft.joints = draft.joints.filter((j) => !orphanedIds.has(j.id));
+    draft.gasSprings = draft.gasSprings.filter((g) => !orphanedIds.has(g.jointId));
+
+    const deadHardware = draft.hardware.filter((h) => h.jointId !== null && orphanedIds.has(h.jointId));
+    const deadHardwareIds = new Set(deadHardware.map((h) => h.id));
+    draft.hardware = draft.hardware.filter((h) => !deadHardwareIds.has(h.id));
+    draft.gasSprings = draft.gasSprings.filter((g) => !deadHardwareIds.has(g.hardwareId));
+
+    // 金物が自動生成した加工も一緒に消す（不変条件 J-8）
+    for (const part of draft.parts) {
+      part.operations = part.operations.filter((op) => !op.note || !deadHardwareIds.has(op.note));
+    }
   });
 }
 

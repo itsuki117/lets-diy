@@ -71,8 +71,14 @@ export const useProjectStore = create<ProjectStore>((set, get) => ({
     const base = get().transientBase;
     if (!base) return;
     const final = get().project;
+    // Transient が触りうる可変フィールドをすべて写す。
+    // ここに書き漏らすと、その種類の変更だけ履歴に残らない
+    // （Ver.2 で joints を足したときに実際に踏んだ）。
     const [next, patches, inversePatches] = produceWithPatches(base, (draft) => {
       draft.parts = final.parts as typeof draft.parts;
+      draft.joints = final.joints as typeof draft.joints;
+      draft.hardware = final.hardware as typeof draft.hardware;
+      draft.gasSprings = final.gasSprings as typeof draft.gasSprings;
       draft.name = final.name;
       draft.updatedAt = final.updatedAt;
     });
