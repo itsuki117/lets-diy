@@ -145,6 +145,9 @@ export function validateOperation(op: Operation, part: Part | undefined): Valida
       break;
     }
     case 'cut': {
+      const tilt = op.tiltDeg ?? 0;
+      if (tilt < -89 || tilt > 89) errors.push({ field: 'tiltDeg', message: '傾きは -89〜89 度にしてください' });
+      if (op.tiltAbout === op.axis) errors.push({ field: 'tiltAbout', message: '切断方向と異なる傾き軸を選んでください' });
       const half = axisSize(part.size, op.axis) / 2;
       if (Math.abs(op.offset) >= half) {
         errors.push({ field: 'offset', message: '切断位置が部材の外にあります' });
@@ -154,6 +157,11 @@ export function validateOperation(op: Operation, part: Part | undefined): Valida
       const removed = axisSize(part.size, op.axis) - remain;
       if (removed < 1) warnings.push({ field: 'offset', message: '切り落とされる幅が 1mm 未満です' });
       if (remain < 1) errors.push({ field: 'offset', message: '残る部分が 1mm 未満です' });
+      if (tilt !== 0) {
+        const span = Math.max(...otherAxes(op.axis).map((axis) => axisSize(part.size, axis)));
+        const edgeLoss = Math.abs(Math.tan((tilt * Math.PI) / 180)) * span / 2;
+        if (remain - edgeLoss < 1) warnings.push({ field: 'tiltDeg', message: '傾きにより端部の残りが 1mm 未満になる可能性があります' });
+      }
       break;
     }
   }

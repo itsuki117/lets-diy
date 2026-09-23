@@ -1,7 +1,7 @@
 import { MATERIAL_LABELS } from '../constants';
 import { OPERATION_TYPE_LABELS } from '../operation/operationDefaults';
 import { hashPartShape } from '../part/partHash';
-import type { MaterialKind, OperationType, Part, PartId, Project } from '../types';
+import type { HardwareKind, MaterialKind, OperationType, Part, PartId, Project } from '../types';
 
 /**
  * 部品表（BOM）。設計データだけから導出する純粋な集計で、保存対象ではない。
@@ -41,10 +41,19 @@ export interface BomMaterialSummary {
 
 export interface Bom {
   rows: BomRow[];
+  hardware: BomHardwareRow[];
   materials: BomMaterialSummary[];
   totalParts: number;
   totalAreaM2: number;
   totalVolumeM3: number;
+}
+
+export interface BomHardwareRow {
+  presetId: string;
+  label: string;
+  partNumber?: string;
+  kind: HardwareKind;
+  quantity: number;
 }
 
 const round = (v: number, digits = 4): number => {
@@ -129,8 +138,22 @@ export function buildBom(project: Project): Bom {
     (a, b) => a.materialLabel.localeCompare(b.materialLabel) || a.thickness - b.thickness,
   );
 
+  const hardwareMap = new Map<string, BomHardwareRow>();
+  for (const item of project.hardware) {
+    const existing = hardwareMap.get(item.preset.presetId);
+    if (existing) existing.quantity += item.quantity;
+    else hardwareMap.set(item.preset.presetId, {
+      presetId: item.preset.presetId,
+      label: item.preset.label,
+      ...(item.preset.partNumber ? { partNumber: item.preset.partNumber } : {}),
+      kind: item.preset.kind,
+      quantity: item.quantity,
+    });
+  }
+
   return {
     rows,
+    hardware: [...hardwareMap.values()].sort((a, b) => a.label.localeCompare(b.label)),
     materials,
     totalParts: project.parts.length,
     totalAreaM2: round(rows.reduce((sum, r) => sum + r.faceAreaM2 * r.quantity, 0)),

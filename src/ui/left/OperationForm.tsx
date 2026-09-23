@@ -300,7 +300,7 @@ export function OperationForm({ part, draft }: Props) {
               { value: 'y', label: 'Y' },
               { value: 'z', label: 'Z' },
             ]}
-            onChange={(axis) => patch({ axis })}
+            onChange={(axis) => patch({ axis, ...(op.tiltAbout === axis ? { tiltAbout: axis === 'x' ? 'y' : 'x' } : {}) })}
           />
           <NumberField
             label={`切断位置（コーナーから ${AXIS_LABELS[op.axis]}）`}
@@ -322,6 +322,28 @@ export function OperationForm({ part, draft }: Props) {
             ]}
             onChange={(keep) => patch({ keep })}
           />
+          <SegmentedControl
+            label="傾き軸"
+            value={op.tiltAbout ?? (op.axis === 'x' ? 'y' : 'x')}
+            options={(['x', 'y', 'z'] as const)
+              .filter((axis) => axis !== op.axis)
+              .map((axis) => ({ value: axis, label: axis.toUpperCase() }))}
+            onChange={(tiltAbout) => patch({ tiltAbout })}
+          />
+          <NumberField
+            label="傾き"
+            unit="deg"
+            value={op.tiltDeg ?? 0}
+            min={-89}
+            max={89}
+            error={messageFor(result.errors, 'tiltDeg') ?? messageFor(result.errors, 'tiltAbout')}
+            warning={messageFor(result.warnings, 'tiltDeg')}
+            onCommit={(tiltDeg) => patch({ tiltDeg })}
+          />
+          <div className="button-row">
+            <button type="button" onClick={() => patch({ tiltDeg: 45 })}>留め 45 度</button>
+            <button type="button" onClick={() => patch({ tiltDeg: 0 })}>直角に戻す</button>
+          </div>
         </>
       ) : null}
 

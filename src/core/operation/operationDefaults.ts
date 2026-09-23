@@ -63,7 +63,7 @@ export function defaultOperation(type: OperationType, part: Part): Operation {
     }
     case 'cut': {
       const axis = longestAxis(part.size);
-      return { id, type: 'cut', enabled: true, axis, offset: 0, keep: 'negative' };
+      return { id, type: 'cut', enabled: true, axis, offset: 0, keep: 'negative', tiltAbout: axis === 'x' ? 'y' : 'x', tiltDeg: 0 };
     }
   }
 }

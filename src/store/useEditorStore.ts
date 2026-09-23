@@ -34,6 +34,7 @@ export interface EditorStore {
   selectedIds: PartId[];
   /** 可動モードで選択中の joint */
   selectedJointId: JointId | null;
+  selectedHardwareId: string | null;
   /** 可動の追加ウィザードの下書き */
   jointDraft: JointDraft | null;
   /** 可動範囲の走査結果。null なら未実行 */
@@ -61,6 +62,7 @@ export interface EditorStore {
   toggleSelect: (id: PartId) => void;
   clearSelection: () => void;
   selectJoint: (id: JointId | null) => void;
+  selectHardware: (id: string | null) => void;
   startJointDraft: (kind: JointKind) => void;
   pickJointPart: (partId: PartId) => void;
   resetJointDraftPicks: () => void;
@@ -98,6 +100,7 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
   mode: 'create',
   selectedIds: [],
   selectedJointId: null,
+  selectedHardwareId: null,
   jointDraft: null,
   motionScan: null,
   hoveredId: null,
@@ -125,6 +128,7 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
 
   clearSelection: () => set({ selectedIds: [] }),
   selectJoint: (selectedJointId) => set({ selectedJointId, motionScan: null }),
+  selectHardware: (selectedHardwareId) => set({ selectedHardwareId }),
 
   startJointDraft: (kind) => set({ jointDraft: { kind, basePartId: null, movingPartId: null } }),
 

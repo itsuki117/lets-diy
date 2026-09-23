@@ -43,7 +43,8 @@ export function operationLabel(op: Operation, part: Part): string {
       const axis = AXIS_LABELS[op.axis];
       const at = cornerOnAxis(part, op.axis, op.offset);
       const side = op.keep === 'negative' ? `${axis}-側を残す` : `${axis}+側を残す`;
-      return `${head} ${axis}=${num(at)} / ${side}`;
+      const tilt = op.tiltDeg ? ` / ${AXIS_LABELS[op.tiltAbout ?? (op.axis === 'x' ? 'y' : 'x')]}軸 ${num(op.tiltDeg)}°` : '';
+      return `${head} ${axis}=${num(at)} / ${side}${tilt}`;
     }
   }
 }

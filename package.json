@@ -12,6 +12,7 @@
     "test:coverage": "vitest run --coverage",
     "sample": "tsx scripts/genSample.ts",
     "benchmark": "tsx scripts/benchmark.ts",
+    "benchmark:v2": "tsx scripts/benchmarkV2.ts",
     "typecheck": "tsc --noEmit",
     "lint": "eslint . --max-warnings 0",
     "format": "prettier --write src scripts *.json *.ts *.js index.html"

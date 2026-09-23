@@ -99,6 +99,17 @@ export function BomPanel() {
                 ))}
               </tbody>
             </table>
+            {bom.hardware.length > 0 ? (
+              <>
+                <h3 className="overlay-subhead">金物</h3>
+                <table className="data-table">
+                  <thead><tr><th>品名</th><th>型番</th><th>種類</th><th className="num">数量</th></tr></thead>
+                  <tbody>{bom.hardware.map((hardware) => (
+                    <tr key={hardware.presetId}><td>{hardware.label}</td><td>{hardware.partNumber ?? '-'}</td><td>{hardware.kind}</td><td className="num">{hardware.quantity}</td></tr>
+                  ))}</tbody>
+                </table>
+              </>
+            ) : null}
             <p className="muted">
               同じ素材寸法かつ同じ加工の部材だけをまとめています。左右対称で穴位置が反転している部材は別の行になります。
             </p>

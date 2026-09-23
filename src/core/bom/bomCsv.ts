@@ -42,6 +42,15 @@ export function bomToCsv(bom: Bom, projectName: string): string {
     lines.push([material.materialLabel, material.thickness, material.quantity, material.areaM2].map(cell).join(','));
   }
 
+  if (bom.hardware.length > 0) {
+    lines.push('');
+    lines.push(['金物'].map(cell).join(','));
+    lines.push(['品名', '型番', '種類', '数量'].map(cell).join(','));
+    for (const hardware of bom.hardware) {
+      lines.push([hardware.label, hardware.partNumber ?? '', hardware.kind, hardware.quantity].map(cell).join(','));
+    }
+  }
+
   lines.push('');
   lines.push(['合計部材数', bom.totalParts].map(cell).join(','));
   lines.push(['合計面積(m2)', bom.totalAreaM2].map(cell).join(','));

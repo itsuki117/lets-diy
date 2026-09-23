@@ -6,8 +6,9 @@ import { findInterferences } from '../../core/collision/interference';
 import { useProjectIo } from '../hooks/useProjectIo';
 import { UndoRedoButtons } from './UndoRedoButtons';
 import { ProjectLibrary } from './ProjectLibrary';
+import { ExportMenu } from './ExportMenu';
 
-export function TopBar() {
+export function TopBar({ onExportStl }: { onExportStl: (selectedOnly: boolean) => void }) {
   const name = useProjectStore((s) => s.project.name);
   const applyCommand = useProjectStore((s) => s.applyCommand);
   const viewOptions = useEditorStore((s) => s.viewOptions);
@@ -44,6 +45,7 @@ export function TopBar() {
           <FolderOpen size={16} aria-hidden />
           保存一覧
         </button>
+        <ExportMenu onExportStl={onExportStl} />
       </div>
 
       <div className="topbar-group">

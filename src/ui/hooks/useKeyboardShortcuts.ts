@@ -63,6 +63,9 @@ export function useKeyboardShortcuts(
           editor.setMode('machine');
           break;
         case '4':
+          editor.setMode('hardware');
+          break;
+        case '5':
           editor.setMode('motion');
           break;
         case 'o':

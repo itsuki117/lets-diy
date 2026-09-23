@@ -149,6 +149,10 @@ export interface CutOperation extends OperationBase {
   offset: Millimeter;
   /** 残す側。'negative' = axis の負方向側を残す */
   keep: 'negative' | 'positive';
+  /** 切断面を傾ける軸。省略時は直角切断。 */
+  tiltAbout?: AxisKey;
+  /** -89..89 度。省略時は 0。 */
+  tiltDeg?: Degree;
 }
 
 export type Operation =
@@ -275,6 +279,8 @@ export interface HardwarePreset {
   defaultRange?: { min: number; max: number };
   /** 必要な穴 */
   holes: HardwareHole[];
+  /** ガススプリングだけが持つ仕様。プリセットデータで駆動する。 */
+  gasSpring?: { strokeMin: Millimeter; strokeMax: Millimeter; forceN: number };
 }
 
 export interface Hardware {

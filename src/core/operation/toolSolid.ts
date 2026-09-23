@@ -1,7 +1,7 @@
 import { OVERCUT } from '../constants';
 import { axisOf, axisSize, axisUnit, otherAxes, signOf, withAxis, withAxisSize } from '../math/axis';
-import { axisAngleMatrix, matrixFromColumns, matrixToEuler, multiply } from '../math/matrix';
-import { clean, cross, dot, negate } from '../math/vec3';
+import { applyMat3, axisAngleMatrix, matrixFromColumns, matrixToEuler, multiply } from '../math/matrix';
+import { add, clean, cross, dot, negate, sub } from '../math/vec3';
 import type { ArchOperation, AxisKey, Operation, RoundCornerOperation, Size3, ToolSolidSpec, Vec3 } from '../types';
 
 /** 円柱の軸（+Y）を指定軸に向けるための Euler XYZ（度） */
@@ -113,11 +113,16 @@ export function toolSolidSpec(op: Operation, size: Size3): ToolSolidSpec {
       // 残さない側の半空間を覆う巨大ボックスを減算する
       const big = Math.max(size.x, size.y, size.z) * 2 + 100;
       const removeSign = op.keep === 'negative' ? 1 : -1;
+      const unrotated = withAxis([0, 0, 0], op.axis, op.offset + (removeSign * big) / 2);
+      const tiltDeg = op.tiltDeg ?? 0;
+      const tiltAbout = op.tiltAbout ?? (op.axis === 'x' ? 'y' : 'x');
+      const rotationMatrix = axisAngleMatrix(axisUnit(tiltAbout), tiltDeg);
+      const pivot = withAxis([0, 0, 0], op.axis, op.offset);
       return {
         shape: 'box',
         size: { x: big, y: big, z: big },
-        position: withAxis([0, 0, 0], op.axis, op.offset + (removeSign * big) / 2),
-        rotation: [0, 0, 0],
+        position: clean(add(pivot, applyMat3(rotationMatrix, sub(unrotated, pivot))), 6),
+        rotation: clean(matrixToEuler(rotationMatrix), 6),
       };
     }
   }
@@ -144,11 +149,16 @@ export function previewSolidSpec(op: Operation, size: Size3): ToolSolidSpec {
   clamped = withAxisSize(clamped, ua, axisSize(size, ua) + 1);
   clamped = withAxisSize(clamped, va, axisSize(size, va) + 1);
 
+  const unrotated = withAxis([0, 0, 0], op.axis, (op.offset + removeTo) / 2);
+  const tiltDeg = op.tiltDeg ?? 0;
+  const tiltAbout = op.tiltAbout ?? (op.axis === 'x' ? 'y' : 'x');
+  const rotationMatrix = axisAngleMatrix(axisUnit(tiltAbout), tiltDeg);
+  const pivot = withAxis([0, 0, 0], op.axis, op.offset);
   return {
     shape: 'box',
     size: clamped,
-    position: withAxis([0, 0, 0], op.axis, (op.offset + removeTo) / 2),
-    rotation: [0, 0, 0],
+    position: clean(add(pivot, applyMat3(rotationMatrix, sub(unrotated, pivot))), 6),
+    rotation: clean(matrixToEuler(rotationMatrix), 6),
   };
 }
 

@@ -7,10 +7,10 @@ import { ToastHost } from './common/ToastHost';
 import { BomPanel } from './bom/BomPanel';
 import { InterferencePanel } from './bom/InterferencePanel';
 
-export function AppShell({ children }: { children?: ReactNode }) {
+export function AppShell({ children, onExportStl }: { children?: ReactNode; onExportStl: (selectedOnly: boolean) => void }) {
   return (
     <div className="app-shell">
-      <TopBar />
+      <TopBar onExportStl={onExportStl} />
       <LeftPanel />
       <main className="viewport-container" aria-label="3D作業スペース">
         {children}

@@ -65,6 +65,8 @@ const operation = z.discriminatedUnion('type', [
     axis: axisKey,
     offset: z.number().finite(),
     keep: z.enum(['negative', 'positive']),
+    tiltAbout: axisKey.optional(),
+    tiltDeg: z.number().min(-89).max(89).optional(),
   }),
 ]);
 
@@ -137,6 +139,7 @@ const hardwarePreset = z.object({
   jointKind: z.enum(['fixed', 'revolute', 'prismatic']),
   defaultRange: range.optional(),
   holes: z.array(hardwareHole),
+  gasSpring: z.object({ strokeMin: z.number().positive(), strokeMax: z.number().positive(), forceN: z.number().positive() }).optional(),
 });
 
 const hardware = z.object({

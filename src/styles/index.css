@@ -324,6 +324,13 @@ legend { padding: 0; }
 .motion-range-blocked { position: absolute; top: 0; bottom: 0; background: var(--warning); opacity: .7; }
 .scan-row { display: flex; align-items: flex-start; gap: 4px; }
 .scan-row .notice { flex: 1; }
+.export-menu-wrap { position: relative; }
+.export-menu { position: absolute; top: calc(100% + 6px); left: 0; min-width: 190px; padding: 5px; display: flex; flex-direction: column; gap: 3px; background: var(--panel); border: 1px solid var(--border-hi); border-radius: 6px; z-index: 30; }
+.export-menu button { justify-content: flex-start; }
+.drawing-preview { overflow: auto; background: #fff; padding: 12px; }
+.drawing-preview svg { max-width: 100%; height: auto; }
+.gas-card { display: flex; flex-direction: column; gap: 5px; padding: 8px; border: 1px solid var(--border); border-radius: 5px; }
+.gas-card svg { width: 100%; height: 80px; color: var(--accent); background: var(--surface); }
 
 /* ---------------- オーバーレイ（部品表など） ---------------- */
 .overlay-panel {

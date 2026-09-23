@@ -17,7 +17,7 @@ function normalizeOperationForHash(op: Operation): unknown[] {
     case 'notch':
       return ['notch', op.size.x, op.size.y, op.size.z, ...op.position];
     case 'cut':
-      return ['cut', op.axis, op.offset, op.keep];
+      return ['cut', op.axis, op.offset, op.keep, op.tiltAbout ?? null, op.tiltDeg ?? 0];
   }
 }
 
