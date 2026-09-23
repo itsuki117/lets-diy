@@ -387,7 +387,7 @@ export interface ValidationResult {
 // ------------------------------------------------------------
 // エディタ状態（保存対象外・Undo 対象外）
 // ------------------------------------------------------------
-export type EditorMode = 'create' | 'arrange' | 'machine';
+export type EditorMode = 'create' | 'arrange' | 'machine' | 'hardware' | 'motion';
 export type GizmoMode = 'translate' | 'rotate';
 
 /** 0 = スナップ OFF */
@@ -425,6 +425,13 @@ export interface OperationDraft {
   operation: Operation;
   /** UI での位置入力基準 */
   originMode: 'center' | 'corner';
+}
+
+/** 可動モードで「固定側 -> 動く側」を選んでいる最中の下書き */
+export interface JointDraft {
+  kind: JointKind;
+  basePartId: PartId | null;
+  movingPartId: PartId | null;
 }
 
 export type AlignAxis = AxisKey;

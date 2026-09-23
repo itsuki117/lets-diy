@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { useThree } from '@react-three/fiber';
 import { geometryCache } from '../../geometry/GeometryCache';
 import { useEditorStore } from '../../store/useEditorStore';
+import { useMotionStore } from '../../store/useMotionStore';
 import { useProjectStore } from '../../store/useProjectStore';
 
 /**
@@ -16,10 +17,12 @@ export function useInvalidateOnStore(): void {
       invalidate();
     });
     const unsubEditor = useEditorStore.subscribe(() => invalidate());
+    const unsubMotion = useMotionStore.subscribe(() => invalidate());
     const unsubGeometry = geometryCache.subscribe(() => invalidate());
     return () => {
       unsubProject();
       unsubEditor();
+      unsubMotion();
       unsubGeometry();
     };
   }, [invalidate]);

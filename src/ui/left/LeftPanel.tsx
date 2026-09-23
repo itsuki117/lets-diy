@@ -1,6 +1,7 @@
 import { useEditorStore } from '../../store/useEditorStore';
 import { ArrangePanel } from './ArrangePanel';
 import { CreatePanel } from './CreatePanel';
+import { JointPanel } from './JointPanel';
 import { MachinePanel } from './MachinePanel';
 import { ModeTabs } from './ModeTabs';
 import { PartOutliner } from './PartOutliner';
@@ -14,6 +15,7 @@ export function LeftPanel() {
         {mode === 'create' ? <CreatePanel /> : null}
         {mode === 'arrange' ? <ArrangePanel /> : null}
         {mode === 'machine' ? <MachinePanel /> : null}
+        {mode === 'motion' ? <JointPanel /> : null}
       </div>
       <PartOutliner />
     </aside>

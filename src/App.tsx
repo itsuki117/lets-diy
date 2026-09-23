@@ -5,12 +5,13 @@ import { ErrorBoundary } from './ui/common/ErrorBoundary';
 import { useKeyboardShortcuts } from './ui/hooks/useKeyboardShortcuts';
 import { useProjectIo, useProjectLifecycle } from './ui/hooks/useProjectIo';
 import { focusOnParts } from './store/cameraCommands';
+import { toggleSelectedJoint } from './store/commands/jointCommands';
 import { Viewport } from './viewport/Viewport';
 
 export default function App() {
   const io = useProjectIo();
   const focus = useCallback((ids: string[]) => focusOnParts(ids), []);
-  useKeyboardShortcuts(io.downloadFile, focus);
+  useKeyboardShortcuts(io.downloadFile, focus, toggleSelectedJoint);
   useProjectLifecycle();
   useEffect(() => startStoreSync(), []);
 

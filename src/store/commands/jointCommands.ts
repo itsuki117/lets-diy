@@ -125,3 +125,14 @@ export function closeAllJoints(): void {
     }
   });
 }
+
+/** 選択中の可動を開閉する（O キー / ボタン） */
+export function toggleSelectedJoint(): void {
+  const jointId = editor().selectedJointId;
+  if (!jointId) return;
+  const joint = store().project.joints.find((j) => j.id === jointId);
+  if (!joint || !isMovableJoint(joint) || !joint.enabled) return;
+  const mid = (joint.range.min + joint.range.max) / 2;
+  const target = joint.value > mid ? joint.range.min : joint.range.max;
+  setJointValue(jointId, target, target === joint.range.min ? '閉じる' : '開く');
+}

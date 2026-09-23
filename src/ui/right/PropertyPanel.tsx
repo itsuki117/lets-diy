@@ -8,25 +8,33 @@ import { useEditorStore } from '../../store/useEditorStore';
 import { NumberField } from '../common/NumberField';
 import { Section } from '../common/Section';
 import { Vec3Field } from '../common/Vec3Field';
+import { MotionSection } from './MotionSection';
 import { OperationList } from './OperationList';
 
 export function PropertyPanel() {
   const part = useSelectedPart();
   const selected = useSelectedParts();
   const selectedIds = useEditorStore((s) => s.selectedIds);
+  const selectedJointId = useEditorStore((s) => s.selectedJointId);
 
   if (selected.length === 0) {
     return (
       <aside className="right-panel">
         <div className="panel-heading">プロパティ</div>
-        <div className="empty-state">
-          <Box size={30} aria-hidden />
-          <h3>部材の詳細</h3>
-          <p>
-            部材を選択すると
-            <br />
-            ここに詳細が表示されます
-          </p>
+        <div className="panel-scroll">
+          {/* 可動は部材を選んでいなくても操作できる（joint 自体が選択対象のため） */}
+          <MotionSection />
+          {selectedJointId ? null : (
+            <div className="empty-state">
+              <Box size={30} aria-hidden />
+              <h3>部材の詳細</h3>
+              <p>
+                部材を選択すると
+                <br />
+                ここに詳細が表示されます
+              </p>
+            </div>
+          )}
         </div>
       </aside>
     );
@@ -123,6 +131,8 @@ export function PropertyPanel() {
         <Section title="加工" badge={part.operations.length}>
           <OperationList part={part} />
         </Section>
+
+        <MotionSection />
       </div>
     </aside>
   );

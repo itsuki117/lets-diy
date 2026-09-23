@@ -7,6 +7,7 @@ import { PartsLayer } from './PartsLayer';
 import { TransformGizmo } from './TransformGizmo';
 import { OperationPreview } from './OperationPreview';
 import { OperationGizmo } from './OperationGizmo';
+import { JointGizmo } from './JointGizmo';
 import { FacePickOverlay } from './FacePickOverlay';
 import { useInvalidateOnStore } from './hooks/useInvalidateOnStore';
 import type { ViewPreset } from './ViewCube';
@@ -22,6 +23,7 @@ export function SceneRoot({ view }: { view: { preset: ViewPreset; revision: numb
       <TransformGizmo />
       <OperationPreview />
       <OperationGizmo />
+      <JointGizmo />
       <FacePickOverlay />
       <CameraRig view={view} />
       <GizmoHelper alignment="bottom-left" margin={[65, 70]}>

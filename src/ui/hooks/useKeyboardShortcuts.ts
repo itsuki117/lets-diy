@@ -9,14 +9,19 @@ const isTextEntry = (target: EventTarget | null): boolean => {
 };
 
 /** すべてのショートカットは画面上のボタンと 1:1 対応させる（設計書 §2.4） */
-export function useKeyboardShortcuts(onSave: () => void, onFocus: (ids: string[]) => void): void {
+export function useKeyboardShortcuts(
+  onSave: () => void,
+  onFocus: (ids: string[]) => void,
+  onToggleJoint: () => void,
+): void {
   useEffect(() => {
     const handler = (event: KeyboardEvent): void => {
       const editor = useEditorStore.getState();
       const project = useProjectStore.getState();
 
       if (event.key === 'Escape') {
-        if (editor.faceSnap) editor.cancelFaceSnap();
+        if (editor.jointDraft) editor.cancelJointDraft();
+        else if (editor.faceSnap) editor.cancelFaceSnap();
         else if (editor.operationDraft) editor.setOperationDraft(null);
         else if (!isTextEntry(event.target)) editor.clearSelection();
         return;
@@ -57,6 +62,13 @@ export function useKeyboardShortcuts(onSave: () => void, onFocus: (ids: string[]
         case '3':
           editor.setMode('machine');
           break;
+        case '4':
+          editor.setMode('motion');
+          break;
+        case 'o':
+        case 'O':
+          onToggleJoint();
+          break;
         case 'g':
         case 'G':
           editor.setGizmoMode('translate');
@@ -82,5 +94,5 @@ export function useKeyboardShortcuts(onSave: () => void, onFocus: (ids: string[]
     };
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
-  }, [onSave, onFocus]);
+  }, [onSave, onFocus, onToggleJoint]);
 }

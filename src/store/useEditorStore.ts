@@ -3,6 +3,9 @@ import { DEFAULT_SNAP } from '../core/constants';
 import type { InterferencePair } from '../core/collision/interference';
 import type {
   AxisDirection,
+  JointDraft,
+  JointId,
+  JointKind,
   EditorMode,
   FaceRef,
   FaceSnapSession,
@@ -28,6 +31,10 @@ export interface ViewOptions {
 export interface EditorStore {
   mode: EditorMode;
   selectedIds: PartId[];
+  /** 可動モードで選択中の joint */
+  selectedJointId: JointId | null;
+  /** 可動の追加ウィザードの下書き */
+  jointDraft: JointDraft | null;
   hoveredId: PartId | null;
   /** 面スナップ中にホバーしている面 */
   hoveredFace: FaceRef | null;
@@ -50,6 +57,11 @@ export interface EditorStore {
   select: (ids: PartId[], additive?: boolean) => void;
   toggleSelect: (id: PartId) => void;
   clearSelection: () => void;
+  selectJoint: (id: JointId | null) => void;
+  startJointDraft: (kind: JointKind) => void;
+  pickJointPart: (partId: PartId) => void;
+  resetJointDraftPicks: () => void;
+  cancelJointDraft: () => void;
   setHovered: (id: PartId | null) => void;
   setHoveredFace: (ref: FaceRef | null) => void;
   setGizmoMode: (mode: GizmoMode) => void;
@@ -81,6 +93,8 @@ let toastSeq = 0;
 export const useEditorStore = create<EditorStore>((set, get) => ({
   mode: 'create',
   selectedIds: [],
+  selectedJointId: null,
+  jointDraft: null,
   hoveredId: null,
   hoveredFace: null,
   gizmoMode: 'translate',
@@ -94,7 +108,7 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
   interference: null,
   hintOverride: null,
 
-  setMode: (mode) => set({ mode, faceSnap: null, hoveredFace: null, operationDraft: null }),
+  setMode: (mode) => set({ mode, faceSnap: null, hoveredFace: null, operationDraft: null, jointDraft: null }),
 
   select: (ids, additive = false) =>
     set((s) => ({ selectedIds: additive ? [...new Set([...s.selectedIds, ...ids])] : ids })),
@@ -105,6 +119,28 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
     })),
 
   clearSelection: () => set({ selectedIds: [] }),
+  selectJoint: (selectedJointId) => set({ selectedJointId }),
+
+  startJointDraft: (kind) => set({ jointDraft: { kind, basePartId: null, movingPartId: null } }),
+
+  pickJointPart: (partId) => {
+    const draft = get().jointDraft;
+    if (!draft) return;
+    if (!draft.basePartId) {
+      set({ jointDraft: { ...draft, basePartId: partId } });
+      return;
+    }
+    if (partId === draft.basePartId) {
+      get().pushToast('warning', '同じ部材どうしは結合できません');
+      return;
+    }
+    set({ jointDraft: { ...draft, movingPartId: partId } });
+  },
+
+  resetJointDraftPicks: () =>
+    set((s) => (s.jointDraft ? { jointDraft: { ...s.jointDraft, basePartId: null, movingPartId: null } } : {})),
+
+  cancelJointDraft: () => set({ jointDraft: null }),
   setHovered: (hoveredId) => set({ hoveredId }),
   setHoveredFace: (hoveredFace) => set({ hoveredFace }),
   setGizmoMode: (gizmoMode) => set({ gizmoMode }),

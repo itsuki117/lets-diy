@@ -300,6 +300,27 @@ legend { padding: 0; }
 .camera-help span { padding: 0 5px; color: #596575; }
 .fallback { padding: 80px 30px; text-align: center; color: var(--muted); display: flex; flex-direction: column; align-items: center; gap: 12px; }
 
+
+/* ---------------- 可動 ---------------- */
+.kind-btn { justify-content: flex-start; gap: 9px; padding: 9px 11px; text-align: left; }
+.kind-label { display: flex; flex-direction: column; gap: 2px; font-size: 12px; }
+.kind-label .muted { font-size: 10.5px; }
+.op-row-active { border-color: var(--accent); background: var(--accent-soft); }
+.op-select {
+  flex: 1;
+  min-width: 0;
+  justify-content: flex-start;
+  gap: 7px;
+  background: transparent;
+  border-color: transparent;
+  padding: 5px 4px;
+  text-align: left;
+}
+.op-select:hover:not(:disabled) { background: transparent; border-color: transparent; }
+.joint-value { float: right; color: var(--text); font-variant-numeric: tabular-nums; }
+.joint-slider { width: 100%; padding: 0; height: 22px; background: transparent; border: 0; accent-color: var(--accent); }
+.joint-slider:disabled { opacity: .4; }
+
 /* ---------------- オーバーレイ（部品表など） ---------------- */
 .overlay-panel {
   position: fixed;

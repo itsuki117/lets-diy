@@ -5,6 +5,7 @@ import { pickFace } from '../core/part/partFaces';
 import type { Part, Vec3 } from '../core/types';
 import { applyTransform } from '../geometry/transformUtils';
 import { useEditorStore } from '../store/useEditorStore';
+import { useMotionStore } from '../store/useMotionStore';
 import { getInterferenceMaterial, getPartMaterial } from './materials/materialLibrary';
 import { dragging, registerPartObject } from './partObjects';
 import { usePartGeometry } from './hooks/usePartGeometry';
@@ -17,12 +18,15 @@ function PartMeshInner({ part }: { part: Part }) {
   const isHovered = useEditorStore((s) => s.hoveredId === part.id);
   const faceSnapActive = useEditorStore((s) => s.faceSnap !== null);
   const interfering = useEditorStore((s) => !!s.interference?.some((pair) => pair.a === part.id || pair.b === part.id));
+  // joint で動かされている部材は、rest pose ではなく計算された姿勢で描く（設計書 DESIGN_V2 §7.3）。
+  // ジオメトリは変わらないので GeometryCache には一切触らない。
+  const pose = useMotionStore((s) => s.poses.get(part.id)) ?? part.transform;
 
   useLayoutEffect(() => {
     const mesh = ref.current;
     if (!mesh || dragging.partId === part.id) return;
-    applyTransform(mesh, part.transform);
-  }, [part.transform, part.id, part.visible, geometry]);
+    applyTransform(mesh, pose);
+  }, [pose, part.id, part.visible, geometry]);
 
   useEffect(() => {
     registerPartObject(part.id, ref.current);
@@ -38,6 +42,10 @@ function PartMeshInner({ part }: { part: Part }) {
     const point: Vec3 = [event.point.x, event.point.y, event.point.z];
     if (editor.faceSnap) {
       editor.pickFace({ partId: part.id, face: pickFace(part, point) });
+      return;
+    }
+    if (editor.jointDraft) {
+      editor.pickJointPart(part.id);
       return;
     }
     if (event.shiftKey) editor.toggleSelect(part.id);
