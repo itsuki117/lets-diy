@@ -7,6 +7,7 @@ import { useProjectIo, useProjectLifecycle } from './ui/hooks/useProjectIo';
 import { focusOnParts } from './store/cameraCommands';
 import { toggleSelectedJoint } from './store/commands/jointCommands';
 import { Viewport } from './viewport/Viewport';
+import { MotionCheckPage } from './ui/motion/MotionCheckPage';
 import { geometryCache } from './geometry/GeometryCache';
 import { exportStl } from './geometry/exporters/stlExporter';
 import { downloadBinary } from './io/fileDownload';
@@ -16,6 +17,7 @@ import { useProjectStore } from './store/useProjectStore';
 
 export default function App() {
   const io = useProjectIo();
+  const workspace = useEditorStore((state) => state.workspace);
   const focus = useCallback((ids: string[]) => focusOnParts(ids), []);
   useKeyboardShortcuts(io.downloadFile, focus, toggleSelectedJoint);
   useProjectLifecycle();
@@ -39,11 +41,15 @@ export default function App() {
 
   return (
     <ErrorBoundary scope="app">
-      <AppShell onExportStl={exportStlFile}>
-        <ErrorBoundary scope="viewport">
-          <Viewport />
-        </ErrorBoundary>
-      </AppShell>
+      {workspace === 'motionCheck' ? (
+        <MotionCheckPage>
+          <ErrorBoundary scope="viewport"><Viewport /></ErrorBoundary>
+        </MotionCheckPage>
+      ) : (
+        <AppShell onExportStl={exportStlFile}>
+          <ErrorBoundary scope="viewport"><Viewport /></ErrorBoundary>
+        </AppShell>
+      )}
     </ErrorBoundary>
   );
 }

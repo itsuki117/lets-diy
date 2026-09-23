@@ -87,11 +87,11 @@ function JointVisual({ joint, base }: { joint: MovableJoint; base: Part }) {
 
 export function JointGizmo() {
   const selectedJointId = useEditorStore((s) => s.selectedJointId);
-  const mode = useEditorStore((s) => s.mode);
+  const workspace = useEditorStore((s) => s.workspace);
   const project = useProjectStore((s) => s.project);
   const poses = useMotionStore((s) => s.poses);
 
-  if (mode !== 'motion' || !selectedJointId) return null;
+  if (workspace !== 'motionCheck' || !selectedJointId) return null;
   const joint = project.joints.find((j) => j.id === selectedJointId);
   if (!joint || !isMovableJoint(joint)) return null;
   const basePart = project.parts.find((p) => p.id === joint.basePartId);

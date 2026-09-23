@@ -30,6 +30,8 @@ export interface ViewOptions {
 }
 
 export interface EditorStore {
+  workspace: 'edit' | 'motionCheck';
+  createCategory: 'wood' | 'hardware';
   mode: EditorMode;
   selectedIds: PartId[];
   /** 可動モードで選択中の joint */
@@ -57,6 +59,8 @@ export interface EditorStore {
   /** ビューポート上部に出す 1 行ガイド。null なら状況から自動生成する。 */
   hintOverride: string | null;
 
+  setWorkspace: (workspace: 'edit' | 'motionCheck') => void;
+  setCreateCategory: (category: 'wood' | 'hardware') => void;
   setMode: (mode: EditorMode) => void;
   select: (ids: PartId[], additive?: boolean) => void;
   toggleSelect: (id: PartId) => void;
@@ -97,6 +101,8 @@ export interface EditorStore {
 let toastSeq = 0;
 
 export const useEditorStore = create<EditorStore>((set, get) => ({
+  workspace: 'edit',
+  createCategory: 'wood',
   mode: 'create',
   selectedIds: [],
   selectedJointId: null,
@@ -116,6 +122,14 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
   interference: null,
   hintOverride: null,
 
+  setWorkspace: (workspace) => set({
+    workspace,
+    faceSnap: null,
+    hoveredFace: null,
+    operationDraft: null,
+    jointDraft: null,
+  }),
+  setCreateCategory: (createCategory) => set({ createCategory, selectedHardwareId: null }),
   setMode: (mode) => set({ mode, faceSnap: null, hoveredFace: null, operationDraft: null, jointDraft: null }),
 
   select: (ids, additive = false) =>

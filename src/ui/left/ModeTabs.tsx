@@ -1,4 +1,4 @@
-import { Drill, Move3d, Plus, RotateCw, Wrench } from 'lucide-react';
+import { Drill, Move3d, Plus } from 'lucide-react';
 import type { EditorMode } from '../../core/types';
 import { useEditorStore } from '../../store/useEditorStore';
 
@@ -6,8 +6,6 @@ const TABS: Array<{ mode: EditorMode; label: string; key: string; Icon: typeof P
   { mode: 'create', label: '生成', key: '1', Icon: Plus },
   { mode: 'arrange', label: '配置', key: '2', Icon: Move3d },
   { mode: 'machine', label: '加工', key: '3', Icon: Drill },
-  { mode: 'hardware', label: '金物', key: '4', Icon: Wrench },
-  { mode: 'motion', label: '可動', key: '5', Icon: RotateCw },
 ];
 
 export function ModeTabs() {

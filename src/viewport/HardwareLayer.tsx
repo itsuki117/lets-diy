@@ -24,6 +24,8 @@ export function HardwareLayer() {
 function HardwareItem({ hardware, pose }: { hardware: Hardware; pose: Transform }) {
   const [object, setObject] = useState<Object3D | null>(null);
   const mode = useEditorStore((state) => state.mode);
+  const workspace = useEditorStore((state) => state.workspace);
+  const createCategory = useEditorStore((state) => state.createCategory);
   const selected = useEditorStore((state) => state.selectedHardwareId === hardware.id);
   const selectHardware = useEditorStore((state) => state.selectHardware);
   const snap = useEditorStore((state) => state.snap.grid);
@@ -34,6 +36,6 @@ function HardwareItem({ hardware, pose }: { hardware: Hardware; pose: Transform 
         <meshStandardMaterial color={selected ? '#d59b45' : '#7f8a92'} metalness={0.65} roughness={0.32} />
       </mesh>
     </group>
-    {selected && mode === 'hardware' && object ? <TransformControls object={object} mode="translate" space="local" size={0.6} translationSnap={snap > 0 ? snap : null} onMouseUp={() => moveHardware(hardware.id, [object.position.x, object.position.y, object.position.z])} /> : null}
+    {selected && workspace === 'edit' && mode === 'create' && createCategory === 'hardware' && object ? <TransformControls object={object} mode="translate" space="local" size={0.6} translationSnap={snap > 0 ? snap : null} onMouseUp={() => moveHardware(hardware.id, [object.position.x, object.position.y, object.position.z])} /> : null}
   </group>;
 }

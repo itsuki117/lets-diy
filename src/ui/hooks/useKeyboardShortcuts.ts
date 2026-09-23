@@ -62,12 +62,6 @@ export function useKeyboardShortcuts(
         case '3':
           editor.setMode('machine');
           break;
-        case '4':
-          editor.setMode('hardware');
-          break;
-        case '5':
-          editor.setMode('motion');
-          break;
         case 'o':
         case 'O':
           onToggleJoint();

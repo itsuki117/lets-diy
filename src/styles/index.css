@@ -117,6 +117,20 @@ legend { padding: 0; }
 .mode-tabs button:hover:not(:disabled) { background: var(--surface); }
 .mode-tabs button.active { background: var(--accent-soft); color: var(--accent); border-color: #5a4a35; }
 
+.generate-category {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  padding: 12px 12px 0;
+}
+.generate-category button { justify-content: flex-start; align-items: flex-start; padding: 10px; text-align: left; }
+.generate-category button > span { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.generate-category strong { font-size: 12px; }
+.generate-category small { color: var(--muted); font-size: 9.5px; line-height: 1.35; }
+.generate-category button.active small { color: #c9ad8c; }
+
+.motion-check-button { background: var(--accent-soft); color: var(--accent); border-color: #5a4a35; font-weight: 600; }
+
 .viewport-container { position: relative; min-width: 0; min-height: 0; overflow: hidden; background: #181c21; }
 .statusbar {
   grid-column: 1 / -1;
@@ -133,6 +147,46 @@ legend { padding: 0; }
 .status-separator { height: 10px; width: 1px; background: var(--border); margin: 0 4px; }
 .status-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--success); }
 .status-dot-dirty { background: var(--warning); }
+
+/* ---------------- 動作確認ページ ---------------- */
+.motion-check-shell {
+  display: grid;
+  width: 100%;
+  height: 100dvh;
+  min-width: 940px;
+  min-height: 560px;
+  grid-template-columns: 300px minmax(0, 1fr) 340px;
+  grid-template-rows: 68px minmax(0, 1fr);
+  background: var(--bg);
+}
+.motion-check-header {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 0 16px;
+  border-bottom: 1px solid var(--border);
+  background: #1a1e22;
+}
+.motion-check-header > p { margin-left: auto; color: var(--muted); font-size: 11.5px; }
+.motion-check-title { display: flex; align-items: center; gap: 9px; color: var(--accent); }
+.motion-check-title > div { display: flex; flex-direction: column; gap: 1px; }
+.motion-check-title strong { color: var(--text); font-size: 16px; }
+.motion-check-title span { color: var(--muted); font-size: 10px; }
+.motion-check-left, .motion-check-right { min-height: 0; display: flex; flex-direction: column; background: var(--panel); }
+.motion-check-left { border-right: 1px solid var(--border); }
+.motion-check-right { border-left: 1px solid var(--border); }
+.motion-check-viewport { position: relative; min-width: 0; min-height: 0; overflow: hidden; background: #181c21; }
+.motion-panel-intro { min-height: 70px; display: flex; align-items: center; gap: 10px; padding: 12px 16px; border-bottom: 1px solid var(--border); }
+.motion-panel-intro > div { display: flex; flex-direction: column; gap: 3px; }
+.motion-panel-intro strong { font-size: 12px; }
+.motion-panel-intro small { color: var(--muted); font-size: 10px; line-height: 1.4; }
+.step-number { width: 24px; height: 24px; flex: 0 0 24px; display: inline-flex; align-items: center; justify-content: center; border: 1px solid #5a4a35; border-radius: 50%; color: var(--accent); background: var(--accent-soft); font-size: 11px; font-weight: 700; }
+.motion-empty-state { margin: 72px 24px 0; display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center; color: var(--muted); }
+.motion-empty-state > svg { color: #67717e; }
+.motion-empty-state h2 { color: var(--text); font-size: 15px; }
+.motion-empty-state p { font-size: 11.5px; }
+.motion-check-guide { position: absolute; left: 16px; bottom: 16px; display: flex; align-items: center; gap: 6px; padding: 7px 10px; border: 1px solid var(--border); border-radius: 5px; background: #22282edc; color: var(--muted); font-size: 10px; pointer-events: none; }
 
 /* ---------------- フォーム ---------------- */
 .field { display: flex; flex-direction: column; gap: 4px; }

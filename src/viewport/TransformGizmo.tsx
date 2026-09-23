@@ -13,6 +13,7 @@ import type { Vec3 } from '../core/types';
 
 export function TransformGizmo() {
   const mode = useEditorStore((s) => s.mode);
+  const workspace = useEditorStore((s) => s.workspace);
   const gizmoMode = useEditorStore((s) => s.gizmoMode);
   const snap = useEditorStore((s) => s.snap);
   const faceSnapActive = useEditorStore((s) => s.faceSnap !== null);
@@ -33,7 +34,7 @@ export function TransformGizmo() {
   // 45 度開けた状態で動かすと、閉じたときにずれてしまう。
   const editable = !!partId && canEditRestPose(joints, partId);
   const active =
-    mode === 'arrange' && !faceSnapActive && !!part && !part.locked && part.visible && !!object && editable;
+    workspace === 'edit' && mode === 'arrange' && !faceSnapActive && !!part && !part.locked && part.visible && !!object && editable;
   useEffect(() => () => {
     if (dragging.partId !== null) {
       dragging.partId = null;

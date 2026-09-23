@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ClipboardList, FilePlus2, FolderOpen, Hammer, Save, ScanSearch, Upload } from 'lucide-react';
+import { ClipboardList, FilePlus2, FolderOpen, Hammer, Play, Save, ScanSearch, Upload } from 'lucide-react';
 import { useEditorStore } from '../../store/useEditorStore';
 import { useProjectStore } from '../../store/useProjectStore';
 import { findInterferences } from '../../core/collision/interference';
@@ -15,6 +15,7 @@ export function TopBar({ onExportStl }: { onExportStl: (selectedOnly: boolean) =
   const setViewOption = useEditorStore((s) => s.setViewOption);
   const setBomOpen = useEditorStore((s) => s.setBomOpen);
   const setInterference = useEditorStore((s) => s.setInterference);
+  const setWorkspace = useEditorStore((s) => s.setWorkspace);
   const io = useProjectIo();
   const [editingName, setEditingName] = useState(false);
   const [libraryOpen, setLibraryOpen] = useState(false);
@@ -49,6 +50,10 @@ export function TopBar({ onExportStl }: { onExportStl: (selectedOnly: boolean) =
       </div>
 
       <div className="topbar-group">
+        <button type="button" className="motion-check-button" onClick={() => setWorkspace('motionCheck')} title="作品を実際に動かして確認する">
+          <Play size={15} aria-hidden />
+          動作確認
+        </button>
         <button type="button" onClick={() => setBomOpen(true)} title="部品表を開く">
           <ClipboardList size={15} aria-hidden />
           部品表

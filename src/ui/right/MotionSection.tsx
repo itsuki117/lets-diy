@@ -38,7 +38,7 @@ export function MotionSection() {
   const unit = jointUnit(joint.kind);
 
   return (
-    <Section title="可動" badge={JOINT_KIND_LABELS[joint.kind]}>
+    <Section title="動かして確認" badge={JOINT_KIND_LABELS[joint.kind]} defaultOpen>
       <div className="field">
         <label className="field-label" htmlFor="joint-name">
           名前
@@ -64,7 +64,7 @@ export function MotionSection() {
           checked={joint.enabled}
           onChange={(event) => setJointEnabled(joint.id, event.target.checked)}
         />
-        この可動を有効にする
+        この動作を有効にする
       </label>
 
       {isMovableJoint(joint) && unit ? (
@@ -125,7 +125,7 @@ export function MotionSection() {
           />
 
           <div className="field-group">
-            <span className="field-label">可動範囲</span>
+            <span className="field-label">動かせる範囲</span>
             <div className="vec3-field">
               <NumberField
                 compact

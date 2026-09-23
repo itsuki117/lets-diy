@@ -393,7 +393,7 @@ export interface ValidationResult {
 // ------------------------------------------------------------
 // エディタ状態（保存対象外・Undo 対象外）
 // ------------------------------------------------------------
-export type EditorMode = 'create' | 'arrange' | 'machine' | 'hardware' | 'motion';
+export type EditorMode = 'create' | 'arrange' | 'machine';
 export type GizmoMode = 'translate' | 'rotate';
 
 /** 0 = スナップ OFF */

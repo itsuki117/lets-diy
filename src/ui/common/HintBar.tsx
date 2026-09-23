@@ -4,6 +4,8 @@ import { useProjectStore } from '../../store/useProjectStore';
 /** 「次に何をすればいいか」を常に 1 行で示す。Blender 化しないための中核。 */
 function useHint(): string {
   const mode = useEditorStore((s) => s.mode);
+  const workspace = useEditorStore((s) => s.workspace);
+  const createCategory = useEditorStore((s) => s.createCategory);
   const selectedIds = useEditorStore((s) => s.selectedIds);
   const faceSnap = useEditorStore((s) => s.faceSnap);
   const draft = useEditorStore((s) => s.operationDraft);
@@ -18,14 +20,15 @@ function useHint(): string {
   if (faceSnap) return '隙間を確認して［適用］を押してください';
   if (jointDraft && !jointDraft.basePartId) return '固定側の部材をクリックしてください';
   if (jointDraft && !jointDraft.movingPartId) return '動く側の部材をクリックしてください';
+  if (workspace === 'motionCheck' && jointCount === 0) return '左の［動かす場所を追加］から設定を始めてください';
+  if (workspace === 'motionCheck') return '左で場所を選び、右のスライダーで作品を動かせます';
   if (partCount === 0) return '左の［生成］から木材を作りましょう';
+  if (mode === 'create' && createCategory === 'hardware') return '取り付ける金物と2つの部材を選んでください';
   if (mode === 'create') return '寸法を入力して［木材を生成する］を押してください';
   if (mode === 'arrange' && selectedIds.length === 0) return '部材をクリックするか、左の一覧から選んでください';
   if (mode === 'arrange') return '右のパネルで数値を入力するか、ギズモをドラッグして動かします';
   if (mode === 'machine' && selectedIds.length !== 1) return '加工する部材を 1 つ選んでください';
   if (draft) return '矢印のドラッグ・微調整ボタン・座標入力の 3 つで位置を決められます';
-  if (mode === 'motion' && jointCount === 0) return '［可動を追加］から、扉や引き出しの動きを作れます';
-  if (mode === 'motion') return '一覧から可動を選ぶと、右のスライダーで動かせます';
   return '加工の種類を選んでください';
 }
 

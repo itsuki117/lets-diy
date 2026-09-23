@@ -16,6 +16,7 @@ import { useProjectStore } from '../store/useProjectStore';
  * 動かせる軸は加工の種類ごとに絞る（設計書 §13.4 の補助操作）。
  */
 export function OperationGizmo() {
+  const workspace = useEditorStore((s) => s.workspace);
   const draft = useEditorStore((s) => s.operationDraft);
   const snap = useEditorStore((s) => s.snap);
   const updateDraft = useEditorStore((s) => s.updateOperationDraft);
@@ -32,7 +33,7 @@ export function OperationGizmo() {
     handle.position.set(p[0], p[1], p[2]);
   }, [handle, draft, part]);
 
-  if (!draft || !part || part.locked) return null;
+  if (workspace !== 'edit' || !draft || !part || part.locked) return null;
 
   const axes = draggableAxes(draft.operation);
 

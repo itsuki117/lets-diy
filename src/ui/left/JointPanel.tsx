@@ -39,9 +39,9 @@ export function JointPanel() {
 
   return (
     <div className="panel-content">
-      <p className="eyebrow">MOTION</p>
-      <h2>動くようにする</h2>
-      <p className="muted">2 つの部材を結び、扉や引き出しとして動かします。</p>
+      <p className="eyebrow">MOVING PARTS</p>
+      <h2>動かす場所を設定</h2>
+      <p className="muted">固定する部材と動かす部材を1つずつ選びます。</p>
 
       {draft ? (
         <div className="tool-block tool-block-active">
@@ -76,7 +76,7 @@ export function JointPanel() {
         </div>
       ) : (
         <div className="field-group">
-          <span className="field-label">可動を追加</span>
+          <span className="field-label">動かす場所を追加</span>
           {KINDS.map(({ kind, Icon, hint }) => (
             <button key={kind} type="button" className="kind-btn" onClick={() => startDraft(kind)}>
               <Icon size={16} aria-hidden />
@@ -91,9 +91,9 @@ export function JointPanel() {
       )}
 
       <div className="field-group">
-        <span className="field-label">この設計の可動 ({project.joints.length})</span>
+        <span className="field-label">設定済みの場所 ({project.joints.length})</span>
         {project.joints.length === 0 ? (
-          <p className="muted">まだ可動はありません</p>
+          <p className="muted">まだ設定されていません</p>
         ) : (
           <ul className="op-list">
             {project.joints.map((joint) => {
