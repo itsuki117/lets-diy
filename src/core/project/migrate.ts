@@ -25,6 +25,35 @@ const MIGRATIONS: Record<number, Migration> = {
       },
     };
   },
+  // v4 -> v5: 金物のない可動（手で作った joint）を廃止した（設計書 DESIGN_V2 §3.2）。
+  // 丁番・レール・リニアガイド・固定金具のどれにも支えられていない joint は消す。
+  // その joint に付いていたガススプリング・ドアロックも、支えを失うので一緒に消す。
+  4: (doc) => {
+    const project = (doc.project ?? {}) as Record<string, unknown>;
+    type Row = Record<string, unknown>;
+    const hardware = (project.hardware ?? []) as Row[];
+    const joints = (project.joints ?? []) as Row[];
+    const drivers = new Set(['hinge', 'slideRail', 'linearGuide', 'bracket']);
+    const kindOf = (item: Row): string => ((item.preset ?? {}) as Row).kind as string;
+    const backed = new Set(hardware.filter((item) => drivers.has(kindOf(item))).map((item) => item.jointId));
+    const keptJoints = joints.filter((joint) => backed.has(joint.id));
+    const kept = new Set(keptJoints.map((joint) => joint.id));
+    const keptHardware = hardware.filter((item) => item.jointId === null || kept.has(item.jointId));
+    const dropped = new Set(hardware.filter((item) => !keptHardware.includes(item)).map((item) => item.id));
+    const parts = ((project.parts ?? []) as Row[]).map((part) => (Array.isArray(part.operations) && dropped.size > 0
+      ? { ...part, operations: (part.operations as Row[]).filter((operation) => !dropped.has(operation.note)) }
+      : part));
+    return {
+      ...doc,
+      project: {
+        ...project,
+        parts,
+        joints: keptJoints,
+        hardware: keptHardware,
+        gasSprings: ((project.gasSprings ?? []) as Row[]).filter((mount) => kept.has(mount.jointId)),
+      },
+    };
+  },
 };
 
 export function migrate(raw: unknown): Record<string, unknown> {

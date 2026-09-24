@@ -1,7 +1,7 @@
 import { performance } from 'node:perf_hooks';
 import { createProject } from '../src/core/project/createProject';
 import { createPart } from '../src/core/part/createPart';
-import { defaultJoint } from '../src/core/motion/jointDefaults';
+import { hingeLayout } from '../src/core/hardware/mechanism';
 import { solvePoses } from '../src/core/motion/kinematics';
 import { scanJointMotion } from '../src/core/motion/motionScan';
 import type { Joint, Project } from '../src/core/types';
@@ -14,7 +14,11 @@ const parts = Array.from({ length: 50 }, (_, index) => createPart({
 const joints: Joint[] = Array.from({ length: 10 }, (_, index) => {
   const base = parts[index * 2]!;
   const moving = parts[index * 2 + 1]!;
-  return defaultJoint('revolute', base, moving);
+  const layout = hingeLayout(base, moving);
+  return {
+    id: `jnt-${index}`, name: `扉 ${index + 1}`, enabled: true, kind: 'revolute',
+    basePartId: base.id, movingPartId: moving.id, origin: layout.origin, axis: layout.axis, value: 0, range: { min: 0, max: 110 },
+  };
 });
 const project: Project = { ...createProject('Ver.2 performance'), parts, joints };
 

@@ -4,9 +4,7 @@ import type { InterferencePair } from '../core/collision/interference';
 import type { MotionScanResult } from '../core/motion/motionScan';
 import type {
   AxisDirection,
-  JointDraft,
   JointId,
-  JointKind,
   EditorMode,
   FaceRef,
   FaceSnapSession,
@@ -14,9 +12,44 @@ import type {
   OperationDraft,
   PartId,
   SnapSettings,
+  Vec3,
 } from '../core/types';
 
 export type ToastKind = 'info' | 'success' | 'warning' | 'error';
+
+/** 面の上の点（部材ローカル mm） */
+export interface PlacementPoint {
+  partId: PartId;
+  face: AxisDirection;
+  point: Vec3;
+}
+
+/**
+ * 金物の取り付け（設計書 DESIGN_V2 §10.7）。
+ *   base   固定側の面の上に、固定側の部品（レール・座金・ガスの下端・ロックの受け）を置く
+ *   moving 動く側の面にマウスを乗せると、取り付けた結果が透過表示される。クリックで決める
+ *   ready  透過表示を確かめて［取り付ける］
+ */
+export interface HardwarePlacement {
+  step: 'base' | 'moving' | 'ready' | null;
+  base: PlacementPoint | null;
+  moving: PlacementPoint | null;
+  /** マウスが乗っている面の上の点 */
+  hover: PlacementPoint | null;
+  /** レール・ガイドの向き: 面の中で 90° 回す / 反対向き */
+  turn: boolean;
+  flip: boolean;
+}
+
+export interface PlacementOptions {
+  presetId: string;
+  quantity: number;
+  autoHoles: boolean;
+  snapToMount: boolean;
+  latchAt: 'auto' | 'min' | 'max';
+}
+
+export const IDLE_PLACEMENT: HardwarePlacement = { step: null, base: null, moving: null, hover: null, turn: false, flip: false };
 
 export interface Toast {
   id: number;
@@ -37,8 +70,8 @@ export interface EditorStore {
   /** 可動モードで選択中の joint */
   selectedJointId: JointId | null;
   selectedHardwareId: string | null;
-  /** 可動の追加ウィザードの下書き */
-  jointDraft: JointDraft | null;
+  placement: HardwarePlacement;
+  placementOptions: PlacementOptions;
   /** 可動範囲の走査結果。null なら未実行 */
   motionScan: MotionScanResult | null;
   hoveredId: PartId | null;
@@ -60,6 +93,9 @@ export interface EditorStore {
   hintOverride: string | null;
 
   setWorkspace: (workspace: 'edit' | 'motionCheck') => void;
+  setPlacement: (patch: Partial<HardwarePlacement>) => void;
+  setPlacementOptions: (patch: Partial<PlacementOptions>) => void;
+  cancelPlacement: () => void;
   setCreateCategory: (category: 'wood' | 'hardware') => void;
   setMode: (mode: EditorMode) => void;
   select: (ids: PartId[], additive?: boolean) => void;
@@ -67,10 +103,6 @@ export interface EditorStore {
   clearSelection: () => void;
   selectJoint: (id: JointId | null) => void;
   selectHardware: (id: string | null) => void;
-  startJointDraft: (kind: JointKind) => void;
-  pickJointPart: (partId: PartId) => void;
-  resetJointDraftPicks: () => void;
-  cancelJointDraft: () => void;
   setMotionScan: (result: MotionScanResult | null) => void;
   setHovered: (id: PartId | null) => void;
   setHoveredFace: (ref: FaceRef | null) => void;
@@ -107,7 +139,8 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
   selectedIds: [],
   selectedJointId: null,
   selectedHardwareId: null,
-  jointDraft: null,
+  placement: IDLE_PLACEMENT,
+  placementOptions: { presetId: 'hinge.concealed.35', quantity: 2, autoHoles: true, snapToMount: true, latchAt: 'auto' },
   motionScan: null,
   hoveredId: null,
   hoveredFace: null,
@@ -127,10 +160,14 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
     faceSnap: null,
     hoveredFace: null,
     operationDraft: null,
-    jointDraft: null,
+    placement: IDLE_PLACEMENT,
   }),
-  setCreateCategory: (createCategory) => set({ createCategory, selectedHardwareId: null }),
-  setMode: (mode) => set({ mode, faceSnap: null, hoveredFace: null, operationDraft: null, jointDraft: null }),
+  setCreateCategory: (createCategory) => set({ createCategory, selectedHardwareId: null, placement: IDLE_PLACEMENT }),
+  setMode: (mode) => set({ mode, faceSnap: null, hoveredFace: null, operationDraft: null, placement: IDLE_PLACEMENT }),
+
+  setPlacement: (patch) => set((s) => ({ placement: { ...s.placement, ...patch }, faceSnap: patch.step ? null : s.faceSnap })),
+  setPlacementOptions: (patch) => set((s) => ({ placementOptions: { ...s.placementOptions, ...patch } })),
+  cancelPlacement: () => set({ placement: IDLE_PLACEMENT, hoveredFace: null }),
 
   select: (ids, additive = false) =>
     set((s) => ({ selectedIds: additive ? [...new Set([...s.selectedIds, ...ids])] : ids })),
@@ -144,26 +181,6 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
   selectJoint: (selectedJointId) => set({ selectedJointId, motionScan: null }),
   selectHardware: (selectedHardwareId) => set({ selectedHardwareId }),
 
-  startJointDraft: (kind) => set({ jointDraft: { kind, basePartId: null, movingPartId: null } }),
-
-  pickJointPart: (partId) => {
-    const draft = get().jointDraft;
-    if (!draft) return;
-    if (!draft.basePartId) {
-      set({ jointDraft: { ...draft, basePartId: partId } });
-      return;
-    }
-    if (partId === draft.basePartId) {
-      get().pushToast('warning', '同じ部材どうしは結合できません');
-      return;
-    }
-    set({ jointDraft: { ...draft, movingPartId: partId } });
-  },
-
-  resetJointDraftPicks: () =>
-    set((s) => (s.jointDraft ? { jointDraft: { ...s.jointDraft, basePartId: null, movingPartId: null } } : {})),
-
-  cancelJointDraft: () => set({ jointDraft: null }),
   setMotionScan: (motionScan) => set({ motionScan }),
   setHovered: (hoveredId) => set({ hoveredId }),
   setHoveredFace: (hoveredFace) => set({ hoveredFace }),
@@ -224,16 +241,21 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
         ? { ...s.faceSnap, source: null, target: null }
         : s.faceSnap;
     const operationDraft = s.operationDraft && !alive.has(s.operationDraft.partId) ? null : s.operationDraft;
+    const placement = (s.placement.base && !alive.has(s.placement.base.partId))
+      || (s.placement.moving && !alive.has(s.placement.moving.partId))
+      ? IDLE_PLACEMENT
+      : s.placement;
     if (
       selectedIds.length === s.selectedIds.length &&
       hoveredId === s.hoveredId &&
       hoveredFace === s.hoveredFace &&
       faceSnap === s.faceSnap &&
-      operationDraft === s.operationDraft
+      operationDraft === s.operationDraft &&
+      placement === s.placement
     ) {
       return;
     }
-    set({ selectedIds, hoveredId, hoveredFace, faceSnap, operationDraft });
+    set({ selectedIds, hoveredId, hoveredFace, faceSnap, operationDraft, placement });
   },
 }));
 

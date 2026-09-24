@@ -1,20 +1,48 @@
 import { useEffect, type ReactNode } from 'react';
-import { ArrowLeft, CircleCheck, MousePointer2, Play, ScanSearch } from 'lucide-react';
+import { ArrowLeft, Link, MousePointer2, MoveHorizontal, Play, RotateCw, ScanSearch, Wrench } from 'lucide-react';
+import { isMovableJoint, type Joint, type Project } from '../../core/types';
 import { useEditorStore } from '../../store/useEditorStore';
-import { useProjectStore } from '../../store/useProjectStore';
+import { useMotionPlayer } from '../../store/useMotionPlayer';
+import { useWorkingProject } from '../../store/useSimulationStore';
 import { ToastHost } from '../common/ToastHost';
-import { JointPanel } from '../left/JointPanel';
 import { MotionSection } from '../right/MotionSection';
 
+const ICONS = { revolute: RotateCw, prismatic: MoveHorizontal, fixed: Link } as const;
+
+/** 可動部の説明。動きは取り付けた金物で決まる */
+function describe(project: Project, joint: Joint): { title: string; detail: string } {
+  const name = (id: string): string => project.parts.find((part) => part.id === id)?.name ?? '?';
+  const hardware = project.hardware.filter((item) => item.jointId === joint.id);
+  const detail = hardware.length > 0
+    ? hardware.map((item) => `${item.preset.label} ×${item.quantity}`).join(' / ')
+    : '金物なし（手動で設定した動き）';
+  const title = `${name(joint.movingPartId)}（${name(joint.basePartId)}に取付）`;
+  return { title, detail };
+}
+
 export function MotionCheckPage({ children }: { children: ReactNode }) {
-  const project = useProjectStore((state) => state.project);
+  const project = useWorkingProject();
   const selectedJointId = useEditorStore((state) => state.selectedJointId);
   const selectJoint = useEditorStore((state) => state.selectJoint);
   const setWorkspace = useEditorStore((state) => state.setWorkspace);
+  const setMode = useEditorStore((state) => state.setMode);
+  const setCreateCategory = useEditorStore((state) => state.setCreateCategory);
+  const settle = useMotionPlayer((state) => state.settle);
+
+  const movable = project.joints.filter(isMovableJoint);
 
   useEffect(() => {
-    if (!selectedJointId && project.joints[0]) selectJoint(project.joints[0].id);
-  }, [project.joints, selectJoint, selectedJointId]);
+    if (!movable.some((joint) => joint.id === selectedJointId) && movable[0]) selectJoint(movable[0].id);
+  }, [movable, selectJoint, selectedJointId]);
+
+  // ページを離れるときは、動いている途中でも今の位置で確定する
+  useEffect(() => () => settle(), [settle]);
+
+  const goToHardware = (): void => {
+    setWorkspace('edit');
+    setMode('create');
+    setCreateCategory('hardware');
+  };
 
   return (
     <div className="motion-check-shell">
@@ -30,15 +58,47 @@ export function MotionCheckPage({ children }: { children: ReactNode }) {
             <span>{project.name}</span>
           </div>
         </div>
-        <p>作品を開閉・スライドして、正しく動くか確認します</p>
+        <p>取り付けた金物のとおりに動かして、止まる位置やぶつかりを確かめます</p>
       </header>
 
-      <aside className="motion-check-left" aria-label="動かす場所の設定">
+      <aside className="motion-check-left" aria-label="動く場所">
         <div className="motion-panel-intro">
           <span className="step-number">1</span>
-          <div><strong>動かす場所を選ぶ</strong><small>未設定なら、2つの部材を結びます</small></div>
+          <div><strong>動く場所を選ぶ</strong><small>金物を付けた場所が自動で並びます</small></div>
         </div>
-        <div className="panel-scroll"><JointPanel /></div>
+        <div className="panel-scroll">
+          <div className="panel-content">
+            {movable.length === 0 ? (
+              <div className="motion-empty-state">
+                <Wrench size={28} aria-hidden />
+                <h2>動く場所がありません</h2>
+                <p>丁番・スライドレール・ガススプリングを取り付けると、ここに表示されます。</p>
+                <button type="button" onClick={goToHardware}><Wrench size={14} aria-hidden />金物を取り付ける</button>
+              </div>
+            ) : (
+              <div className="mechanism-rows">
+                {movable.map((joint) => {
+                  const Icon = ICONS[joint.kind];
+                  const { title, detail } = describe(project, joint);
+                  return (
+                    <button
+                      key={joint.id}
+                      type="button"
+                      className={`mechanism-row ${joint.id === selectedJointId ? 'op-row-active' : ''}`}
+                      onClick={() => { settle(); selectJoint(joint.id); }}
+                    >
+                      <Icon size={16} aria-hidden />
+                      <span>
+                        <strong>{title}</strong>
+                        <small>{detail}</small>
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        </div>
       </aside>
 
       <main className="motion-check-viewport" aria-label="動作確認用3D表示">
@@ -51,15 +111,13 @@ export function MotionCheckPage({ children }: { children: ReactNode }) {
       <aside className="motion-check-right" aria-label="動作確認の操作">
         <div className="motion-panel-intro">
           <span className="step-number">2</span>
-          <div><strong>実際に動かして確認</strong><small>スライダーまたは開閉ボタンで操作します</small></div>
+          <div><strong>手で動かして、離してみる</strong><small>スライダーが手です。離すと重力とガス圧で動きます</small></div>
         </div>
         <div className="panel-scroll">
-          {selectedJointId ? <MotionSection /> : (
+          {selectedJointId && movable.some((joint) => joint.id === selectedJointId) ? <MotionSection /> : (
             <div className="motion-empty-state">
               <ScanSearch size={30} aria-hidden />
               <h2>確認する場所を選んでください</h2>
-              <p>左の一覧から動かす場所を選ぶと、ここに操作ボタンが表示されます。</p>
-              {project.joints.length === 0 ? <p className="notice notice-ok"><CircleCheck size={14} />まず左から設定を追加しましょう</p> : null}
             </div>
           )}
         </div>

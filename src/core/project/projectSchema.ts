@@ -131,15 +131,33 @@ const hardwareHole = z.object({
   offset: vec3,
 });
 
+const gasSpringExtras = {
+  type: z.enum(['push', 'traction', 'damper', 'locking']).optional(),
+  progression: z.number().min(1).max(3).optional(),
+  extendSpeed: z.number().positive().optional(),
+  dampDirection: z.enum(['both', 'compress', 'extend']).optional(),
+};
+
 const hardwarePreset = z.object({
   presetId: z.string().min(1),
   label: z.string(),
-  kind: z.enum(['hinge', 'slideRail', 'gasSpring']),
+  kind: z.enum(['hinge', 'slideRail', 'linearGuide', 'gasSpring', 'latch', 'bracket']),
   partNumber: z.string().optional(),
   jointKind: z.enum(['fixed', 'revolute', 'prismatic']),
   defaultRange: range.optional(),
   holes: z.array(hardwareHole),
-  gasSpring: z.object({ strokeMin: z.number().positive(), strokeMax: z.number().positive(), forceN: z.number().positive() }).optional(),
+  motionAxis: vec3.optional(),
+  railLength: z.number().positive().optional(),
+  blockLength: z.number().positive().optional(),
+  mountGap: z.number().nonnegative().optional(),
+  latchMode: z.enum(['auto', 'manual']).optional(),
+  bracketLeg: z.number().positive().optional(),
+  gasSpring: z.object({
+    strokeMin: z.number().positive(),
+    strokeMax: z.number().positive(),
+    forceN: z.number().positive(),
+    ...gasSpringExtras,
+  }).optional(),
 });
 
 const hardware = z.object({
@@ -150,6 +168,10 @@ const hardware = z.object({
   rotation: vec3,
   quantity: z.number().int().positive(),
   note: z.string().optional(),
+  parts: z.object({ base: z.string().min(1), moving: z.string().min(1) }).optional(),
+  latch: z.object({ at: z.enum(['min', 'max']), engaged: z.boolean() }).optional(),
+  faces: z.object({ base: axisDirection, moving: axisDirection }).optional(),
+  travelOffset: z.number().nonnegative().optional(),
 });
 
 const gasSpring = z.object({
@@ -161,6 +183,9 @@ const gasSpring = z.object({
   strokeMin: z.number().positive(),
   strokeMax: z.number().positive(),
   forceN: z.number().positive(),
+  ...gasSpringExtras,
+  rodEnd: z.enum(['base', 'moving']).optional(),
+  locked: z.boolean().optional(),
 });
 
 const project = z

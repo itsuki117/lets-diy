@@ -5,7 +5,7 @@ import { ErrorBoundary } from './ui/common/ErrorBoundary';
 import { useKeyboardShortcuts } from './ui/hooks/useKeyboardShortcuts';
 import { useProjectIo, useProjectLifecycle } from './ui/hooks/useProjectIo';
 import { focusOnParts } from './store/cameraCommands';
-import { toggleSelectedJoint } from './store/commands/jointCommands';
+import { simToggleSelectedJoint } from './store/commands/simulationCommands';
 import { Viewport } from './viewport/Viewport';
 import { MotionCheckPage } from './ui/motion/MotionCheckPage';
 import { geometryCache } from './geometry/GeometryCache';
@@ -19,7 +19,7 @@ export default function App() {
   const io = useProjectIo();
   const workspace = useEditorStore((state) => state.workspace);
   const focus = useCallback((ids: string[]) => focusOnParts(ids), []);
-  useKeyboardShortcuts(io.downloadFile, focus, toggleSelectedJoint);
+  useKeyboardShortcuts(io.downloadFile, focus, simToggleSelectedJoint);
   useProjectLifecycle();
   useEffect(() => startStoreSync(), []);
   const exportStlFile = useCallback((selectedOnly: boolean) => {

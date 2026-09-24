@@ -251,7 +251,13 @@ export const jointUnit = (kind: JointKind): 'deg' | 'mm' | null =>
 // ------------------------------------------------------------
 // 金物（Ver.2）
 // ------------------------------------------------------------
-export type HardwareKind = 'hinge' | 'slideRail' | 'gasSpring';
+/**
+ * 金物の種類。可動・結合はすべて金物から作る（金物のない可動は作れない）。
+ * - hinge: 回転 / slideRail: 引き出しの直進 / linearGuide: リニアガイドの直進（上下も可）
+ * - gasSpring: 可動に付く補助（押し上げ・減速・保持）/ latch: 可動を決まった位置で止めるドアロック
+ * - bracket: 2 つの部材を固定する固定金具
+ */
+export type HardwareKind = 'hinge' | 'slideRail' | 'linearGuide' | 'gasSpring' | 'latch' | 'bracket';
 
 /** 金物が要求する穴。target で「どちらの部材にあける穴か」を決める */
 export interface HardwareHole {
@@ -279,8 +285,48 @@ export interface HardwarePreset {
   defaultRange?: { min: number; max: number };
   /** 必要な穴 */
   holes: HardwareHole[];
+  /**
+   * 動きの向き（金物ローカル）。丁番はピンの向き、レールは引き出す向き。
+   * 省略時は種類ごとの既定（丁番 +Y / レール +X）。
+   */
+  motionAxis?: Vec3;
+  /** レールの全長 mm（取付長さ）。可動量は defaultRange.max */
+  railLength?: Millimeter;
+  /** リニアガイドのブロックの長さ mm。可動量 = レール長 - ブロック長 */
+  blockLength?: Millimeter;
+  /** 取付面どうしの間の、金物の厚み mm（リニアガイドはレール + ブロック、側面レールはレールの厚み） */
+  mountGap?: Millimeter;
   /** ガススプリングだけが持つ仕様。プリセットデータで駆動する。 */
-  gasSpring?: { strokeMin: Millimeter; strokeMax: Millimeter; forceN: number };
+  gasSpring?: GasSpringSpec;
+  /** ドアロックの掛かり方。auto = 位置まで来ると自動で掛かる / manual = 位置で手で掛ける */
+  latchMode?: 'auto' | 'manual';
+  /** 固定金具の脚の長さ mm（表示用） */
+  bracketLeg?: Millimeter;
+}
+
+/**
+ * ガススプリング / ダンパーの種類。
+ * - push: 一般的な押し出し型。フタの持ち上げ補助・開いた状態の保持
+ * - traction: 引張型。縮む向きに力が出る。閉じた状態の保持や引き込み
+ * - damper: 油圧ダンパー。ガス圧はほぼ無く、速度に比例した抵抗で動きを遅くする
+ * - locking: ロック付き。押し出し型と同じ力で、ロック中は長さが固定される
+ */
+export type GasSpringType = 'push' | 'traction' | 'damper' | 'locking';
+
+export interface GasSpringSpec {
+  /** 縮みきった長さ（取付穴中心間） */
+  strokeMin: Millimeter;
+  /** 伸びきった長さ（取付穴中心間） */
+  strokeMax: Millimeter;
+  /** 呼び力 F1 N（伸びきり 5mm 手前での力）。ダンパーは戻し力 */
+  forceN: number;
+  type?: GasSpringType;
+  /** F2/F1。縮めるほど力が増える割合。一般に 1.2〜1.4 */
+  progression?: number;
+  /** 自由伸長速度の目安 mm/s。油の絞りで決まる */
+  extendSpeed?: number;
+  /** ダンパーの減衰がかかる向き。compress = 縮むとき（閉じるとき）だけ効く */
+  dampDirection?: 'both' | 'compress' | 'extend';
 }
 
 export interface Hardware {
@@ -295,6 +341,14 @@ export interface Hardware {
   /** 数量。扉 1 枚にヒンジ 2 個など */
   quantity: number;
   note?: string;
+  /** 取り付けた 2 つの部材。固定金具は joint を作らないこともあるので、ここで持つ */
+  parts?: { base: PartId; moving: PartId };
+  /** リニアガイド: 可動量 0 のとき、ブロックがレールの下端から何 mm 上にいるか */
+  travelOffset?: Millimeter;
+  /** 金物を付けた面（部材ローカルの外向き法線）。面を選んで付けたときに持つ */
+  faces?: { base: AxisDirection; moving: AxisDirection };
+  /** ドアロックの状態。at = 可動範囲のどちらの端でかかるか */
+  latch?: { at: 'min' | 'max'; engaged: boolean };
 }
 
 /**
@@ -315,6 +369,14 @@ export interface GasSpringMount {
   strokeMax: Millimeter;
   /** 呼び力 N */
   forceN: number;
+  type?: GasSpringType;
+  progression?: number;
+  extendSpeed?: number;
+  dampDirection?: 'both' | 'compress' | 'extend';
+  /** ロッド（細い側）がどちらの部材に付くか。油圧減衰を効かせるため下向き推奨 */
+  rodEnd?: 'base' | 'moving';
+  /** ロック付きのとき、ロック中か */
+  locked?: boolean;
 }
 
 // ------------------------------------------------------------
@@ -334,7 +396,7 @@ export interface Project {
   updatedAt: string;
 }
 
-export const SCHEMA_VERSION = 4 as const;
+export const SCHEMA_VERSION = 5 as const;
 
 export interface ProjectDocument {
   app: 'lets-diy';
@@ -434,12 +496,6 @@ export interface OperationDraft {
 }
 
 /** 可動モードで「固定側 -> 動く側」を選んでいる最中の下書き */
-export interface JointDraft {
-  kind: JointKind;
-  basePartId: PartId | null;
-  movingPartId: PartId | null;
-}
-
 export type AlignAxis = AxisKey;
 export type AlignAnchor = 'min' | 'center' | 'max';
 

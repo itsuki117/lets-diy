@@ -4,13 +4,13 @@ import { isMovableJoint } from '../../core/types';
 import { useProjectStore } from '../useProjectStore';
 import { useEditorStore } from '../useEditorStore';
 import { addPart, removeParts } from '../commands/partCommands';
+import { addHardware } from '../commands/hardwareCommands';
+import { getHardwarePreset } from '../../core/hardware/presets';
+import type { JointKind } from '../../core/types';
 import {
-  addJoint,
   closeAllJoints,
-  removeJoint,
   renameJoint,
   setJointEnabled,
-  setJointRange,
   setJointValue,
   updateTransientJointValue,
 } from '../commands/jointCommands';
@@ -36,7 +36,19 @@ const twoParts = (): [string, string] => {
   return [a, b];
 };
 
-describe('addJoint', () => {
+/**
+ * 可動は金物からしか作れない（設計書 DESIGN_V2 §3.2 廃止）。
+ * テストでは種類に合う金物を付けて joint を作る。
+ */
+const PRESET_FOR: Record<JointKind, string> = { revolute: 'hinge.butt.64', prismatic: 'slide.side.350', fixed: 'bracket.l.40' };
+function addJoint(kind: JointKind, basePartId: string, movingPartId: string): string | null {
+  const before = new Set(store().project.joints.map((joint) => joint.id));
+  const id = addHardware({ preset: getHardwarePreset(PRESET_FOR[kind])!, basePartId, movingPartId, autoHoles: false });
+  if (!id) return null;
+  return store().project.joints.find((joint) => !before.has(joint.id))?.id ?? null;
+}
+
+describe('金物で可動を作る', () => {
   beforeEach(reset);
 
   it('ヒンジを追加できる', () => {
@@ -47,9 +59,10 @@ describe('addJoint', () => {
     expect(joints()[0]!.kind).toBe('revolute');
   });
 
-  it('固定・スライドも追加できる', () => {
+  it('スライドも追加できる。動かない部材どうしの固定金具は可動を作らない', () => {
     const [base, moving] = twoParts();
-    expect(addJoint('fixed', base, moving)).not.toBeNull();
+    expect(addJoint('fixed', base, moving)).toBeNull();
+    expect(store().project.hardware).toHaveLength(1);
     reset();
     const [b2, m2] = twoParts();
     expect(addJoint('prismatic', b2, m2)).not.toBeNull();
@@ -95,30 +108,14 @@ describe('joint の値と範囲', () => {
     expect(joint.value).toBe(joint.range.max);
   });
 
-  it('範囲を変えると現在値も丸められる', () => {
+  it('固定 joint（動く部材に金具で付けた部材）には値を設定できない', () => {
     const [base, moving] = twoParts();
-    const id = addJoint('revolute', base, moving)!;
-    setJointValue(id, 100);
-    setJointRange(id, { min: 0, max: 45 });
-    const joint = joints()[0]!;
-    if (!isMovableJoint(joint)) return;
-    expect(joint.value).toBe(45);
-  });
-
-  it('最小と最大が逆でも入れ替えて受け付ける', () => {
-    const [base, moving] = twoParts();
-    const id = addJoint('revolute', base, moving)!;
-    setJointRange(id, { min: 90, max: 10 });
-    const joint = joints()[0]!;
-    if (!isMovableJoint(joint)) return;
-    expect(joint.range).toEqual({ min: 10, max: 90 });
-  });
-
-  it('固定 joint には値を設定できない', () => {
-    const [base, moving] = twoParts();
-    const id = addJoint('fixed', base, moving)!;
-    setJointValue(id, 50);
-    expect('value' in joints()[0]!).toBe(false);
+    const handle = addPart({ name: '取っ手', size: { x: 20, y: 120, z: 30 }, position: [400, 300, 24] });
+    addJoint('revolute', base, moving);
+    addJoint('fixed', moving, handle);
+    const fixed = joints().find((joint) => joint.kind === 'fixed')!;
+    setJointValue(fixed.id, 50);
+    expect('value' in joints().find((joint) => joint.id === fixed.id)!).toBe(false);
   });
 
   it('closeAllJoints ですべて 0 に戻る', () => {
@@ -191,10 +188,10 @@ describe('部材を消すと可動も道連れになる', () => {
     const [base, moving] = twoParts();
     const third = addPart({ name: '天板', size: { x: 300, y: 18, z: 300 }, position: [0, 700, 0] });
     addJoint('revolute', base, moving);
-    addJoint('fixed', base, third);
+    addJoint('prismatic', base, third);
     removeParts([moving]);
     expect(joints()).toHaveLength(1);
-    expect(joints()[0]!.kind).toBe('fixed');
+    expect(joints()[0]!.kind).toBe('prismatic');
   });
 });
 
@@ -203,10 +200,8 @@ describe('全コマンドの undo 網羅（joint 系）', () => {
 
   const cases: Array<[string, (jointId: string) => void]> = [
     ['setJointValue', (id) => setJointValue(id, 45)],
-    ['setJointRange', (id) => setJointRange(id, { min: -10, max: 80 })],
     ['renameJoint', (id) => renameJoint(id, '新しい名前')],
     ['setJointEnabled', (id) => setJointEnabled(id, false)],
-    ['removeJoint', (id) => removeJoint(id)],
     ['closeAllJoints', () => closeAllJoints()],
   ];
 

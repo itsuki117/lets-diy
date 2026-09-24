@@ -20,7 +20,7 @@ export function useKeyboardShortcuts(
       const project = useProjectStore.getState();
 
       if (event.key === 'Escape') {
-        if (editor.jointDraft) editor.cancelJointDraft();
+        if (editor.placement.step) editor.cancelPlacement();
         else if (editor.faceSnap) editor.cancelFaceSnap();
         else if (editor.operationDraft) editor.setOperationDraft(null);
         else if (!isTextEntry(event.target)) editor.clearSelection();

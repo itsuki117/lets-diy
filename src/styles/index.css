@@ -384,7 +384,50 @@ legend { padding: 0; }
 .drawing-preview { overflow: auto; background: #fff; padding: 12px; }
 .drawing-preview svg { max-width: 100%; height: auto; }
 .gas-card { display: flex; flex-direction: column; gap: 5px; padding: 8px; border: 1px solid var(--border); border-radius: 5px; }
-.gas-card svg { width: 100%; height: 80px; color: var(--accent); background: var(--surface); }
+.gas-card-head { display: flex; align-items: baseline; justify-content: space-between; gap: 6px; }
+.gas-card-head strong { font-size: 11.5px; }
+.gas-card button { display: inline-flex; align-items: center; justify-content: center; gap: 6px; font-size: 11.5px; }
+.stroke-bar { position: relative; height: 8px; border: 1px solid var(--border); border-radius: 4px; background: var(--surface); overflow: hidden; }
+.stroke-fill { position: absolute; left: 0; top: 0; bottom: 0; background: var(--accent); opacity: .75; }
+.range-caption { display: flex; justify-content: space-between; gap: 6px; color: var(--muted); font-size: 10px; font-variant-numeric: tabular-nums; }
+
+/* 動作確認: 可動部の一覧と、手で動かすトラック */
+.mechanism-rows { display: flex; flex-direction: column; gap: 6px; }
+.mechanism-row { display: flex; align-items: flex-start; gap: 9px; padding: 9px 10px; text-align: left; color: var(--text); }
+.mechanism-row > svg { flex-shrink: 0; margin-top: 2px; color: var(--accent); }
+.mechanism-row > span { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.mechanism-row strong { font-size: 12px; font-weight: 600; }
+.mechanism-row small { color: var(--muted); font-size: 10.5px; line-height: 1.45; }
+.mechanism-list { display: flex; flex-wrap: wrap; gap: 5px; }
+.mechanism-chip { padding: 3px 7px; border: 1px solid var(--border); border-radius: 4px; background: var(--surface); color: var(--text); font-size: 10.5px; }
+.motion-track { position: relative; height: 8px; margin-top: 4px; border: 1px solid var(--border); border-radius: 4px; background: var(--surface); overflow: hidden; }
+.motion-track-seg, .motion-track-blocked { position: absolute; top: 0; bottom: 0; }
+.motion-track-blocked { background: repeating-linear-gradient(135deg, #5b636d 0 3px, #2b3036 3px 6px); }
+.balance-closes { background: #7d9fc4; }
+.balance-holds { background: var(--success); }
+.balance-opens { background: var(--accent); }
+.balance-legend { display: flex; flex-wrap: wrap; gap: 4px 12px; color: var(--muted); font-size: 10px; }
+.balance-legend span { display: inline-flex; align-items: center; gap: 5px; }
+.balance-legend i { display: inline-block; width: 12px; height: 6px; border-radius: 2px; position: static; }
+.forecast { flex-direction: column; gap: 4px; }
+.forecast > span { display: flex; align-items: center; gap: 5px; }
+
+/* 金物パネル */
+.hardware-usage { line-height: 1.55; }
+.face-steps { list-style: none; margin: 0; padding: 0; gap: 8px; }
+.face-steps li { align-items: center; }
+.face-step-text { display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0; }
+.face-step-text strong { font-size: 11.5px; font-weight: 600; }
+.face-step-text small { font-size: 10.5px; line-height: 1.4; color: var(--muted); }
+.face-steps li.done .face-step-text small { color: var(--success); }
+.placement-adjust { flex-direction: column; align-items: stretch !important; gap: 6px; padding-left: 26px; }
+.nudge-value { min-width: 38px; text-align: center; font-size: 11px; font-variant-numeric: tabular-nums; }
+.face-steps button { display: inline-flex; align-items: center; gap: 4px; flex-shrink: 0; font-size: 11px; padding: 4px 8px; }
+.hardware-row { flex-direction: column; align-items: stretch; gap: 6px; }
+.hardware-row-head { display: flex; align-items: center; gap: 2px; }
+.hardware-row-head .op-select { flex: 1; }
+.hardware-adjust { display: flex; flex-direction: column; gap: 7px; padding: 4px 2px 2px; }
+.hardware-adjust > button { display: inline-flex; align-items: center; justify-content: center; gap: 6px; font-size: 11.5px; }
 
 /* ---------------- オーバーレイ（部品表など） ---------------- */
 .overlay-panel {

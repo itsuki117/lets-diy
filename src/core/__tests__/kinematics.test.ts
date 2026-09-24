@@ -1,7 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { applyPoses, canEditRestPose, isDrivenPart, solvePoses } from '../motion/kinematics';
 import { canAddJoint, validateJoints } from '../motion/jointValidate';
-import { defaultJoint } from '../motion/jointDefaults';
 import { createProject } from '../project/createProject';
 import type { Joint, Part, Project, Vec3 } from '../types';
 import { makePart } from './fixtures';
@@ -17,7 +16,6 @@ const project = (parts: Part[], joints: Joint[] = []): Project => ({
   parts,
   joints,
 });
-
 type Revolute = Extract<Joint, { kind: 'revolute' }>;
 type Prismatic = Extract<Joint, { kind: 'prismatic' }>;
 
@@ -303,39 +301,3 @@ describe('applyPoses / canEditRestPose', () => {
   });
 });
 
-describe('defaultJoint', () => {
-  it('ヒンジの軸は base ローカル Y、原点は base の外形内に収まる', () => {
-    const base = makePart({ name: '側板', size: { x: 300, y: 600, z: 18 }, position: [0, 300, 0] });
-    const moving = makePart({ name: '扉', size: { x: 400, y: 600, z: 18 }, position: [400, 300, 150] });
-    const joint = defaultJoint('revolute', base, moving);
-    expect(joint.kind).toBe('revolute');
-    if (joint.kind !== 'revolute') return;
-    close(joint.axis, [0, 1, 0]);
-    expect(Math.abs(joint.origin[0])).toBeLessThanOrEqual(150);
-    expect(Math.abs(joint.origin[2])).toBeLessThanOrEqual(9);
-  });
-
-  it('スライドの軸は base から moving へ向かう主軸に丸められる', () => {
-    const base = makePart({ name: '本体', position: [0, 0, 0] });
-    const moving = makePart({ name: '引き出し', position: [0, 0, 400] });
-    const joint = defaultJoint('prismatic', base, moving);
-    if (joint.kind !== 'prismatic') return;
-    close(joint.axis, [0, 0, 1]);
-  });
-
-  it('固定は値も範囲も持たない', () => {
-    const base = makePart({ name: 'A' });
-    const moving = makePart({ name: 'B', position: [100, 0, 0] });
-    const joint = defaultJoint('fixed', base, moving);
-    expect(joint.kind).toBe('fixed');
-    expect('value' in joint).toBe(false);
-  });
-
-  it('既定値はそのまま検査を通る', () => {
-    const base = makePart({ name: 'A' });
-    const moving = makePart({ name: 'B', position: [100, 0, 0] });
-    for (const kind of ['fixed', 'revolute', 'prismatic'] as const) {
-      expect(validateJoints([defaultJoint(kind, base, moving)], [base, moving])).toEqual([]);
-    }
-  });
-});

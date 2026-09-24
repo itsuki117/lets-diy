@@ -8,19 +8,20 @@ function useHint(): string {
   const createCategory = useEditorStore((s) => s.createCategory);
   const selectedIds = useEditorStore((s) => s.selectedIds);
   const faceSnap = useEditorStore((s) => s.faceSnap);
+  const placing = useEditorStore((s) => s.placement.step);
   const draft = useEditorStore((s) => s.operationDraft);
   const override = useEditorStore((s) => s.hintOverride);
   const partCount = useProjectStore((s) => s.project.parts.length);
-  const jointDraft = useEditorStore((s) => s.jointDraft);
   const jointCount = useProjectStore((s) => s.project.joints.length);
 
   if (override) return override;
+  if (placing === 'base') return '固定側の面の、金物を置く位置をクリックしてください（グリッドにそろいます / Esc でやめる）';
+  if (placing === 'moving') return '動く側の面にマウスを乗せると取り付け後が透けて見えます。よければクリック（赤は付けられない位置）';
+  if (placing === 'ready') return '透過表示を確かめて［取り付ける］を押してください';
   if (faceSnap && !faceSnap.source) return '動かす部材の面をクリックしてください';
   if (faceSnap && !faceSnap.target) return '接触させる相手の面をクリックしてください';
   if (faceSnap) return '隙間を確認して［適用］を押してください';
-  if (jointDraft && !jointDraft.basePartId) return '固定側の部材をクリックしてください';
-  if (jointDraft && !jointDraft.movingPartId) return '動く側の部材をクリックしてください';
-  if (workspace === 'motionCheck' && jointCount === 0) return '左の［動かす場所を追加］から設定を始めてください';
+  if (workspace === 'motionCheck' && jointCount === 0) return '金物を取り付けると、動く場所が表示されます';
   if (workspace === 'motionCheck') return '左で場所を選び、右のスライダーで作品を動かせます';
   if (partCount === 0) return '左の［生成］から木材を作りましょう';
   if (mode === 'create' && createCategory === 'hardware') return '取り付ける金物と2つの部材を選んでください';

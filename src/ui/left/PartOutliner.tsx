@@ -9,8 +9,6 @@ export function PartOutliner() {
   const select = useEditorStore((s) => s.select);
   const toggleSelect = useEditorStore((s) => s.toggleSelect);
   const setHovered = useEditorStore((s) => s.setHovered);
-  const jointDraft = useEditorStore((s) => s.jointDraft);
-  const pickJointPart = useEditorStore((s) => s.pickJointPart);
 
   return (
     <div className="outliner">
@@ -34,11 +32,6 @@ export function PartOutliner() {
                 type="button"
                 className="outliner-name"
                 onClick={(event) => {
-                  // 可動の追加中は、一覧からも固定側 / 動く側を選べるようにする
-                  if (jointDraft) {
-                    pickJointPart(part.id);
-                    return;
-                  }
                   if (event.shiftKey) toggleSelect(part.id);
                   else select([part.id]);
                 }}

@@ -2,6 +2,8 @@ import { memo, useEffect, useLayoutEffect, useRef } from 'react';
 import type { Mesh } from 'three';
 import type { ThreeEvent } from '@react-three/fiber';
 import { pickFace } from '../core/part/partFaces';
+import { worldToLocalPoint } from '../core/math/matrix';
+import { clickPlacement, hoverPlacement } from '../store/commands/placementCommands';
 import type { Part, Vec3 } from '../core/types';
 import { applyTransform } from '../geometry/transformUtils';
 import { useEditorStore } from '../store/useEditorStore';
@@ -17,6 +19,7 @@ function PartMeshInner({ part }: { part: Part }) {
   const selected = useEditorStore((s) => s.selectedIds.includes(part.id));
   const isHovered = useEditorStore((s) => s.hoveredId === part.id);
   const faceSnapActive = useEditorStore((s) => s.faceSnap !== null);
+  const placing = useEditorStore((s) => s.placement.step !== null);
   const interfering = useEditorStore((s) => !!s.interference?.some((pair) => pair.a === part.id || pair.b === part.id));
   // joint で動かされている部材は、rest pose ではなく計算された姿勢で描く（設計書 DESIGN_V2 §7.3）。
   // ジオメトリは変わらないので GeometryCache には一切触らない。
@@ -44,8 +47,10 @@ function PartMeshInner({ part }: { part: Part }) {
       editor.pickFace({ partId: part.id, face: pickFace(part, point) });
       return;
     }
-    if (editor.jointDraft) {
-      editor.pickJointPart(part.id);
+    if (editor.placement.step) {
+      // 表示中の姿勢で、部材ローカルの点と面を求める
+      const posed = { ...part, transform: pose };
+      clickPlacement({ partId: part.id, face: pickFace(posed, point), point: worldToLocalPoint(pose, point) });
       return;
     }
     if (event.shiftKey) editor.toggleSelect(part.id);
@@ -53,6 +58,15 @@ function PartMeshInner({ part }: { part: Part }) {
   };
 
   const handlePointerMove = (event: ThreeEvent<PointerEvent>) => {
+    if (placing) {
+      event.stopPropagation();
+      const world: Vec3 = [event.point.x, event.point.y, event.point.z];
+      const posed = { ...part, transform: pose };
+      const face = pickFace(posed, world);
+      useEditorStore.getState().setHoveredFace({ partId: part.id, face });
+      hoverPlacement({ partId: part.id, face, point: worldToLocalPoint(pose, world) });
+      return;
+    }
     if (!faceSnapActive) return;
     event.stopPropagation();
     const point: Vec3 = [event.point.x, event.point.y, event.point.z];

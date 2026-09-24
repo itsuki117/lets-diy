@@ -44,9 +44,9 @@ describe('migrate', () => {
   });
 });
 
-describe('migrate: v1 / v2 / v3 から v4 へ', () => {
-  it('現行バージョンは 4', () => {
-    expect(SCHEMA_VERSION).toBe(4);
+describe('migrate: v1 / v2 / v3 から現行へ', () => {
+  it('現行バージョンは 5', () => {
+    expect(SCHEMA_VERSION).toBe(5);
   });
 
   it.each([1, 2, 3])('v%i のファイルが現行バージョンになる', (version) => {
@@ -69,7 +69,27 @@ describe('migrate: v1 / v2 / v3 から v4 へ', () => {
 
   it('すでに配列を持っている v3 ファイルは上書きしない', () => {
     const joints = [{ id: 'jnt-1' }];
-    const out = migrate(docAt(3, { parts: [], joints })) as { project: { joints: unknown } };
+    const hardware = [{ id: 'hw-1', jointId: 'jnt-1', preset: { kind: 'hinge' } }];
+    const out = migrate(docAt(3, { parts: [], joints, hardware })) as { project: { joints: unknown } };
     expect(out.project.joints).toEqual(joints);
+  });
+});
+
+describe('migrate: v4 から v5（金物のない可動を廃止）', () => {
+  it('金物に支えられていない joint と、そこに付いたガススプリング・自動の穴を消す', () => {
+    const project = {
+      parts: [{ id: 'p', operations: [{ id: 'op-1', note: 'hw-gas' }, { id: 'op-2' }] }],
+      joints: [{ id: 'jnt-hinge' }, { id: 'jnt-manual' }],
+      hardware: [
+        { id: 'hw-hinge', jointId: 'jnt-hinge', preset: { kind: 'hinge' } },
+        { id: 'hw-gas', jointId: 'jnt-manual', preset: { kind: 'gasSpring' } },
+      ],
+      gasSprings: [{ id: 'g', jointId: 'jnt-manual' }],
+    };
+    const out = migrate(docAt(4, project)) as { project: typeof project };
+    expect(out.project.joints.map((joint) => joint.id)).toEqual(['jnt-hinge']);
+    expect(out.project.hardware.map((item) => item.id)).toEqual(['hw-hinge']);
+    expect(out.project.gasSprings).toEqual([]);
+    expect(out.project.parts[0]!.operations.map((operation) => operation.id)).toEqual(['op-2']);
   });
 });

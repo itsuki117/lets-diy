@@ -1,3 +1,4 @@
+import { motionJoints, rebuildBracketJoints } from '../../core/hardware/brackets';
 import { MAX_SIZE_MM, MIN_SIZE_MM } from '../../core/constants';
 import { copyName, createPart, type CreatePartInput } from '../../core/part/createPart';
 import { createOperationId, createPartId } from '../../core/ids';
@@ -76,10 +77,14 @@ export function removeParts(ids: readonly PartId[]): void {
     draft.joints = draft.joints.filter((j) => !orphanedIds.has(j.id));
     draft.gasSprings = draft.gasSprings.filter((g) => !orphanedIds.has(g.jointId));
 
-    const deadHardware = draft.hardware.filter((h) => h.jointId !== null && orphanedIds.has(h.jointId));
+    const deadHardware = draft.hardware.filter((h) => (h.jointId !== null && orphanedIds.has(h.jointId))
+      || (h.parts !== undefined && (removable.includes(h.parts.base) || removable.includes(h.parts.moving))));
     const deadHardwareIds = new Set(deadHardware.map((h) => h.id));
     draft.hardware = draft.hardware.filter((h) => !deadHardwareIds.has(h.id));
     draft.gasSprings = draft.gasSprings.filter((g) => !deadHardwareIds.has(g.hardwareId));
+
+    // 固定金具でつながった部材が一緒に動くための joint を作り直す
+    draft.joints = rebuildBracketJoints({ ...draft, joints: motionJoints(draft.joints) }).joints;
 
     // 金物が自動生成した加工も一緒に消す（不変条件 J-8）
     for (const part of draft.parts) {

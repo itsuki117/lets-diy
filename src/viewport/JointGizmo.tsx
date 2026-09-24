@@ -6,7 +6,7 @@ import { add, normalize, scale } from '../core/math/vec3';
 import { isMovableJoint, type MovableJoint, type Part, type Vec3 } from '../core/types';
 import { useEditorStore } from '../store/useEditorStore';
 import { useMotionStore } from '../store/useMotionStore';
-import { useProjectStore } from '../store/useProjectStore';
+import { useWorkingProject } from '../store/useSimulationStore';
 
 const axisMaterial = new LineBasicMaterial({ color: 0x6fb3e0, depthTest: false, transparent: true });
 const arcMaterial = new LineBasicMaterial({ color: 0xe7ac68, depthTest: false, transparent: true });
@@ -88,7 +88,7 @@ function JointVisual({ joint, base }: { joint: MovableJoint; base: Part }) {
 export function JointGizmo() {
   const selectedJointId = useEditorStore((s) => s.selectedJointId);
   const workspace = useEditorStore((s) => s.workspace);
-  const project = useProjectStore((s) => s.project);
+  const project = useWorkingProject();
   const poses = useMotionStore((s) => s.poses);
 
   if (workspace !== 'motionCheck' || !selectedJointId) return null;

@@ -10,6 +10,7 @@ import { OperationGizmo } from './OperationGizmo';
 import { JointGizmo } from './JointGizmo';
 import { HardwareLayer } from './HardwareLayer';
 import { FacePickOverlay } from './FacePickOverlay';
+import { PlacementGhost } from './PlacementGhost';
 import { useInvalidateOnStore } from './hooks/useInvalidateOnStore';
 import type { ViewPreset } from './ViewCube';
 
@@ -27,6 +28,7 @@ export function SceneRoot({ view }: { view: { preset: ViewPreset; revision: numb
       <OperationGizmo />
       <JointGizmo />
       <FacePickOverlay />
+      <PlacementGhost />
       <CameraRig view={view} />
       <GizmoHelper alignment="bottom-left" margin={[65, 70]}>
         <GizmoViewport axisColors={['#e67976', '#9cbc82', '#81a9d7']} labelColor="#15191d" />

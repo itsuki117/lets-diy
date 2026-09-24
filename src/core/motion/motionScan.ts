@@ -1,6 +1,7 @@
 import { MOTION_SCAN_STEPS } from '../constants';
 import { findInterferences, type InterferencePair } from '../collision/interference';
 import { isMovableJoint, type JointId, type Project } from '../types';
+import { motionLimits } from './limits';
 import { applyPoses, solvePoses } from './kinematics';
 
 /**
@@ -101,7 +102,8 @@ export function scanJointMotion(
     return { jointId, steps: 0, blocked: [], usable: null, durationMs: 0 };
   }
 
-  const { min, max } = joint.range;
+  // 金物で動けない区間（ガススプリングの伸縮範囲外・ドアロック中）は走査しない
+  const { min, max } = motionLimits(project, joint);
   const divisions = Math.max(1, Math.floor(steps));
   const samples: Sample[] = [];
 
