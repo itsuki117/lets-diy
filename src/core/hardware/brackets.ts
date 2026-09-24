@@ -92,5 +92,35 @@ export function bracketGroup(project: Project, from: PartId, blocked: PartId): S
   return group;
 }
 
+/**
+ * 金物または joint で物理的につながっている部材をすべて返す。
+ *
+ * 配置モードでは、この単位を 1 つの組立品として動かす。丁番やレールは自由度を
+ * 持つが、取付位置そのものを編集するときに片側だけを動かすと金物から外れてしまう。
+ */
+export function hardwareConnectedGroup(project: Project, from: PartId): Set<PartId> {
+  const edges = new Map<PartId, Set<PartId>>();
+  const link = (a: PartId, b: PartId): void => {
+    edges.set(a, new Set([...(edges.get(a) ?? []), b]));
+    edges.set(b, new Set([...(edges.get(b) ?? []), a]));
+  };
+
+  for (const joint of project.joints) link(joint.basePartId, joint.movingPartId);
+  for (const hardware of project.hardware) {
+    if (hardware.parts) link(hardware.parts.base, hardware.parts.moving);
+  }
+
+  const group = new Set<PartId>([from]);
+  const stack = [from];
+  while (stack.length > 0) {
+    for (const next of edges.get(stack.pop()!) ?? []) {
+      if (group.has(next)) continue;
+      group.add(next);
+      stack.push(next);
+    }
+  }
+  return group;
+}
+
 /** 金具由来の fixed joint を除いた、動きを作る joint だけ */
 export const motionJoints = (joints: readonly Joint[]): MovableJoint[] => joints.filter(isMovableJoint);

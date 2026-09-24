@@ -3,35 +3,65 @@ import { snapAngle } from '../../core/math/angle';
 import { snapVec3 } from '../../core/snap/gridSnap';
 import { computeAlignedPositions } from '../../core/snap/align';
 import { computeFaceSnapTransform } from '../../core/snap/faceSnap';
-import type { AlignAnchor, AxisKey, FaceRef, PartId, Transform, Vec3 } from '../../core/types';
+import { hardwareConnectedGroup } from '../../core/hardware/brackets';
+import { composeRigid, invertRigid, rigidFromTransform, rigidToTransform } from '../../core/math/rigid';
+import type { AlignAnchor, AxisKey, FaceRef, PartId, Project, Transform, Vec3 } from '../../core/types';
 import { useEditorStore } from '../useEditorStore';
 import { useProjectStore } from '../useProjectStore';
 
 const store = () => useProjectStore.getState();
 const editor = () => useEditorStore.getState();
 
+/** 選んだ部材の変換差分を、金物でつながった組立品全体へ適用する。 */
+function transformConnectedParts(project: Project, id: PartId, target: Transform): void {
+  const source = project.parts.find((part) => part.id === id);
+  if (!source) return;
+  const group = hardwareConnectedGroup(project, id);
+  const delta = composeRigid(rigidFromTransform(target), invertRigid(rigidFromTransform(source.transform)));
+  for (const part of project.parts) {
+    if (group.has(part.id)) part.transform = rigidToTransform(composeRigid(delta, rigidFromTransform(part.transform)));
+  }
+  // 行列から Euler 角へ戻す際の丸め誤差を、操作対象そのものには残さない。
+  const selected = project.parts.find((part) => part.id === id);
+  if (selected) selected.transform = target;
+}
+
+function movableConnectedGroup(id: PartId): Set<PartId> | null {
+  const project = store().project;
+  const group = hardwareConnectedGroup(project, id);
+  if (project.parts.some((part) => group.has(part.id) && part.locked)) {
+    editor().pushToast('warning', '金物でつながった部材にロックがあるため、組立品を移動できません');
+    return null;
+  }
+  return group;
+}
+
 export function setPartPosition(id: PartId, position: Vec3, label = '位置を変更'): void {
   const snapped = snapVec3(position, editor().snap.grid);
+  if (!movableConnectedGroup(id)) return;
   store().applyCommand(label, (draft) => {
     const part = draft.parts.find((p) => p.id === id);
-    if (part && !part.locked) part.transform.position = snapped;
+    if (part) transformConnectedParts(draft, id, { ...part.transform, position: snapped });
   });
 }
 
 export function setPartRotation(id: PartId, rotation: Vec3, label = '回転を変更'): void {
   const step = editor().snap.angle;
   const snapped: Vec3 = [snapAngle(rotation[0], step), snapAngle(rotation[1], step), snapAngle(rotation[2], step)];
+  if (!movableConnectedGroup(id)) return;
   store().applyCommand(label, (draft) => {
     const part = draft.parts.find((p) => p.id === id);
-    if (part && !part.locked) part.transform.rotation = snapped;
+    if (part) transformConnectedParts(draft, id, { ...part.transform, rotation: snapped });
   });
 }
 
 /** ギズモのドラッグ中に呼ぶ。履歴には積まない。 */
 export function updateTransientTransform(id: PartId, transform: Transform): void {
+  const project = store().project;
+  const group = hardwareConnectedGroup(project, id);
+  if (project.parts.some((part) => group.has(part.id) && part.locked)) return;
   store().updateTransient((draft) => {
-    const part = draft.parts.find((p) => p.id === id);
-    if (part && !part.locked) part.transform = transform;
+    transformConnectedParts(draft, id, transform);
   });
 }
 
@@ -59,8 +89,7 @@ export function applyFaceSnap(source: FaceRef, target: FaceRef, gap: number, cen
     editor().pushToast('error', '対象の部材が見つかりません');
     return false;
   }
-  if (sourcePart.locked) {
-    editor().pushToast('warning', 'ロックされた部材は動かせません');
+  if (!movableConnectedGroup(source.partId)) {
     return false;
   }
   try {
@@ -73,8 +102,7 @@ export function applyFaceSnap(source: FaceRef, target: FaceRef, gap: number, cen
       centerAlign,
     });
     store().applyCommand('面スナップ', (draft) => {
-      const part = draft.parts.find((p) => p.id === source.partId);
-      if (part) part.transform = transform;
+      transformConnectedParts(draft, source.partId, transform);
     });
     return true;
   } catch (error) {

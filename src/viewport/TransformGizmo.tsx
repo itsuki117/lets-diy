@@ -6,6 +6,7 @@ import { snapVec3 } from '../core/snap/gridSnap';
 import { snapAngle } from '../core/math/angle';
 import { updateTransientTransform } from '../store/commands/transformCommands';
 import { canEditRestPose } from '../core/motion/kinematics';
+import { hardwareConnectedGroup } from '../core/hardware/brackets';
 import { useEditorStore } from '../store/useEditorStore';
 import { useProjectStore } from '../store/useProjectStore';
 import { dragging, getPartObject, subscribePartObjects } from './partObjects';
@@ -33,8 +34,10 @@ export function TransformGizmo() {
   // 開いたままの可動部材は rest pose を編集させない（設計書 DESIGN_V2 §7.5）。
   // 45 度開けた状態で動かすと、閉じたときにずれてしまう。
   const editable = !!partId && canEditRestPose(joints, partId);
+  const connected = partId ? hardwareConnectedGroup(useProjectStore.getState().project, partId) : new Set<string>();
+  const connectedLocked = parts.some((candidate) => connected.has(candidate.id) && candidate.locked);
   const active =
-    workspace === 'edit' && mode === 'arrange' && !faceSnapActive && !!part && !part.locked && part.visible && !!object && editable;
+    workspace === 'edit' && mode === 'arrange' && !faceSnapActive && !!part && !connectedLocked && part.visible && !!object && editable;
   useEffect(() => () => {
     if (dragging.partId !== null) {
       dragging.partId = null;
