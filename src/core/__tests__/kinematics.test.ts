@@ -300,4 +300,3 @@ describe('applyPoses / canEditRestPose', () => {
     expect(isDrivenPart([joint], a.id)).toBeUndefined();
   });
 });
-
